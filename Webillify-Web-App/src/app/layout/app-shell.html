@@ -18,7 +18,13 @@
 
     <div class="branch-picker">
       <span class="branch-picker__icon"><app-icon name="store" /></span>
-      <span><small>Current branch</small><strong>Ageera · Chennai</strong></span>
+      <span
+        ><small>Current branch</small
+        ><strong
+          >{{ auth.session()?.workspace?.organizationName ?? 'Webillify' }} ·
+          {{ auth.session()?.workspace?.branchName ?? 'No branch' }}</strong
+        ></span
+      >
       <app-icon name="chevron" />
     </div>
 

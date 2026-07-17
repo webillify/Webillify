@@ -35,6 +35,12 @@ export interface AuthSession {
   readonly user: AuthUser;
   readonly expiresAt: string;
   readonly mode: 'demo' | 'api';
+  readonly workspace?: {
+    readonly organizationId: string;
+    readonly organizationName: string;
+    readonly branchId: string;
+    readonly branchName: string;
+  };
 }
 
 export interface SignInCredentials {

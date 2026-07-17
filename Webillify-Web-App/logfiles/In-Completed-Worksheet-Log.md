@@ -1,13 +1,14 @@
 # Webillify incomplete work worksheet
 
-Last updated: **2026-07-17 19:22:18 IST**
-In progress: **None — BE-007B verified and published as `593ed67`**
-Ready next: **WBL-BE-007C — purchase cancellation and return compensating workflows**
+Last updated: **2026-07-17 19:34:26 IST**
+In progress: **WBL-FE-016B — browser purchase workflow and separate AI/core subscription status**
+Ready next: **Complete the currently implemented backend surface in the browser, then BE-007C**
 
 ## Ready
 
 | Task ID      | Priority | Module/outcome                 | Assignee | Status      |
 | ------------ | -------- | ------------------------------ | -------- | ----------- |
+| `WBL-FE-016B` | P0      | Browser purchases and separate AI/core plan screens | Codex | IN PROGRESS |
 | `WBL-BE-007C` | P0      | Purchase cancellation/returns with compensating effects | Unassigned | READY |
 
 ## Planned frontend

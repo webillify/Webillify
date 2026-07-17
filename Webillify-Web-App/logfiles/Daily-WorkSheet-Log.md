@@ -61,6 +61,10 @@ Status: **IN PROGRESS — BE-004/SEC-001 complete; GitHub publication retry acti
 | 2026-07-17 19:19:14 | TEST     | Concurrent post exposed Prisma-wrapped PostgreSQL `40001` retry gap                        | FAILED — FIXED |
 | 2026-07-17 19:22:18 | TEST     | Clean five-migration replay, drift/lint/build/audit, 3 unit and 52 integration tests       | PASS        |
 | 2026-07-17 19:23:53 | INFRA    | Pushed verified BE-007B purchase posting/payment API stage to GitHub `main`                | `593ed67`   |
+| 2026-07-17 19:25:00 | FRONTEND | Audited browser integration; development still used mock mode and unavailable API adapters | GAP FOUND   |
+| 2026-07-17 19:29:25 | FRONTEND | Added real access-token session, refresh cookie, tenant headers and product/stock adapters  | COMPLETE    |
+| 2026-07-17 19:31:00 | TEST     | Browser login exposed localhost/127.0.0.1 CORS origin mismatch                              | FAILED — FIXED |
+| 2026-07-17 19:34:26 | TEST     | Frontend build, 19 unit tests and 4 desktop/mobile connected browser journeys               | PASS        |
 
 ---
 

@@ -1,8 +1,21 @@
 # Webillify task backlog
 
-Last prioritized: **2026-07-17 19:22:18 IST**
-Active assignee: **Unassigned — WBL-BE-007C ready; BE-007B published as `593ed67`**
+Last prioritized: **2026-07-17 19:34:26 IST**
+Active assignee: **Codex — WBL-FE-016B browser workflow integration**
 WIP limit: **One P0 task per engineer**
+
+## Just completed
+
+### WBL-FE-016A — Connected authentication, catalogue and stock browser stage
+
+Status: **COMPLETE — 2026-07-17 19:34:26 IST**
+
+- Switched development runtime from mock to real API mode without removing isolated mock tests.
+- Added persisted access-token sessions, refresh-cookie support, tenant headers and live organization/branch context.
+- Mapped real product variants and branch stock balances into Products and POS.
+- Reworked desktop/mobile browser journeys to validate real API behavior and the explicit pending sales boundary.
+
+Result: production/development builds pass, 19/19 unit tests pass, and 4/4 connected Chrome desktop/mobile journeys pass.
 
 ## Just completed
 

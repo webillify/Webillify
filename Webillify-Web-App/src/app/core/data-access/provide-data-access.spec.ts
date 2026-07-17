@@ -1,4 +1,6 @@
 import { TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { firstValueFrom } from 'rxjs';
 import { ProductRepository } from './repositories';
 import { provideDataAccess } from './provide-data-access';
@@ -17,13 +19,33 @@ describe('provideDataAccess', () => {
     expect(products.length).toBeGreaterThan(0);
   });
 
-  it('fails explicitly instead of falling back to mock data in API mode', async () => {
+  it('uses real product and stock endpoints instead of mock data in API mode', async () => {
     TestBed.configureTestingModule({
-      providers: [provideDataAccess({ production: false, dataMode: 'api', apiBaseUrl: '/api/v1' })],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideDataAccess({ production: false, dataMode: 'api', apiBaseUrl: '/api/v1' }),
+      ],
     });
 
-    await expect(firstValueFrom(TestBed.inject(ProductRepository).list())).rejects.toThrow(
-      'API data mode is selected',
-    );
+    const result = firstValueFrom(TestBed.inject(ProductRepository).list());
+    const http = TestBed.inject(HttpTestingController);
+    http.expectOne('/api/v1/products').flush([
+      {
+        id: 'product-1',
+        name: 'Premium Rice',
+        category: { name: 'Grocery' },
+        baseUnit: { symbol: 'kg' },
+        variants: [{ id: 'variant-1', sku: 'RICE-1KG', name: '1 kg', salePrice: '60.00' }],
+      },
+    ]);
+    http.expectOne('/api/v1/stock-balances').flush([
+      { quantity: '100.000', variant: { id: 'variant-1' } },
+    ]);
+
+    await expect(result).resolves.toEqual([
+      expect.objectContaining({ id: 'variant-1', sku: 'RICE-1KG', stock: 100, price: 60 }),
+    ]);
+    http.verify();
   });
 });

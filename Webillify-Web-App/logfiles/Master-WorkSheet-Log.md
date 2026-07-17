@@ -1,10 +1,10 @@
 # Webillify master worksheet
 
-Snapshot timestamp: **2026-07-17 19:22:18 IST**
+Snapshot timestamp: **2026-07-17 19:34:26 IST**
 Project status: **ACTIVE — identity, tenancy, authorization and independent subscription foundations verified**
 Current release: **R1 — Frontend application foundation**  
 Current phase: **Phase 4 — Catalogue, purchases and inventory**
-Current task: **WBL-BE-007C — Purchase cancellation and return compensating workflows (ready next)**
+Current task: **WBL-FE-016B — Browser purchases and separate core/AI subscription status**
 
 ## Project snapshot
 
@@ -15,8 +15,8 @@ Current task: **WBL-BE-007C — Purchase cancellation and return compensating wo
 | Responsive application shell    | COMPLETE             | Sidebar, top bar, branch picker, mobile navigation and placeholder routes                                                              |
 | Dashboard UI                    | COMPLETE — DEMO DATA | KPI cards, sample chart, quick actions, recent sales and stock alerts                                                                  |
 | POS UI                          | COMPLETE — DEMO DATA | Search, categories, interactive cart, totals, payment selection and demo completion                                                    |
-| Product catalogue UI            | COMPLETE — DEMO DATA | Searchable table remains demo; real tenant catalogue and stock APIs are ready for adapter wiring                                      |
-| Authentication                  | PARTIAL — API READY  | Real Argon2/JWT/rotating-session API passes tests; Angular API adapter integration remains pending                                     |
+| Product catalogue UI            | PARTIAL — API DATA  | Searchable table renders real tenant product variants and branch stock; create/import remains pending                                |
+| Authentication                  | COMPLETE — CORE API | Angular real login/session/tenant integration works against Argon2/JWT/rotating-session API in desktop/mobile Chrome                  |
 | PWA foundation                  | COMPLETE             | Manifest, icon, service worker registration and production `ngsw` output                                                               |
 | Customers                       | PLANNED              | Placeholder route only                                                                                                                 |
 | Purchases                       | IN PROGRESS — CORE API | Protected supplier/draft/post/payment APIs pass; cancellation, returns and frontend remain pending                                  |
@@ -25,7 +25,7 @@ Current task: **WBL-BE-007C — Purchase cancellation and return compensating wo
 | Backend and persistence         | IN PROGRESS          | Identity through purchase posting/payments pass entitlement, isolation, idempotency, concurrency and reconciliation tests              |
 | Webillify AI integration        | PARTIAL — API READY  | Separate plan/lifecycle/usage APIs and atomic credit service pass; capability workflows and UI remain pending                         |
 | Data access and request state   | COMPLETE             | Typed models/repositories, mock/API modes, environment configuration and visible request errors                                        |
-| Automated tests                 | PARTIAL              | 19 frontend unit, 6 browser E2E/accessibility, 3 API unit and 52 backend integration/security tests pass                               |
+| Automated tests                 | PARTIAL              | 19 frontend unit, 4 connected browser/accessibility journeys, 3 API unit and 52 backend integration/security tests pass                |
 | Production deployment           | PARTIAL              | Production build and GitHub CI definition exist; hosting/deployment environments remain pending                                        |
 
 ## Latest verified baseline
@@ -45,6 +45,7 @@ Current task: **WBL-BE-007C — Purchase cancellation and return compensating wo
 | 2026-07-17 18:46:55 IST | Catalogue/inventory API gate   | PASS — 3 unit + 38 integration; concurrency/reconciliation and audit 0   |
 | 2026-07-17 19:06:21 IST | Purchases/payables DB gate     | PASS — 3 unit + 43 integration; schema drift and audit 0                 |
 | 2026-07-17 19:22:18 IST | Purchase posting/payment gate  | PASS — 3 unit + 52 integration; concurrency, drift and audit 0           |
+| 2026-07-17 19:34:26 IST | Connected browser integration  | PASS — real auth/catalogue/stock; 19 unit + 4 desktop/mobile journeys     |
 
 ## Current goal
 

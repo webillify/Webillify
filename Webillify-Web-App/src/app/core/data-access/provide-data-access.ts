@@ -6,7 +6,7 @@ import {
   ApiPosRepository,
   ApiProductRepository,
   ApiWorkspaceRepository,
-} from './api/api-unavailable.repositories';
+} from './api/api.repositories';
 import {
   MockAuthRepository,
   MockDashboardRepository,

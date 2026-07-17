@@ -32,7 +32,7 @@ test('protects workspace routes and exposes an accessible sign-in form', async (
   await expectNoSeriousAccessibilityViolations(page);
 });
 
-test('signs in and renders responsive, accessible workspace navigation', async ({
+test('signs in and renders real workspace navigation and catalogue data', async ({
   page,
 }, testInfo) => {
   await signIn(page);
@@ -46,16 +46,20 @@ test('signs in and renders responsive, accessible workspace navigation', async (
     await page.getByRole('button', { name: 'Close navigation' }).first().click();
   }
   await expectNoSeriousAccessibilityViolations(page);
-});
+  await page.goto('/products');
+  await expect(page.getByRole('heading', { name: 'Products' })).toBeVisible();
+  const productRow = page.getByRole('row').filter({ hasText: 'RICE-PREMIUM-1KG' });
+  await expect(productRow).toContainText('Premium Rice');
+  await expect(productRow).toContainText('100');
 
-test('completes the demo POS checkout with announced feedback', async ({ page }) => {
-  await signIn(page);
   await page.goto('/pos');
   await expect(page.getByRole('heading', { name: 'New sale' })).toBeVisible();
+  await page.getByRole('button', { name: /Premium Rice/ }).click();
   await page.getByRole('button', { name: /Charge/ }).click();
   const dialog = page.getByRole('dialog', { name: 'Choose payment method' });
   await expect(dialog).toBeFocused();
   await dialog.getByRole('button', { name: 'Cash' }).click();
-  await expect(page.getByRole('status').filter({ hasText: /WBL-/ })).toBeVisible();
-  await expect(page.getByText('Your cart is empty')).toBeVisible();
+  await expect(
+    page.getByRole('status').filter({ hasText: /Sales posting is not implemented/ }),
+  ).toBeVisible();
 });

@@ -104,6 +104,12 @@ export class MockAuthRepository implements AuthRepository {
       },
       expiresAt: new Date(Date.now() + (credentials.remember ? 7 : 1) * 86_400_000).toISOString(),
       mode: 'demo',
+      workspace: {
+        organizationId: 'org-demo',
+        organizationName: 'Ageera',
+        branchId: 'branch-chennai',
+        branchName: 'Chennai',
+      },
     };
     this.storage?.setItem(DEMO_SESSION_KEY, JSON.stringify(session));
     return of(session);
