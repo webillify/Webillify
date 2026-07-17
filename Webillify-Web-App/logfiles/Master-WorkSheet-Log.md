@@ -1,10 +1,10 @@
 # Webillify master worksheet
 
-Snapshot timestamp: **2026-07-17 20:36:50 IST**
+Snapshot timestamp: **2026-07-17 20:38:54 IST**
 Project status: **ACTIVE — POS persistence foundation verified; protected posting API is next**
 Current release: **R1 — Frontend application foundation**  
 Current phase: **Phase 4 — Catalogue, purchases and inventory**
-Current task: **WBL-BE-008B — Protected atomic POS posting API (ready after publication)**
+Current task: **WBL-BE-008B — Protected atomic POS posting API (in progress)**
 
 ## Project snapshot
 
@@ -79,7 +79,7 @@ See [Task-Backlog.md](Task-Backlog.md#recommended-next-task) for the complete as
 - All five original worksheets are populated.
 - Completed claims are mapped to source files or command evidence.
 - Pending modules are task-ID based and assignable.
-- BE-001 through BE-007C, SEC-001, connected FE-016A/B/C and SETUP-005 are published. BE-008A is verified with publication pending; BE-008B is ready next.
+- BE-001 through BE-008A, SEC-001, connected FE-016A/B/C and SETUP-005 are published. BE-008B is active next.
 
 ## Category codes
 

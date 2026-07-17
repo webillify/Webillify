@@ -90,6 +90,8 @@ Status: **IN PROGRESS — BE-007C verified; frontend compensation actions ready 
 | 2026-07-17 20:32:00 | DATABASE | Added customers, financial-year sequences, POS sessions, invoices/items, tenders and cash records | COMPLETE   |
 | 2026-07-17 20:34:00 | TEST     | Added ownership, numbering, tax, split-payment, closing and append-only database matrix           | PASS — 5/5 |
 | 2026-07-17 20:36:50 | TEST     | Clean eight-migration replay/seed/drift, lint/build/audit, 3 unit and 62 integration tests         | PASS       |
+| 2026-07-17 20:38:54 | INFRA    | Pushed verified BE-008A POS persistence foundation to GitHub `main`                                | `1bfe776`  |
+| 2026-07-17 20:38:54 | BACKEND  | Assigned BE-008B protected atomic POS session/invoice posting API                                  | IN PROGRESS |
 
 ---
 
