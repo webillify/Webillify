@@ -36,6 +36,10 @@ Status: **IN PROGRESS — BE-004/SEC-001 complete; GitHub publication retry acti
 | 2026-07-17 18:10:00 | BACKEND  | Assigned BE-005 core and separately billed AI entitlement foundation          | IN PROGRESS    |
 | 2026-07-17 18:13:30 | DATABASE | Added three versioned plans, entitlement sets and unique AI ledger sources    | COMPLETE       |
 | 2026-07-17 18:14:44 | TEST     | Migration/seed/schema/lint/build/audit plus 3 unit and 17 integration tests   | PASS           |
+| 2026-07-17 18:18:30 | BACKEND  | Added core plan/subscription/usage and separate AI plan/usage APIs             | COMPLETE       |
+| 2026-07-17 18:20:30 | AI       | Added atomic idempotent credit consume/refund with lifecycle enforcement       | COMPLETE       |
+| 2026-07-17 18:21:30 | TEST     | Concurrent charges exposed Prisma serialization conflict propagation           | FAILED — FIXED |
+| 2026-07-17 18:22:53 | TEST     | Added bounded retry; full 3-unit/26-integration/build/audit gate                | PASS           |
 
 ---
 

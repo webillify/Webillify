@@ -1,14 +1,14 @@
 # Webillify incomplete work worksheet
 
-Last updated: **2026-07-17 18:14:44 IST**
-In progress: **WBL-BE-005 — database contract verified; API enforcement active**
-Ready after current: **WBL-BE-006 catalogue and inventory ledger**
+Last updated: **2026-07-17 18:22:53 IST**
+In progress: **None — WBL-BE-005 verified and awaiting stage push**
+Ready next: **WBL-BE-006 catalogue and inventory ledger**
 
 ## Ready
 
 | Task ID      | Priority | Module/outcome                 | Assignee | Status      |
 | ------------ | -------- | ------------------------------ | -------- | ----------- |
-| `WBL-BE-005` | P0       | Core and separate AI entitlements | Codex | IN PROGRESS |
+| `WBL-BE-006` | P0       | Catalogue and immutable inventory ledger | Unassigned | READY |
 
 ## Planned frontend
 
@@ -30,7 +30,7 @@ Ready after current: **WBL-BE-006 catalogue and inventory ledger**
 | `WBL-BE-002`    | P0           | PostgreSQL tenancy schema             | COMPLETE    |
 | `WBL-BE-003`    | P0           | Identity and sessions                 | COMPLETE — CORE |
 | `WBL-BE-004`    | P0           | Organization/branch/RBAC              | COMPLETE    |
-| `WBL-BE-005`    | P0           | Core and AI subscription entitlements | PLANNED     |
+| `WBL-BE-005`    | P0           | Core and AI subscription entitlements | COMPLETE    |
 | `WBL-BE-006`    | P0           | Catalogue and inventory ledger        | PLANNED     |
 | `WBL-BE-007`    | P0           | Purchases and payables                | PLANNED     |
 | `WBL-BE-008`    | P0           | POS/invoice/payment/returns           | PLANNED     |

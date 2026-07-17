@@ -9,6 +9,7 @@ import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { AccessModule } from './modules/access/access.module';
 import { HealthModule } from './modules/health/health.module';
+import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { HealthModule } from './modules/health/health.module';
     ThrottlerModule.forRoot([{ ttl: 60_000, limit: 100 }]),
     AuthModule,
     AccessModule,
+    SubscriptionsModule,
     HealthModule,
   ],
   controllers: [AppController],

@@ -1,6 +1,6 @@
 # Webillify module status
 
-Reconciled: **2026-07-17 18:14:44 IST**
+Reconciled: **2026-07-17 18:22:53 IST**
 Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence passed. `DEMO` is not production-ready.
 
 ## Frontend modules
@@ -31,8 +31,8 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 | `WBL-MOD-101` | API foundation     | COMPLETE    | NestJS, validation, errors, health and OpenAPI        |
 | `WBL-MOD-102` | Identity/sessions  | COMPLETE — CORE | Login/JWT/rotation/reuse/logout/me; reset queued  |
 | `WBL-MOD-103` | Tenancy/RBAC       | COMPLETE    | Tenant resolution, branch scope and permissions; 15 API E2E pass |
-| `WBL-MOD-104` | Core subscriptions | IN PROGRESS | Three versioned plan entitlement sets seeded and tested |
-| `WBL-MOD-105` | AI subscription    | IN PROGRESS | Independent lifecycle, trial grant and duplicate ledger protection tested |
+| `WBL-MOD-104` | Core subscriptions | COMPLETE    | Versioned plan/usage APIs and active-mutation enforcement tested |
+| `WBL-MOD-105` | AI subscription    | COMPLETE — CORE | Independent plan/lifecycle/credits; atomic consume/refund and concurrency tested |
 | `WBL-MOD-106` | Catalogue          | NOT STARTED | Products, variants, barcodes, units and tax           |
 | `WBL-MOD-107` | Inventory          | NOT STARTED | Movement ledger, balances, counts, transfers          |
 | `WBL-MOD-108` | Purchases/payables | NOT STARTED | Suppliers, bills, returns and payments                |
@@ -63,4 +63,5 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 2026-07-17 17:22:18 IST  npm audit --omit=dev         PASS (0 production vulnerabilities)
 2026-07-17 18:07:26 IST  API lint/build/audit          PASS (0 vulnerabilities)
 2026-07-17 18:07:26 IST  API unit + E2E                PASS (3 + 15 tests)
+2026-07-17 18:22:53 IST  Subscription API full gate    PASS (3 unit + 26 integration; audit 0)
 ```

@@ -1,10 +1,10 @@
 # Webillify master worksheet
 
-Snapshot timestamp: **2026-07-17 18:14:44 IST**
-Project status: **ACTIVE — identity, tenancy and authorization API foundation verified**
+Snapshot timestamp: **2026-07-17 18:22:53 IST**
+Project status: **ACTIVE — identity, tenancy, authorization and independent subscription foundations verified**
 Current release: **R1 — Frontend application foundation**  
 Current phase: **Phase 3 — Backend identity and tenancy**  
-Current task: **WBL-BE-005 — Core and separately billed AI subscription entitlements (API enforcement stage)**
+Current task: **WBL-BE-006 — Catalogue and immutable inventory ledger (ready next)**
 
 ## Project snapshot
 
@@ -22,10 +22,10 @@ Current task: **WBL-BE-005 — Core and separately billed AI subscription entitl
 | Purchases                       | PLANNED              | Placeholder route only                                                                                                                 |
 | Reports                         | PLANNED              | Placeholder route only                                                                                                                 |
 | Settings / roles / subscription | PLANNED              | Placeholder route only                                                                                                                 |
-| Backend and persistence         | IN PROGRESS          | NestJS 11, PostgreSQL 17, identity, tenant resolution, branch access and permission guards pass automated verification                |
-| Webillify AI integration        | PLANNED              | UI indicator only; separate subscription rules exist in product documentation                                                          |
+| Backend and persistence         | IN PROGRESS          | NestJS/PostgreSQL identity, tenancy, authorization, versioned plans and separate AI credit accounting pass automated verification      |
+| Webillify AI integration        | PARTIAL — API READY  | Separate plan/lifecycle/usage APIs and atomic credit service pass; capability workflows and UI remain pending                         |
 | Data access and request state   | COMPLETE             | Typed models/repositories, mock/API modes, environment configuration and visible request errors                                        |
-| Automated tests                 | PARTIAL              | 19 frontend unit, 6 browser E2E/accessibility, 3 API unit and 15 API/database/security tests pass                                      |
+| Automated tests                 | PARTIAL              | 19 frontend unit, 6 browser E2E/accessibility, 3 API unit and 26 API/database/security/subscription tests pass                         |
 | Production deployment           | PARTIAL              | Production build and GitHub CI definition exist; hosting/deployment environments remain pending                                        |
 
 ## Latest verified baseline
@@ -40,6 +40,7 @@ Current task: **WBL-BE-005 — Core and separately billed AI subscription entitl
 | 2026-07-17 16:24:18 IST | `npm audit --omit=dev`        | PASS — 0 production vulnerabilities                                     |
 | 2026-07-17 18:07:26 IST | API lint/build/audit          | PASS — 0 dependency vulnerabilities                                     |
 | 2026-07-17 18:07:26 IST | API unit and E2E suites       | PASS — 3 unit + 15 API/database/security tests                           |
+| 2026-07-17 18:22:53 IST | Subscription regression suite | PASS — 3 unit + 26 API/database/security/subscription tests              |
 
 ## Current goal
 
@@ -51,15 +52,15 @@ The frontend foundation is verified as a responsive, accessible demo prototype. 
 
 | Field              | Value                                                                                  |
 | ------------------ | -------------------------------------------------------------------------------------- |
-| Task ID            | `WBL-BE-005`                                                                            |
-| Title              | Versioned core entitlements and independent AI subscription lifecycle                  |
+| Task ID            | `WBL-BE-006`                                                                            |
+| Title              | Tenant-scoped catalogue and immutable inventory movement ledger                        |
 | Status             | READY                                                                                  |
 | Priority           | P0                                                                                     |
 | Suggested assignee | Backend engineer                                                                       |
 | Estimate           | 1–2 development sessions                                                               |
-| Dependencies       | Completed BE-004 tenant/branch authorization and BE-002 subscription schema            |
-| Deliverable        | Core plan checks, separately billed AI lifecycle, credit usage and tests               |
-| Acceptance         | Core and AI entitlements operate independently and deny exhausted/inactive usage       |
+| Dependencies       | Completed BE-005 entitlement guards and BE-004 tenant/branch authorization             |
+| Deliverable        | Product/category/unit/tax/barcode APIs plus balanced immutable stock movements         |
+| Acceptance         | Tenant isolation, idempotency, concurrency and ledger/balance reconciliation pass      |
 
 See [Task-Backlog.md](Task-Backlog.md#recommended-next-task) for the complete assignment brief.
 
@@ -69,7 +70,7 @@ See [Task-Backlog.md](Task-Backlog.md#recommended-next-task) for the complete as
 - All five original worksheets are populated.
 - Completed claims are mapped to source files or command evidence.
 - Pending modules are task-ID based and assignable.
-- Phase 2 and BE-001/002/003/004 plus SEC-001 are complete. GitHub `main` is published and tracking `origin/main`; BE-005 is ready next.
+- Phase 2 and BE-001 through BE-005 plus SEC-001 are complete. GitHub is updated after every verified stage; BE-006 is ready next.
 
 ## Category codes
 

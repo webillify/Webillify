@@ -1,7 +1,7 @@
 # Webillify task backlog
 
-Last prioritized: **2026-07-17 18:14:44 IST**
-Active assignee: **Codex — WBL-BE-005 started 2026-07-17 18:10:00 IST**
+Last prioritized: **2026-07-17 18:22:53 IST**
+Active assignee: **Unassigned — WBL-BE-006 ready next**
 WIP limit: **One P0 task per engineer**
 
 ## Just completed
@@ -123,15 +123,27 @@ Status: **COMPLETE — 2026-07-17 18:07:26 IST**
 
 Result: explicit organization context, active membership resolution, branch scope, typed permission guards and access endpoints with 15/15 API/database/security E2E tests passing.
 
-## Recommended next task
+## Just completed
 
 ### WBL-BE-005 — Core and separately billed AI entitlements
 
-Status: **IN PROGRESS — database contract PASS; API enforcement active**
+Status: **COMPLETE — 2026-07-17 18:22:53 IST**
 
 - Expose versioned core-plan entitlement checks without coupling them to AI access.
 - Implement independent AI subscription lifecycle and atomic credit debit/refund behavior.
 - Prove cancellation, exhaustion and tenant isolation through integration tests.
+
+Result: three versioned core offers, independent AI plan/usage lifecycle, server-side permission and tenant enforcement, idempotent atomic consume/refund accounting, bounded serialization retries and 26/26 integration tests.
+
+## Recommended next task
+
+### WBL-BE-006 — Catalogue and immutable inventory ledger
+
+Status: **READY**
+
+- Add tenant-scoped products, variants, categories, units, taxes and barcode identities.
+- Record stock changes as immutable movements with rebuildable branch balances.
+- Enforce core entitlements, permissions, idempotency and concurrency in the same transaction.
 
 ## Prioritized queue
 
@@ -145,7 +157,8 @@ Status: **IN PROGRESS — database contract PASS; API enforcement active**
 | `WBL-BE-002`     | P0       | PostgreSQL tenancy schema/migrations         | COMPLETE   | Codex              | BE-001          |
 | `WBL-BE-004`     | P0       | Organization/branch/RBAC APIs                | COMPLETE   | Codex              | BE-002/003      |
 | `WBL-SEC-001`    | P0       | Tenant/branch authorization harness          | COMPLETE   | Codex              | BE-002/004      |
-| `WBL-BE-005`     | P0       | Core and separate AI entitlements            | READY      | Backend            | BE-004          |
+| `WBL-BE-005`     | P0       | Core and separate AI entitlements            | COMPLETE   | Codex              | BE-004          |
+| `WBL-BE-006`     | P0       | Catalogue and immutable inventory ledger     | READY      | Backend            | BE-005          |
 | `WBL-FE-009`     | P1       | Shared loading/error/toast/confirm UX        | COMPLETE   | Codex              | FE-007          |
 | `WBL-FE-010`     | P1       | Customer list/detail/balance UI              | PLANNED    | Frontend           | Data/API        |
 | `WBL-FE-011`     | P1       | Product create/edit/import UI                | PLANNED    | Frontend           | Catalogue API   |

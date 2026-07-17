@@ -10,5 +10,6 @@ import { OrganizationsController } from './organizations.controller';
   imports: [AuthModule],
   controllers: [AccessController, OrganizationsController],
   providers: [AccessService, TenantAccessGuard, PermissionGuard],
+  exports: [TenantAccessGuard, PermissionGuard],
 })
 export class AccessModule {}
