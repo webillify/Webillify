@@ -1,10 +1,10 @@
 # Webillify master worksheet
 
-Snapshot timestamp: **2026-07-17 18:09:39 IST**
+Snapshot timestamp: **2026-07-17 18:14:44 IST**
 Project status: **ACTIVE — identity, tenancy and authorization API foundation verified**
 Current release: **R1 — Frontend application foundation**  
 Current phase: **Phase 3 — Backend identity and tenancy**  
-Current task: **WBL-BE-005 — Core and separately billed AI subscription entitlements (ready)**
+Current task: **WBL-BE-005 — Core and separately billed AI subscription entitlements (API enforcement stage)**
 
 ## Project snapshot
 

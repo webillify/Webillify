@@ -1,4 +1,5 @@
 import {
+  AiCreditEntryType,
   MembershipStatus,
   OrganizationStatus,
   PrismaClient,
@@ -31,6 +32,75 @@ const permissionDefinitions = [
   ['settings.manage', 'Manage organization settings and access', true],
   ['subscriptions.manage', 'Manage core and AI subscriptions', true],
   ['ai.use', 'Use separately entitled Webillify AI capabilities', true],
+] as const;
+
+const corePlans = [
+  {
+    code: 'STARTER',
+    name: 'Starter',
+    monthlyPrice: '499.00',
+    annualPrice: '4990.00',
+    entitlements: {
+      'companies.max': 1,
+      'branches.max': 1,
+      'users.max': 2,
+      'sales_invoices.monthly_max': 2_000,
+      'billing.enabled': true,
+      'inventory.enabled': true,
+      'purchases.level': 'BASIC',
+      'expenses.level': 'BASIC',
+      'reports.standard': true,
+      'branch_transfers.enabled': false,
+      'serial_numbers.enabled': false,
+      'exports.advanced': false,
+      'roles.custom': false,
+      'public_api.enabled': false,
+    },
+  },
+  {
+    code: 'BUSINESS',
+    name: 'Business',
+    monthlyPrice: '999.00',
+    annualPrice: '9990.00',
+    entitlements: {
+      'companies.max': 1,
+      'branches.max': 3,
+      'users.max': 10,
+      'sales_invoices.monthly_max': 10_000,
+      'billing.enabled': true,
+      'inventory.enabled': true,
+      'purchases.level': 'FULL',
+      'expenses.level': 'FULL',
+      'reports.standard': true,
+      'branch_transfers.enabled': true,
+      'serial_numbers.enabled': true,
+      'exports.advanced': true,
+      'roles.custom': false,
+      'public_api.enabled': false,
+    },
+  },
+  {
+    code: 'PRO',
+    name: 'Pro',
+    monthlyPrice: '1999.00',
+    annualPrice: '19990.00',
+    entitlements: {
+      'companies.max': 3,
+      'branches.max': 10,
+      'users.max': 30,
+      'sales_invoices.monthly_max': 50_000,
+      'billing.enabled': true,
+      'inventory.enabled': true,
+      'purchases.level': 'FULL',
+      'expenses.level': 'FULL',
+      'reports.standard': true,
+      'branch_transfers.enabled': true,
+      'serial_numbers.enabled': true,
+      'exports.advanced': true,
+      'roles.custom': false,
+      'public_api.enabled': false,
+    },
+  },
 ] as const;
 
 async function main(): Promise<void> {
@@ -285,22 +355,47 @@ async function main(): Promise<void> {
     }),
   ]);
 
-  const plan = await prisma.plan.upsert({
-    where: { code: 'BUSINESS' },
-    update: {},
-    create: { code: 'BUSINESS', name: 'Business' },
-  });
-  const planVersion = await prisma.planVersion.upsert({
-    where: { planId_version: { planId: plan.id, version: 1 } },
-    update: {},
-    create: {
-      planId: plan.id,
-      version: 1,
-      monthlyPrice: '999.00',
-      annualPrice: '9990.00',
-      effectiveFrom: new Date('2026-07-01T00:00:00.000Z'),
-    },
-  });
+  const effectiveFrom = new Date('2026-07-01T00:00:00.000Z');
+  const planVersions = await Promise.all(
+    corePlans.map(async (definition) => {
+      const plan = await prisma.plan.upsert({
+        where: { code: definition.code },
+        update: { name: definition.name, active: true },
+        create: {
+          code: definition.code,
+          name: definition.name,
+          active: true,
+        },
+      });
+      const version = await prisma.planVersion.upsert({
+        where: { planId_version: { planId: plan.id, version: 1 } },
+        update: {
+          monthlyPrice: definition.monthlyPrice,
+          annualPrice: definition.annualPrice,
+          effectiveFrom,
+        },
+        create: {
+          planId: plan.id,
+          version: 1,
+          monthlyPrice: definition.monthlyPrice,
+          annualPrice: definition.annualPrice,
+          effectiveFrom,
+        },
+      });
+      await Promise.all(
+        Object.entries(definition.entitlements).map(([key, value]) =>
+          prisma.planEntitlement.upsert({
+            where: { planVersionId_key: { planVersionId: version.id, key } },
+            update: { value },
+            create: { planVersionId: version.id, key, value },
+          }),
+        ),
+      );
+      return { code: definition.code, version };
+    }),
+  );
+  const businessVersion = planVersions.find(({ code }) => code === 'BUSINESS');
+  if (!businessVersion) throw new Error('Business plan seed is missing.');
   const periodStart = new Date('2026-07-01T00:00:00.000Z');
   const periodEnd = new Date('2026-08-01T00:00:00.000Z');
   await prisma.subscription.upsert({
@@ -308,22 +403,46 @@ async function main(): Promise<void> {
     update: {},
     create: {
       organizationId: organization.id,
-      planVersionId: planVersion.id,
+      planVersionId: businessVersion.version.id,
       status: SubscriptionStatus.TRIALING,
       billingInterval: 'MONTHLY',
       currentPeriodStart: periodStart,
       currentPeriodEnd: periodEnd,
     },
   });
-  await prisma.aiSubscription.upsert({
+  const aiSubscription = await prisma.aiSubscription.upsert({
     where: { organizationId: organization.id },
-    update: {},
+    update: {
+      status: SubscriptionStatus.TRIALING,
+      monthlyCredits: 300,
+      currentPeriodStart: periodStart,
+      currentPeriodEnd: periodEnd,
+    },
     create: {
       organizationId: organization.id,
       status: SubscriptionStatus.TRIALING,
       monthlyCredits: 300,
       currentPeriodStart: periodStart,
       currentPeriodEnd: periodEnd,
+    },
+  });
+  await prisma.aiCreditLedger.upsert({
+    where: {
+      organizationId_entryType_referenceType_referenceId: {
+        organizationId: organization.id,
+        entryType: AiCreditEntryType.GRANT,
+        referenceType: 'AI_SUBSCRIPTION_PERIOD',
+        referenceId: aiSubscription.id,
+      },
+    },
+    update: { credits: 300, expiresAt: periodEnd },
+    create: {
+      organizationId: organization.id,
+      entryType: AiCreditEntryType.GRANT,
+      credits: 300,
+      referenceType: 'AI_SUBSCRIPTION_PERIOD',
+      referenceId: aiSubscription.id,
+      expiresAt: periodEnd,
     },
   });
 }

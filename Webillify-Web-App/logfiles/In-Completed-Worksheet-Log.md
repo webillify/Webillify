@@ -1,14 +1,14 @@
 # Webillify incomplete work worksheet
 
-Last updated: **2026-07-17 18:09:39 IST**
-In progress: **None — GitHub publication completed**
-Ready next: **WBL-BE-005 core and separate AI entitlements**
+Last updated: **2026-07-17 18:14:44 IST**
+In progress: **WBL-BE-005 — database contract verified; API enforcement active**
+Ready after current: **WBL-BE-006 catalogue and inventory ledger**
 
 ## Ready
 
 | Task ID      | Priority | Module/outcome                 | Assignee | Status      |
 | ------------ | -------- | ------------------------------ | -------- | ----------- |
-| `WBL-BE-005` | P0       | Core and separate AI entitlements | Unassigned | READY |
+| `WBL-BE-005` | P0       | Core and separate AI entitlements | Codex | IN PROGRESS |
 
 ## Planned frontend
 

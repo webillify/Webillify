@@ -33,6 +33,9 @@ Status: **IN PROGRESS — BE-004/SEC-001 complete; GitHub publication retry acti
 | 2026-07-17 18:07:26 | TEST     | API lint/build/audit, 3 unit and 15 API/database/security tests              | PASS           |
 | 2026-07-17 18:07:26 | BACKEND  | Closed BE-004 and SEC-001; queued BE-005 independent AI entitlements         | COMPLETE       |
 | 2026-07-17 18:09:39 | INFRA    | Pushed complete three-commit history to `webillify/Webillify` `main`          | COMPLETE       |
+| 2026-07-17 18:10:00 | BACKEND  | Assigned BE-005 core and separately billed AI entitlement foundation          | IN PROGRESS    |
+| 2026-07-17 18:13:30 | DATABASE | Added three versioned plans, entitlement sets and unique AI ledger sources    | COMPLETE       |
+| 2026-07-17 18:14:44 | TEST     | Migration/seed/schema/lint/build/audit plus 3 unit and 17 integration tests   | PASS           |
 
 ---
 

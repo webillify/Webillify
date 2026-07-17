@@ -1,6 +1,6 @@
 # Webillify module status
 
-Reconciled: **2026-07-17 18:07:26 IST**
+Reconciled: **2026-07-17 18:14:44 IST**
 Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence passed. `DEMO` is not production-ready.
 
 ## Frontend modules
@@ -31,8 +31,8 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 | `WBL-MOD-101` | API foundation     | COMPLETE    | NestJS, validation, errors, health and OpenAPI        |
 | `WBL-MOD-102` | Identity/sessions  | COMPLETE — CORE | Login/JWT/rotation/reuse/logout/me; reset queued  |
 | `WBL-MOD-103` | Tenancy/RBAC       | COMPLETE    | Tenant resolution, branch scope and permissions; 15 API E2E pass |
-| `WBL-MOD-104` | Core subscriptions | NOT STARTED | Versioned Starter/Business/Pro entitlements           |
-| `WBL-MOD-105` | AI subscription    | NOT STARTED | Independent lifecycle and credit ledger               |
+| `WBL-MOD-104` | Core subscriptions | IN PROGRESS | Three versioned plan entitlement sets seeded and tested |
+| `WBL-MOD-105` | AI subscription    | IN PROGRESS | Independent lifecycle, trial grant and duplicate ledger protection tested |
 | `WBL-MOD-106` | Catalogue          | NOT STARTED | Products, variants, barcodes, units and tax           |
 | `WBL-MOD-107` | Inventory          | NOT STARTED | Movement ledger, balances, counts, transfers          |
 | `WBL-MOD-108` | Purchases/payables | NOT STARTED | Suppliers, bills, returns and payments                |

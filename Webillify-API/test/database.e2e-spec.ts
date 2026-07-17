@@ -14,6 +14,7 @@ describe('PostgreSQL identity and tenancy schema', () => {
         memberships: { include: { roles: true, branchAccess: true } },
         coreSubscription: true,
         aiSubscription: true,
+        aiCreditEntries: true,
       },
     });
 
@@ -32,6 +33,53 @@ describe('PostgreSQL identity and tenancy schema', () => {
     expect(organization.aiSubscription?.id).not.toBe(
       organization.coreSubscription?.id,
     );
+    expect(organization.aiCreditEntries).toEqual([
+      expect.objectContaining({
+        entryType: 'GRANT',
+        credits: 300,
+        referenceType: 'AI_SUBSCRIPTION_PERIOD',
+      }),
+    ]);
+  });
+
+  it('stores all launch plans as independently versioned entitlement sets', async () => {
+    const plans = await prisma.plan.findMany({
+      include: { versions: { include: { entitlements: true } } },
+      orderBy: { code: 'asc' },
+    });
+
+    expect(plans.map(({ code }) => code)).toEqual([
+      'BUSINESS',
+      'PRO',
+      'STARTER',
+    ]);
+    for (const plan of plans) {
+      expect(plan.versions).toHaveLength(1);
+      expect(plan.versions[0].entitlements.length).toBeGreaterThanOrEqual(14);
+    }
+    const pro = plans.find(({ code }) => code === 'PRO');
+    expect(
+      pro?.versions[0].entitlements.find(({ key }) => key === 'branches.max')
+        ?.value,
+    ).toBe(10);
+  });
+
+  it('rejects duplicate AI ledger entries for one source reference', async () => {
+    const organization = await prisma.organization.findUniqueOrThrow({
+      where: { slug: 'webillify-demo-retail' },
+      include: { aiSubscription: true },
+    });
+    await expect(
+      prisma.aiCreditLedger.create({
+        data: {
+          organizationId: organization.id,
+          entryType: 'GRANT',
+          credits: 300,
+          referenceType: 'AI_SUBSCRIPTION_PERIOD',
+          referenceId: organization.aiSubscription!.id,
+        },
+      }),
+    ).rejects.toThrow();
   });
 
   it('rejects a branch linked to a company from another organization', async () => {

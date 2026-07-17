@@ -1,7 +1,7 @@
 # Webillify task backlog
 
-Last prioritized: **2026-07-17 18:09:39 IST**
-Active assignee: **Unassigned — WBL-BE-005 ready next**
+Last prioritized: **2026-07-17 18:14:44 IST**
+Active assignee: **Codex — WBL-BE-005 started 2026-07-17 18:10:00 IST**
 WIP limit: **One P0 task per engineer**
 
 ## Just completed
@@ -127,7 +127,7 @@ Result: explicit organization context, active membership resolution, branch scop
 
 ### WBL-BE-005 — Core and separately billed AI entitlements
 
-Status: **READY**
+Status: **IN PROGRESS — database contract PASS; API enforcement active**
 
 - Expose versioned core-plan entitlement checks without coupling them to AI access.
 - Implement independent AI subscription lifecycle and atomic credit debit/refund behavior.
