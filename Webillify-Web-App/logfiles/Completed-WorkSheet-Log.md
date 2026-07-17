@@ -1,6 +1,6 @@
 # Webillify completed work worksheet
 
-Last updated: **2026-07-17 17:49:06 IST**
+Last updated: **2026-07-17 18:07:26 IST**
 
 | Task ID         | Completed (IST)     | Module/deliverable                                                            | Evidence                                       | Verification                                  |
 | --------------- | ------------------- | ----------------------------------------------------------------------------- | ---------------------------------------------- | --------------------------------------------- |
@@ -24,5 +24,8 @@ Last updated: **2026-07-17 17:49:06 IST**
 | `WBL-SETUP-003` | 2026-07-17 17:27:22 | Git repository initialized on `main`; requested GitHub origin configured      | Root `.git`, `git remote -v`                   | Empty remote verified; initial push pending   |
 | `WBL-BE-001`    | 2026-07-17 17:39:17 | NestJS API foundation, health, configuration, HTTP security and OpenAPI       | `Webillify-API/src/`, package scripts          | Lint/build; 3 unit + 4 HTTP tests PASS        |
 | `WBL-BE-002`    | 2026-07-17 17:49:06 | PostgreSQL identity/tenancy/RBAC/subscription schema and initial migration    | `Webillify-API/prisma/`, `compose.yaml`        | Clean deploy/seed; 6 HTTP/database tests PASS |
+| `WBL-BE-003`    | 2026-07-17 17:58:00 | Core identity: Argon2 login, JWT, refresh rotation/reuse revocation, logout/me | `Webillify-API/src/modules/auth/`              | Lint/build/audit; 11 integration tests PASS  |
+| `WBL-BE-004`    | 2026-07-17 18:07:26 | Organization/branch access APIs and typed permission enforcement              | `Webillify-API/src/modules/access/`            | Lint/build/audit; authorization tests PASS   |
+| `WBL-SEC-001`   | 2026-07-17 18:07:26 | Cross-tenant, cross-branch and permission-denial security matrix               | `test/authorization.e2e-spec.ts`               | API E2E total 15/15 PASS                     |
 
 `R0 — Frontend foundation` is complete as a **demo baseline**, not a production billing application. Backend, real authentication, persistence and transaction integrity remain pending.

@@ -5,6 +5,9 @@ export interface ApiEnvironment {
   readonly PORT: number;
   readonly CORS_ORIGINS: string;
   readonly DATABASE_URL: string;
+  readonly JWT_ACCESS_SECRET: string;
+  readonly REFRESH_TOKEN_PEPPER: string;
+  readonly ACCESS_TOKEN_TTL_SECONDS: number;
 }
 
 export function validateEnvironment(
@@ -46,12 +49,42 @@ export function validateEnvironment(
       'DATABASE_URL must be an explicit PostgreSQL connection URL.',
     );
   }
+  const developmentAccessSecret = 'development-only-access-secret-change-me';
+  const developmentRefreshPepper = 'development-only-refresh-pepper-change-me';
+  const accessSecret = readString(
+    input,
+    'JWT_ACCESS_SECRET',
+    nodeEnvironment === 'production' ? '' : developmentAccessSecret,
+  );
+  const refreshPepper = readString(
+    input,
+    'REFRESH_TOKEN_PEPPER',
+    nodeEnvironment === 'production' ? '' : developmentRefreshPepper,
+  );
+  if (accessSecret.length < 32 || refreshPepper.length < 32) {
+    throw new Error(
+      'JWT_ACCESS_SECRET and REFRESH_TOKEN_PEPPER must each be at least 32 characters.',
+    );
+  }
+  const accessTokenTtl = Number(input['ACCESS_TOKEN_TTL_SECONDS'] ?? 900);
+  if (
+    !Number.isInteger(accessTokenTtl) ||
+    accessTokenTtl < 60 ||
+    accessTokenTtl > 3600
+  ) {
+    throw new Error(
+      'ACCESS_TOKEN_TTL_SECONDS must be an integer between 60 and 3600.',
+    );
+  }
 
   return {
     NODE_ENV: nodeEnvironment as RuntimeEnvironment,
     PORT: port,
     CORS_ORIGINS: origins.join(','),
     DATABASE_URL: databaseUrl,
+    JWT_ACCESS_SECRET: accessSecret,
+    REFRESH_TOKEN_PEPPER: refreshPepper,
+    ACCESS_TOKEN_TTL_SECONDS: accessTokenTtl,
   };
 }
 

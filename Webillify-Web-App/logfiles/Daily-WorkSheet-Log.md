@@ -5,9 +5,9 @@ Append-only history. Newest session first; corrections use a new timestamped ame
 ## 2026-07-17 — GitHub baseline, CI and backend foundation
 
 Session start: **17:22:35 IST**  
-Tasks: **WBL-SETUP-003 + WBL-INFRA-001 + WBL-BE-001 + WBL-BE-002 + WBL-BE-003**  
+Tasks: **WBL-SETUP-003 + WBL-INFRA-001 + WBL-BE-001/002/003/004 + WBL-SEC-001**
 Assignee: **Codex**  
-Status: **IN PROGRESS — BE-001 active**
+Status: **IN PROGRESS — BE-004/SEC-001 complete; GitHub publication retry active**
 
 | Timestamp (IST)     | Category | Activity                                                                   | Result         |
 | ------------------- | -------- | -------------------------------------------------------------------------- | -------------- |
@@ -24,6 +24,14 @@ Status: **IN PROGRESS — BE-001 active**
 | 2026-07-17 17:47:30 | TEST     | Schema, lint, build, unit and tenant-isolation database suite              | PASS — 6/6     |
 | 2026-07-17 17:48:55 | TEST     | Destroyed local volume; clean migration deploy, seed and tests             | PASS           |
 | 2026-07-17 17:49:06 | BACKEND  | Closed BE-002 and assigned BE-003 identity/rotating sessions               | COMPLETE       |
+| 2026-07-17 17:52:30 | SECURITY | Added Argon2 login, JWT guard, hashed refresh cookies and rate limiting     | COMPLETE       |
+| 2026-07-17 17:55:30 | SECURITY | Added atomic refresh rotation, reuse-family revocation, logout and `/me`    | COMPLETE       |
+| 2026-07-17 17:57:45 | TEST     | Identity, database, lint, build and dependency audit                        | PASS — 11/11   |
+| 2026-07-17 17:58:00 | BACKEND  | Closed core BE-003; assigned BE-004 plus SEC-001 isolation harness          | COMPLETE       |
+| 2026-07-17 18:03:30 | SECURITY | Added explicit tenant resolution, branch access and typed permission guards | COMPLETE       |
+| 2026-07-17 18:05:10 | TEST     | Fixed exported JWT dependency and authorization fixture constraints          | FIXED          |
+| 2026-07-17 18:07:26 | TEST     | API lint/build/audit, 3 unit and 15 API/database/security tests              | PASS           |
+| 2026-07-17 18:07:26 | BACKEND  | Closed BE-004 and SEC-001; queued BE-005 independent AI entitlements         | COMPLETE       |
 
 ---
 

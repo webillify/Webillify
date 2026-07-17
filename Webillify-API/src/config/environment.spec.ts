@@ -8,6 +8,9 @@ describe('validateEnvironment', () => {
       CORS_ORIGINS: 'http://localhost:4200',
       DATABASE_URL:
         'postgresql://webillify:webillify_local@localhost:5433/webillify?schema=public',
+      JWT_ACCESS_SECRET: 'development-only-access-secret-change-me',
+      REFRESH_TOKEN_PEPPER: 'development-only-refresh-pepper-change-me',
+      ACCESS_TOKEN_TTL_SECONDS: 900,
     });
   });
 
@@ -18,6 +21,9 @@ describe('validateEnvironment', () => {
     );
     expect(() => validateEnvironment({ NODE_ENV: 'production' })).toThrow(
       'DATABASE_URL',
+    );
+    expect(() => validateEnvironment({ JWT_ACCESS_SECRET: 'short' })).toThrow(
+      'JWT_ACCESS_SECRET',
     );
   });
 });

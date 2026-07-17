@@ -7,6 +7,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import { ApiEnvironment } from '../config/environment';
 import { ApiExceptionFilter } from '../core/http/api-exception.filter';
 import { CorrelationIdMiddleware } from '../core/http/correlation-id.middleware';
@@ -29,6 +30,7 @@ export function configureApplication(
   app.enableShutdownHooks();
   const correlationIds = new CorrelationIdMiddleware();
   app.use(correlationIds.use.bind(correlationIds));
+  app.use(cookieParser());
   app.use(helmet());
   app.enableCors({
     origin: origins,

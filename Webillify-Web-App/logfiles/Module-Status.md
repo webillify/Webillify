@@ -1,6 +1,6 @@
 # Webillify module status
 
-Reconciled: **2026-07-17 17:49:06 IST**  
+Reconciled: **2026-07-17 18:07:26 IST**
 Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence passed. `DEMO` is not production-ready.
 
 ## Frontend modules
@@ -29,8 +29,8 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 | Module ID     | Module             | Status      | Required scope                                        |
 | ------------- | ------------------ | ----------- | ----------------------------------------------------- |
 | `WBL-MOD-101` | API foundation     | COMPLETE    | NestJS, validation, errors, health and OpenAPI        |
-| `WBL-MOD-102` | Identity/sessions  | NOT STARTED | Login, refresh rotation, reset and history            |
-| `WBL-MOD-103` | Tenancy/RBAC       | IN PROGRESS | Tenant schema/RBAC constraints complete; APIs pending |
+| `WBL-MOD-102` | Identity/sessions  | COMPLETE — CORE | Login/JWT/rotation/reuse/logout/me; reset queued  |
+| `WBL-MOD-103` | Tenancy/RBAC       | COMPLETE    | Tenant resolution, branch scope and permissions; 15 API E2E pass |
 | `WBL-MOD-104` | Core subscriptions | NOT STARTED | Versioned Starter/Business/Pro entitlements           |
 | `WBL-MOD-105` | AI subscription    | NOT STARTED | Independent lifecycle and credit ledger               |
 | `WBL-MOD-106` | Catalogue          | NOT STARTED | Products, variants, barcodes, units and tax           |
@@ -61,4 +61,6 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 2026-07-17 17:22:18 IST  npm test -- --watch=false    PASS (19/19)
 2026-07-17 17:21:30 IST  npm run test:e2e              PASS (6/6 desktop/mobile)
 2026-07-17 17:22:18 IST  npm audit --omit=dev         PASS (0 production vulnerabilities)
+2026-07-17 18:07:26 IST  API lint/build/audit          PASS (0 vulnerabilities)
+2026-07-17 18:07:26 IST  API unit + E2E                PASS (3 + 15 tests)
 ```

@@ -68,16 +68,16 @@ Exit gate: Existing pages no longer import mock data directly; protected routes 
 
 ## Phase 3 — Backend identity and tenancy
 
-Status: **IN PROGRESS — WBL-BE-001/002 complete; WBL-BE-003 active**  
+Status: **IN PROGRESS — WBL-BE-001/002/003/004 and SEC-001 complete; BE-005 next**
 Depends on: Phase 2 boundary contracts
 
 - [x] NestJS modular-monolith scaffold
 - [x] PostgreSQL migrations and seed strategy
-- [ ] Login, refresh rotation, logout, reset and login history
-- [ ] Organizations, companies, branches, memberships and branch access
-- [ ] Roles, permissions, sensitive-action checks and audit log
+- [x] Login, refresh rotation, logout and login history foundation (password reset remains queued)
+- [x] Organizations, companies, branches, memberships and branch access
+- [x] Roles, permissions and sensitive-action checks (audit persistence continues with business APIs)
 - [ ] Versioned plan entitlements and independent AI subscription lifecycle
-- [ ] Automated cross-tenant and cross-branch authorization matrix
+- [x] Automated cross-tenant and cross-branch authorization matrix
 
 Exit gate: Authenticated frontend works with real APIs; isolation tests are release blockers.
 

@@ -1,14 +1,14 @@
 # Webillify incomplete work worksheet
 
-Last updated: **2026-07-17 17:49:06 IST**  
-In progress: **WBL-BE-003 — assigned to Codex at 2026-07-17 17:49:06 IST**  
-Ready after current: **WBL-BE-004 organization/branch/RBAC APIs**
+Last updated: **2026-07-17 18:07:26 IST**
+In progress: **WBL-SETUP-004 — publish verified commits to GitHub**
+Ready after current: **WBL-BE-005 core and separate AI entitlements**
 
 ## Ready
 
 | Task ID      | Priority | Module/outcome                 | Assignee | Status      |
 | ------------ | -------- | ------------------------------ | -------- | ----------- |
-| `WBL-BE-003` | P0       | Identity and rotating sessions | Codex    | IN PROGRESS |
+| `WBL-BE-005` | P0       | Core and separate AI entitlements | Unassigned | READY |
 
 ## Planned frontend
 
@@ -28,8 +28,8 @@ Ready after current: **WBL-BE-004 organization/branch/RBAC APIs**
 | --------------- | ------------ | ------------------------------------- | ----------- |
 | `WBL-BE-001`    | P0           | NestJS API foundation                 | COMPLETE    |
 | `WBL-BE-002`    | P0           | PostgreSQL tenancy schema             | COMPLETE    |
-| `WBL-BE-003`    | P0           | Identity and sessions                 | IN PROGRESS |
-| `WBL-BE-004`    | P0           | Organization/branch/RBAC              | PLANNED     |
+| `WBL-BE-003`    | P0           | Identity and sessions                 | COMPLETE — CORE |
+| `WBL-BE-004`    | P0           | Organization/branch/RBAC              | COMPLETE    |
 | `WBL-BE-005`    | P0           | Core and AI subscription entitlements | PLANNED     |
 | `WBL-BE-006`    | P0           | Catalogue and inventory ledger        | PLANNED     |
 | `WBL-BE-007`    | P0           | Purchases and payables                | PLANNED     |
@@ -38,7 +38,7 @@ Ready after current: **WBL-BE-004 organization/branch/RBAC APIs**
 | `WBL-QA-002`    | P0           | Feature unit tests                    | COMPLETE    |
 | `WBL-QA-003`    | P1           | Accessibility/responsive audit        | COMPLETE    |
 | `WBL-QA-004`    | P0 pre-pilot | Critical-flow E2E                     | PLANNED     |
-| `WBL-SEC-001`   | P0           | Tenant/branch authorization tests     | PLANNED     |
+| `WBL-SEC-001`   | P0           | Tenant/branch authorization tests     | COMPLETE    |
 | `WBL-INFRA-001` | P1           | CI pipeline                           | CONFIGURED  |
 | `WBL-INFRA-002` | P1           | Environments/secrets/deployment       | PLANNED     |
 | `WBL-INFRA-003` | P1           | Monitoring/incident runbook           | PLANNED     |

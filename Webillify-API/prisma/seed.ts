@@ -4,15 +4,18 @@ import {
   PrismaClient,
   SubscriptionStatus,
 } from '@prisma/client';
+import argon2 from 'argon2';
 
 const prisma = new PrismaClient();
 
 const ids = {
   user: '10000000-0000-4000-8000-000000000001',
+  cashierUser: '10000000-0000-4000-8000-000000000002',
   organization: '20000000-0000-4000-8000-000000000001',
   company: '30000000-0000-4000-8000-000000000001',
   branch: '40000000-0000-4000-8000-000000000001',
   membership: '50000000-0000-4000-8000-000000000001',
+  cashierMembership: '50000000-0000-4000-8000-000000000002',
 };
 
 const permissionDefinitions = [
@@ -31,6 +34,9 @@ const permissionDefinitions = [
 ] as const;
 
 async function main(): Promise<void> {
+  const demoPasswordHash = await argon2.hash('webillify', {
+    type: argon2.argon2id,
+  });
   const permissions = await Promise.all(
     permissionDefinitions.map(([code, description, sensitive]) =>
       prisma.permission.upsert({
@@ -54,13 +60,18 @@ async function main(): Promise<void> {
 
   const user = await prisma.user.upsert({
     where: { normalizedEmail: 'owner@webillify.demo' },
-    update: { displayName: 'PK Samy' },
+    update: {
+      displayName: 'PK Samy',
+      passwordHash: demoPasswordHash,
+      status: 'ACTIVE',
+    },
     create: {
       id: ids.user,
       email: 'owner@webillify.demo',
       normalizedEmail: 'owner@webillify.demo',
       displayName: 'PK Samy',
-      status: 'INVITED',
+      passwordHash: demoPasswordHash,
+      status: 'ACTIVE',
     },
   });
 
@@ -169,6 +180,105 @@ async function main(): Promise<void> {
       update: {},
       create: {
         membershipId: membership.id,
+        branchId: branch.id,
+        organizationId: organization.id,
+      },
+    }),
+  ]);
+
+  const cashier = await prisma.user.upsert({
+    where: { normalizedEmail: 'cashier@webillify.demo' },
+    update: {
+      displayName: 'Demo Cashier',
+      passwordHash: demoPasswordHash,
+      status: 'ACTIVE',
+    },
+    create: {
+      id: ids.cashierUser,
+      email: 'cashier@webillify.demo',
+      normalizedEmail: 'cashier@webillify.demo',
+      displayName: 'Demo Cashier',
+      passwordHash: demoPasswordHash,
+      status: 'ACTIVE',
+    },
+  });
+  const cashierMembership = await prisma.organizationMembership.upsert({
+    where: {
+      organizationId_userId: {
+        organizationId: organization.id,
+        userId: cashier.id,
+      },
+    },
+    update: { status: MembershipStatus.ACTIVE },
+    create: {
+      id: ids.cashierMembership,
+      organizationId: organization.id,
+      userId: cashier.id,
+      status: MembershipStatus.ACTIVE,
+      joinedAt: new Date(),
+    },
+  });
+  const cashierRole = await prisma.role.upsert({
+    where: {
+      organizationId_code: { organizationId: organization.id, code: 'CASHIER' },
+    },
+    update: {},
+    create: {
+      organizationId: organization.id,
+      code: 'CASHIER',
+      name: 'Cashier',
+      system: true,
+    },
+  });
+  const cashierPermissions = permissions.filter(({ code }) =>
+    [
+      'dashboard.read',
+      'pos.create',
+      'products.read',
+      'customers.read',
+    ].includes(code),
+  );
+  await prisma.$transaction([
+    ...cashierPermissions.map((permission) =>
+      prisma.rolePermission.upsert({
+        where: {
+          roleId_permissionId: {
+            roleId: cashierRole.id,
+            permissionId: permission.id,
+          },
+        },
+        update: {},
+        create: {
+          roleId: cashierRole.id,
+          permissionId: permission.id,
+          organizationId: organization.id,
+        },
+      }),
+    ),
+    prisma.membershipRole.upsert({
+      where: {
+        membershipId_roleId: {
+          membershipId: cashierMembership.id,
+          roleId: cashierRole.id,
+        },
+      },
+      update: {},
+      create: {
+        membershipId: cashierMembership.id,
+        roleId: cashierRole.id,
+        organizationId: organization.id,
+      },
+    }),
+    prisma.userBranchAccess.upsert({
+      where: {
+        membershipId_branchId: {
+          membershipId: cashierMembership.id,
+          branchId: branch.id,
+        },
+      },
+      update: {},
+      create: {
+        membershipId: cashierMembership.id,
         branchId: branch.id,
         organizationId: organization.id,
       },

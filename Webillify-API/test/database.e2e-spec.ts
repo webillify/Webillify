@@ -17,9 +17,13 @@ describe('PostgreSQL identity and tenancy schema', () => {
       },
     });
 
-    expect(organization.memberships).toHaveLength(1);
-    expect(organization.memberships[0].roles).toHaveLength(1);
-    expect(organization.memberships[0].branchAccess).toHaveLength(1);
+    expect(organization.memberships).toHaveLength(2);
+    const ownerMembership = organization.memberships.find(
+      (membership) =>
+        membership.userId === '10000000-0000-4000-8000-000000000001',
+    );
+    expect(ownerMembership?.roles).toHaveLength(1);
+    expect(ownerMembership?.branchAccess).toHaveLength(1);
     expect(organization.coreSubscription?.status).toBe('TRIALING');
     expect(organization.aiSubscription).toMatchObject({
       status: 'TRIALING',
