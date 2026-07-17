@@ -1,7 +1,7 @@
 # Webillify incomplete work worksheet
 
-Last updated: **2026-07-17 18:46:55 IST**
-In progress: **None — WBL-BE-006 verified and awaiting API-stage push**
+Last updated: **2026-07-17 18:48:44 IST**
+In progress: **None — WBL-BE-006 verified and published as `1c27559`**
 Ready next: **WBL-BE-007 purchases and payables**
 
 ## Ready
