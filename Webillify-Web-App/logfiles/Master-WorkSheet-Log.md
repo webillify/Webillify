@@ -1,10 +1,10 @@
 # Webillify master worksheet
 
-Snapshot timestamp: **2026-07-17 18:32:35 IST**
+Snapshot timestamp: **2026-07-17 18:46:55 IST**
 Project status: **ACTIVE — identity, tenancy, authorization and independent subscription foundations verified**
 Current release: **R1 — Frontend application foundation**  
-Current phase: **Phase 3 — Backend identity and tenancy**  
-Current task: **WBL-BE-006 — Catalogue and immutable inventory ledger (API stage next)**
+Current phase: **Phase 4 — Catalogue, purchases and inventory**
+Current task: **WBL-BE-007 — Purchases and payables (ready next)**
 
 ## Project snapshot
 
@@ -15,17 +15,17 @@ Current task: **WBL-BE-006 — Catalogue and immutable inventory ledger (API sta
 | Responsive application shell    | COMPLETE             | Sidebar, top bar, branch picker, mobile navigation and placeholder routes                                                              |
 | Dashboard UI                    | COMPLETE — DEMO DATA | KPI cards, sample chart, quick actions, recent sales and stock alerts                                                                  |
 | POS UI                          | COMPLETE — DEMO DATA | Search, categories, interactive cart, totals, payment selection and demo completion                                                    |
-| Product catalogue UI            | COMPLETE — DEMO DATA | Searchable table, product/stock metrics and stock-state labels                                                                         |
+| Product catalogue UI            | COMPLETE — DEMO DATA | Searchable table remains demo; real tenant catalogue and stock APIs are ready for adapter wiring                                      |
 | Authentication                  | PARTIAL — API READY  | Real Argon2/JWT/rotating-session API passes tests; Angular API adapter integration remains pending                                     |
 | PWA foundation                  | COMPLETE             | Manifest, icon, service worker registration and production `ngsw` output                                                               |
 | Customers                       | PLANNED              | Placeholder route only                                                                                                                 |
 | Purchases                       | PLANNED              | Placeholder route only                                                                                                                 |
 | Reports                         | PLANNED              | Placeholder route only                                                                                                                 |
 | Settings / roles / subscription | PLANNED              | Placeholder route only                                                                                                                 |
-| Backend and persistence         | IN PROGRESS          | NestJS/PostgreSQL identity, tenancy, authorization, versioned plans and separate AI credit accounting pass automated verification      |
+| Backend and persistence         | IN PROGRESS          | Identity through catalogue/immutable stock APIs pass entitlement, isolation, idempotency, concurrency and reconciliation tests         |
 | Webillify AI integration        | PARTIAL — API READY  | Separate plan/lifecycle/usage APIs and atomic credit service pass; capability workflows and UI remain pending                         |
 | Data access and request state   | COMPLETE             | Typed models/repositories, mock/API modes, environment configuration and visible request errors                                        |
-| Automated tests                 | PARTIAL              | 19 frontend unit, 6 browser E2E/accessibility, 3 API unit and 26 API/database/security/subscription tests pass                         |
+| Automated tests                 | PARTIAL              | 19 frontend unit, 6 browser E2E/accessibility, 3 API unit and 38 backend integration/security tests pass                               |
 | Production deployment           | PARTIAL              | Production build and GitHub CI definition exist; hosting/deployment environments remain pending                                        |
 
 ## Latest verified baseline
@@ -42,6 +42,7 @@ Current task: **WBL-BE-006 — Catalogue and immutable inventory ledger (API sta
 | 2026-07-17 18:07:26 IST | API unit and E2E suites       | PASS — 3 unit + 15 API/database/security tests                           |
 | 2026-07-17 18:22:53 IST | Subscription regression suite | PASS — 3 unit + 26 API/database/security/subscription tests              |
 | 2026-07-17 18:31:45 IST | Catalogue/inventory DB gate    | PASS — 3 unit + 29 integration; immutable ledger and audit 0            |
+| 2026-07-17 18:46:55 IST | Catalogue/inventory API gate   | PASS — 3 unit + 38 integration; concurrency/reconciliation and audit 0   |
 
 ## Current goal
 
@@ -53,15 +54,15 @@ The frontend foundation is verified as a responsive, accessible demo prototype. 
 
 | Field              | Value                                                                                  |
 | ------------------ | -------------------------------------------------------------------------------------- |
-| Task ID            | `WBL-BE-006`                                                                            |
-| Title              | Tenant-scoped catalogue and immutable inventory movement ledger                        |
+| Task ID            | `WBL-BE-007`                                                                            |
+| Title              | Suppliers, purchase bills, posting, returns, payments and payables                     |
 | Status             | READY                                                                                  |
 | Priority           | P0                                                                                     |
 | Suggested assignee | Backend engineer                                                                       |
 | Estimate           | 1–2 development sessions                                                               |
-| Dependencies       | Completed BE-005 entitlement guards and BE-004 tenant/branch authorization             |
-| Deliverable        | Product/category/unit/tax/barcode APIs plus balanced immutable stock movements         |
-| Acceptance         | Tenant isolation, idempotency, concurrency and ledger/balance reconciliation pass      |
+| Dependencies       | Completed BE-006 catalogue/stock ledger and external accounting fixture review          |
+| Deliverable        | Tenant-scoped purchase workflow with immutable posting and stock/payable effects        |
+| Acceptance         | Idempotent posting, duplicate supplier reference, stock and payable reconciliation pass |
 
 See [Task-Backlog.md](Task-Backlog.md#recommended-next-task) for the complete assignment brief.
 
@@ -71,7 +72,7 @@ See [Task-Backlog.md](Task-Backlog.md#recommended-next-task) for the complete as
 - All five original worksheets are populated.
 - Completed claims are mapped to source files or command evidence.
 - Pending modules are task-ID based and assignable.
-- Phase 2 and BE-001 through BE-005 plus SEC-001 are complete. GitHub is updated after every verified stage; BE-006 is ready next.
+- BE-001 through BE-006 plus SEC-001 are complete. GitHub is updated after every verified stage; BE-007 is ready next.
 
 ## Category codes
 

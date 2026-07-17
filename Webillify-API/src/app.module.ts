@@ -10,6 +10,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { AccessModule } from './modules/access/access.module';
 import { HealthModule } from './modules/health/health.module';
 import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
+import { CatalogueModule } from './modules/catalogue/catalogue.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { SubscriptionsModule } from './modules/subscriptions/subscriptions.modul
     AuthModule,
     AccessModule,
     SubscriptionsModule,
+    CatalogueModule,
     HealthModule,
   ],
   controllers: [AppController],

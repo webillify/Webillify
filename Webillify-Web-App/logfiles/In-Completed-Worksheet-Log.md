@@ -1,14 +1,14 @@
 # Webillify incomplete work worksheet
 
-Last updated: **2026-07-17 18:32:35 IST**
-In progress: **WBL-BE-006 — database stage published as `5c18bb7`; API stage next**
-Ready after current: **WBL-BE-007 purchases and payables**
+Last updated: **2026-07-17 18:46:55 IST**
+In progress: **None — WBL-BE-006 verified and awaiting API-stage push**
+Ready next: **WBL-BE-007 purchases and payables**
 
 ## Ready
 
 | Task ID      | Priority | Module/outcome                 | Assignee | Status      |
 | ------------ | -------- | ------------------------------ | -------- | ----------- |
-| `WBL-BE-006` | P0       | Catalogue and immutable inventory ledger | Codex | IN PROGRESS |
+| `WBL-BE-007` | P0       | Purchases and payables | Unassigned | READY |
 
 ## Planned frontend
 
@@ -31,7 +31,7 @@ Ready after current: **WBL-BE-007 purchases and payables**
 | `WBL-BE-003`    | P0           | Identity and sessions                 | COMPLETE — CORE |
 | `WBL-BE-004`    | P0           | Organization/branch/RBAC              | COMPLETE    |
 | `WBL-BE-005`    | P0           | Core and AI subscription entitlements | COMPLETE    |
-| `WBL-BE-006`    | P0           | Catalogue and inventory ledger        | PLANNED     |
+| `WBL-BE-006`    | P0           | Catalogue and inventory ledger        | COMPLETE    |
 | `WBL-BE-007`    | P0           | Purchases and payables                | PLANNED     |
 | `WBL-BE-008`    | P0           | POS/invoice/payment/returns           | PLANNED     |
 | `WBL-BE-009`    | P1           | Reports/exports/closing               | PLANNED     |
