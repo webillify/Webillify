@@ -1,6 +1,6 @@
 # Webillify module status
 
-Reconciled: **2026-07-17 19:06:21 IST**
+Reconciled: **2026-07-17 19:22:18 IST**
 Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence passed. `DEMO` is not production-ready.
 
 ## Frontend modules
@@ -35,7 +35,7 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 | `WBL-MOD-105` | AI subscription    | COMPLETE — CORE | Independent plan/lifecycle/credits; atomic consume/refund and concurrency tested |
 | `WBL-MOD-106` | Catalogue          | COMPLETE    | Protected product/reference APIs, atomic identifiers and tenant isolation pass |
 | `WBL-MOD-107` | Inventory          | COMPLETE — CORE | Branch-scoped balances/movements and concurrent idempotent adjustments pass |
-| `WBL-MOD-108` | Purchases/payables | IN PROGRESS — DB | Supplier/draft/item/payment/allocation schema protected; API posting/returns pending |
+| `WBL-MOD-108` | Purchases/payables | IN PROGRESS — CORE API | Supplier/draft/post/payment and reconciled stock/payable effects pass; returns/cancellation pending |
 | `WBL-MOD-109` | Sales/receivables  | NOT STARTED | POS sessions, invoices, returns and receipts          |
 | `WBL-MOD-110` | Reports/exports    | NOT STARTED | Reconciled reports and scoped exports                 |
 | `WBL-MOD-111` | Audit/files/worker | NOT STARTED | Audit trail, secure files and outbox jobs             |
@@ -67,4 +67,5 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 2026-07-17 18:31:45 IST  Catalogue/inventory DB gate   PASS (3 unit + 29 integration; audit 0)
 2026-07-17 18:46:55 IST  Catalogue/inventory API gate  PASS (3 unit + 38 integration; audit 0)
 2026-07-17 19:06:21 IST  Purchases/payables DB gate    PASS (3 unit + 43 integration; drift/audit 0)
+2026-07-17 19:22:18 IST  Purchase posting/payment gate PASS (3 unit + 52 integration; concurrency/drift/audit 0)
 ```

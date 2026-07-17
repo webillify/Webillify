@@ -221,10 +221,15 @@ function stockResourceNotFound(): NotFoundException {
 }
 
 function isSerializationConflict(error: unknown): boolean {
+  if (typeof error !== 'object' || error === null || !('code' in error))
+    return false;
+  if (error.code === 'P2034') return true;
+  const metadata = 'meta' in error ? error.meta : undefined;
   return (
-    typeof error === 'object' &&
-    error !== null &&
-    'code' in error &&
-    error.code === 'P2034'
+    error.code === 'P2010' &&
+    typeof metadata === 'object' &&
+    metadata !== null &&
+    'code' in metadata &&
+    metadata.code === '40001'
   );
 }

@@ -4,6 +4,7 @@ import {
   ExceptionFilter,
   HttpException,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { CorrelatedRequest } from './correlation-id.middleware';
@@ -21,6 +22,8 @@ interface ErrorDetail {
 
 @Catch()
 export class ApiExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(ApiExceptionFilter.name);
+
   catch(exception: unknown, host: ArgumentsHost): void {
     const context = host.switchToHttp();
     const request = context.getRequest<CorrelatedRequest & Request>();
@@ -28,6 +31,13 @@ export class ApiExceptionFilter implements ExceptionFilter {
     const status =
       exception instanceof HttpException ? exception.getStatus() : 500;
     const detail = this.getDetail(exception);
+
+    if (!(exception instanceof HttpException)) {
+      this.logger.error(
+        'Unhandled API exception',
+        exception instanceof Error ? exception.stack : String(exception),
+      );
+    }
 
     response.status(status).json({
       error: {

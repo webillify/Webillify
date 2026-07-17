@@ -55,6 +55,11 @@ Status: **IN PROGRESS — BE-004/SEC-001 complete; GitHub publication retry acti
 | 2026-07-17 19:03:30 | TEST     | Targeted suite exposed wrong fixture IDs, identifier drift and draft-delete trigger bug | FAILED — FIXED |
 | 2026-07-17 19:06:21 | TEST     | Deploy/seed/schema/drift/lint/build/audit, 3 unit and 43 integration tests               | PASS        |
 | 2026-07-17 19:08:25 | INFRA    | Pushed verified BE-007A purchases/payables database stage to GitHub `main`               | `6618924`   |
+| 2026-07-17 19:09:00 | BACKEND  | Started BE-007B protected supplier, purchase posting and payment API stage                | IN PROGRESS |
+| 2026-07-17 19:15:00 | BACKEND  | Added supplier/draft/read APIs with server GST calculation and duplicate detection        | COMPLETE    |
+| 2026-07-17 19:18:00 | DATABASE | Added allocation validation and allocation-backed payable projection trigger              | COMPLETE    |
+| 2026-07-17 19:19:14 | TEST     | Concurrent post exposed Prisma-wrapped PostgreSQL `40001` retry gap                        | FAILED — FIXED |
+| 2026-07-17 19:22:18 | TEST     | Clean five-migration replay, drift/lint/build/audit, 3 unit and 52 integration tests       | PASS        |
 
 ---
 

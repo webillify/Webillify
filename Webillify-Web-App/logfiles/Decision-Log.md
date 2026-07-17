@@ -16,7 +16,8 @@ Decisions are append-only. A changed decision gets a new ID and references the s
 | `WBL-DEC-010` | 2026-07-17 17:04:48 | Mock auth persists locally but API auth fails explicitly             | Enables guarded UX without representing demo state as secure    | Permission checks deny by default; BE-003 remains mandatory | ACTIVE |
 | `WBL-DEC-011` | 2026-07-17 17:22:35 | Use Playwright plus axe for current browser quality gates            | Real viewport and accessibility behavior need browser evidence  | Desktop/mobile auth, navigation and POS run in CI           | ACTIVE |
 | `WBL-DEC-012` | 2026-07-17 17:27:22 | Track the complete Webillify workspace in one root Git repository    | Product specs, app, API and delivery logs must evolve together  | `main` uses the requested GitHub repository as `origin`     | ACTIVE |
-| `WBL-DEC-013` | 2026-07-17 19:06:21 | Treat posted purchase bills/payments as immutable accounting records | Auditability requires corrections through explicit future reversal flows | Drafts remain editable/deletable; posted rows reject mutation | ACTIVE |
+| `WBL-DEC-013` | 2026-07-17 19:06:21 | Treat posted purchase bills/payments as immutable accounting records | Auditability requires corrections through explicit future reversal flows | Drafts remain editable/deletable; posted rows reject mutation | SUPERSEDED |
+| `WBL-DEC-014` | 2026-07-17 19:22:18 | Keep posted purchase snapshots immutable while allowing only allocation-backed payment projections | Payments must reduce payable without rewriting supplier/tax/stock history; clarifies WBL-DEC-013 | Paid/outstanding may change only through reconciled immutable allocation workflows | ACTIVE |
 
 ## New decision template
 

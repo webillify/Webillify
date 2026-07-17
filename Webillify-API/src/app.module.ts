@@ -11,6 +11,7 @@ import { AccessModule } from './modules/access/access.module';
 import { HealthModule } from './modules/health/health.module';
 import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
 import { CatalogueModule } from './modules/catalogue/catalogue.module';
+import { PurchasesModule } from './modules/purchases/purchases.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { CatalogueModule } from './modules/catalogue/catalogue.module';
     AccessModule,
     SubscriptionsModule,
     CatalogueModule,
+    PurchasesModule,
     HealthModule,
   ],
   controllers: [AppController],

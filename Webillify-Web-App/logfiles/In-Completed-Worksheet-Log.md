@@ -1,14 +1,14 @@
 # Webillify incomplete work worksheet
 
-Last updated: **2026-07-17 19:06:21 IST**
-In progress: **WBL-BE-007B — protected purchase posting and supplier-payment APIs; DB stage published as `6618924`**
-Ready next: **Complete BE-007 API/concurrency/reconciliation stage after verified DB foundation**
+Last updated: **2026-07-17 19:22:18 IST**
+In progress: **None — BE-007B verified; publication pending**
+Ready next: **WBL-BE-007C — purchase cancellation and return compensating workflows**
 
 ## Ready
 
 | Task ID      | Priority | Module/outcome                 | Assignee | Status      |
 | ------------ | -------- | ------------------------------ | -------- | ----------- |
-| `WBL-BE-007B` | P0      | Protected purchase posting/payment APIs | Codex | IN PROGRESS |
+| `WBL-BE-007C` | P0      | Purchase cancellation/returns with compensating effects | Unassigned | READY |
 
 ## Planned frontend
 
@@ -33,7 +33,8 @@ Ready next: **Complete BE-007 API/concurrency/reconciliation stage after verifie
 | `WBL-BE-005`    | P0           | Core and AI subscription entitlements | COMPLETE    |
 | `WBL-BE-006`    | P0           | Catalogue and inventory ledger        | COMPLETE    |
 | `WBL-BE-007A`   | P0           | Purchases/payables database foundation | COMPLETE    |
-| `WBL-BE-007B`   | P0           | Purchase/payable API and posting effects | IN PROGRESS |
+| `WBL-BE-007B`   | P0           | Purchase/payable API and posting effects | COMPLETE    |
+| `WBL-BE-007C`   | P0           | Purchase cancellation and return workflows | PLANNED   |
 | `WBL-BE-008`    | P0           | POS/invoice/payment/returns           | PLANNED     |
 | `WBL-BE-009`    | P1           | Reports/exports/closing               | PLANNED     |
 | `WBL-QA-002`    | P0           | Feature unit tests                    | COMPLETE    |
