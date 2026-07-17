@@ -5,15 +5,25 @@ Append-only history. Newest session first; corrections use a new timestamped ame
 ## 2026-07-17 — GitHub baseline, CI and backend foundation
 
 Session start: **17:22:35 IST**  
-Tasks: **WBL-SETUP-003 + WBL-INFRA-001 + WBL-BE-001**  
+Tasks: **WBL-SETUP-003 + WBL-INFRA-001 + WBL-BE-001 + WBL-BE-002 + WBL-BE-003**  
 Assignee: **Codex**  
 Status: **IN PROGRESS — BE-001 active**
 
-| Timestamp (IST)     | Category | Activity                                                                 | Result      |
-| ------------------- | -------- | ------------------------------------------------------------------------ | ----------- |
-| 2026-07-17 17:27:22 | SETUP    | Initialized root Git `main` and configured requested GitHub `origin`     | COMPLETE    |
-| 2026-07-17 17:27:22 | INFRA    | Added frontend CI quality gate and Dependabot definitions                | CONFIGURED  |
-| 2026-07-17 17:27:22 | BACKEND  | Assigned BE-001 API foundation using the documented V1/security contract | IN PROGRESS |
+| Timestamp (IST)     | Category | Activity                                                                   | Result         |
+| ------------------- | -------- | -------------------------------------------------------------------------- | -------------- |
+| 2026-07-17 17:27:22 | SETUP    | Initialized root Git `main` and configured requested GitHub `origin`       | COMPLETE       |
+| 2026-07-17 17:27:22 | INFRA    | Added frontend CI quality gate and Dependabot definitions                  | CONFIGURED     |
+| 2026-07-17 17:28:30 | INFRA    | GitHub rejected baseline push; connector also has no repository access     | BLOCKED 403    |
+| 2026-07-17 17:32:00 | BACKEND  | Assigned and scaffolded BE-001 from the documented V1/security contract    | IN PROGRESS    |
+| 2026-07-17 17:36:30 | BACKEND  | Added config validation, prefix, headers, CORS, errors, OpenAPI and health | COMPLETE       |
+| 2026-07-17 17:37:10 | TEST     | HTTP tests found correlation middleware missing under prefixed routes      | FAILED — FIXED |
+| 2026-07-17 17:38:55 | TEST     | API lint, build, 3 unit tests, 4 HTTP tests and production audit           | PASS           |
+| 2026-07-17 17:39:17 | BACKEND  | Closed BE-001 and assigned BE-002 PostgreSQL tenancy schema                | COMPLETE       |
+| 2026-07-17 17:43:00 | BACKEND  | Added Prisma tenant/RBAC/session/core-plan/separate-AI schema and seed     | COMPLETE       |
+| 2026-07-17 17:46:03 | DATABASE | Generated and applied initial PostgreSQL 17 migration                      | PASS           |
+| 2026-07-17 17:47:30 | TEST     | Schema, lint, build, unit and tenant-isolation database suite              | PASS — 6/6     |
+| 2026-07-17 17:48:55 | TEST     | Destroyed local volume; clean migration deploy, seed and tests             | PASS           |
+| 2026-07-17 17:49:06 | BACKEND  | Closed BE-002 and assigned BE-003 identity/rotating sessions               | COMPLETE       |
 
 ---
 

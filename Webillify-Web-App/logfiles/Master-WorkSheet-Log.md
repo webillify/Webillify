@@ -1,10 +1,10 @@
 # Webillify master worksheet
 
-Snapshot timestamp: **2026-07-17 17:27:22 IST**  
-Project status: **ACTIVE — frontend foundation complete; backend API foundation starting**  
+Snapshot timestamp: **2026-07-17 17:49:06 IST**  
+Project status: **ACTIVE — PostgreSQL tenancy foundation complete; real identity/session API in progress**  
 Current release: **R1 — Frontend application foundation**  
 Current phase: **Phase 3 — Backend identity and tenancy**  
-Current task: **WBL-BE-001 — NestJS API foundation and health endpoint**
+Current task: **WBL-BE-003 — Identity, access tokens and rotating sessions**
 
 ## Project snapshot
 
@@ -22,7 +22,7 @@ Current task: **WBL-BE-001 — NestJS API foundation and health endpoint**
 | Purchases                       | PLANNED              | Placeholder route only                                                                                                                 |
 | Reports                         | PLANNED              | Placeholder route only                                                                                                                 |
 | Settings / roles / subscription | PLANNED              | Placeholder route only                                                                                                                 |
-| Backend and persistence         | NOT STARTED          | No API project or persistent data service exists in this repository                                                                    |
+| Backend and persistence         | IN PROGRESS          | NestJS 11 API foundation passes lint/build/unit/HTTP tests; PostgreSQL schema is next                                                  |
 | Webillify AI integration        | PLANNED              | UI indicator only; separate subscription rules exist in product documentation                                                          |
 | Data access and request state   | COMPLETE             | Typed models/repositories, mock/API modes, environment configuration and visible request errors                                        |
 | Automated tests                 | PARTIAL              | 19 unit tests plus 6 Chrome E2E/accessibility scenarios; real backend transaction E2E pending                                          |
@@ -47,17 +47,17 @@ The frontend foundation is verified as a responsive, accessible demo prototype. 
 
 ## Next task assignment
 
-| Field              | Value                                                                                                    |
-| ------------------ | -------------------------------------------------------------------------------------------------------- |
-| Task ID            | `WBL-BE-001`                                                                                             |
-| Title              | NestJS API foundation and health endpoint                                                                |
-| Status             | IN PROGRESS                                                                                              |
-| Priority           | P0                                                                                                       |
-| Suggested assignee | Frontend engineer                                                                                        |
-| Estimate           | 1–2 development sessions                                                                                 |
-| Dependencies       | API/security/database specifications and completed frontend contracts                                    |
-| Deliverable        | Versioned NestJS service, configuration validation, security headers, correlation IDs, OpenAPI and tests |
-| Acceptance         | API health/readiness, error envelope, validation and test/build commands pass                            |
+| Field              | Value                                                                                  |
+| ------------------ | -------------------------------------------------------------------------------------- |
+| Task ID            | `WBL-BE-003`                                                                           |
+| Title              | Identity, login, access tokens and rotating refresh sessions                           |
+| Status             | IN PROGRESS                                                                            |
+| Priority           | P0                                                                                     |
+| Suggested assignee | Backend engineer                                                                       |
+| Estimate           | 1–2 development sessions                                                               |
+| Dependencies       | Completed BE-002 identity/tenancy schema and security model                            |
+| Deliverable        | Argon2 login, JWT access, hashed rotating refresh cookies, logout/revocation and `/me` |
+| Acceptance         | Login/refresh/reuse/logout paths and credential/session security tests pass            |
 
 See [Task-Backlog.md](Task-Backlog.md#recommended-next-task) for the complete assignment brief.
 
@@ -67,7 +67,7 @@ See [Task-Backlog.md](Task-Backlog.md#recommended-next-task) for the complete as
 - All five original worksheets are populated.
 - Completed claims are mapped to source files or command evidence.
 - Pending modules are task-ID based and assignable.
-- Phase 2 is complete. Git is initialized on `main`, GitHub `origin` is configured, CI is defined, and BE-001 is active.
+- Phase 2 and BE-001/002 are complete. GitHub push remains permission-blocked; BE-003 is active locally.
 
 ## Category codes
 

@@ -1,14 +1,14 @@
 # Webillify incomplete work worksheet
 
-Last updated: **2026-07-17 17:27:22 IST**  
-In progress: **WBL-BE-001 — assigned to Codex at 2026-07-17 17:27:22 IST**  
-Ready after current: **WBL-BE-002 PostgreSQL tenancy schema**
+Last updated: **2026-07-17 17:49:06 IST**  
+In progress: **WBL-BE-003 — assigned to Codex at 2026-07-17 17:49:06 IST**  
+Ready after current: **WBL-BE-004 organization/branch/RBAC APIs**
 
 ## Ready
 
-| Task ID      | Priority | Module/outcome                            | Assignee | Status      |
-| ------------ | -------- | ----------------------------------------- | -------- | ----------- |
-| `WBL-BE-001` | P0       | NestJS API foundation and health endpoint | Codex    | IN PROGRESS |
+| Task ID      | Priority | Module/outcome                 | Assignee | Status      |
+| ------------ | -------- | ------------------------------ | -------- | ----------- |
+| `WBL-BE-003` | P0       | Identity and rotating sessions | Codex    | IN PROGRESS |
 
 ## Planned frontend
 
@@ -26,9 +26,9 @@ Ready after current: **WBL-BE-002 PostgreSQL tenancy schema**
 
 | Task ID         | Priority     | Module                                | Status      |
 | --------------- | ------------ | ------------------------------------- | ----------- |
-| `WBL-BE-001`    | P0           | NestJS API foundation                 | IN PROGRESS |
-| `WBL-BE-002`    | P0           | PostgreSQL tenancy schema             | PLANNED     |
-| `WBL-BE-003`    | P0           | Identity and sessions                 | PLANNED     |
+| `WBL-BE-001`    | P0           | NestJS API foundation                 | COMPLETE    |
+| `WBL-BE-002`    | P0           | PostgreSQL tenancy schema             | COMPLETE    |
+| `WBL-BE-003`    | P0           | Identity and sessions                 | IN PROGRESS |
 | `WBL-BE-004`    | P0           | Organization/branch/RBAC              | PLANNED     |
 | `WBL-BE-005`    | P0           | Core and AI subscription entitlements | PLANNED     |
 | `WBL-BE-006`    | P0           | Catalogue and inventory ledger        | PLANNED     |

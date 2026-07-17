@@ -14,6 +14,62 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  api:
+    name: API quality gate
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Webillify-API
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: webillify
+          POSTGRES_USER: webillify
+          POSTGRES_PASSWORD: webillify_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U webillify -d webillify"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://webillify:webillify_ci@localhost:5432/webillify?schema=public
+      CORS_ORIGINS: http://localhost:4200
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: Webillify-API/package-lock.json
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Check formatting
+        run: npx prettier --check "src/**/*.ts" "test/**/*.ts" "prisma/**/*.ts"
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Apply and seed database
+        run: npm run db:deploy && npm run db:seed
+
+      - name: Run unit and HTTP integration tests
+        run: npm test -- --runInBand && npm run test:e2e -- --runInBand
+
+      - name: Build API
+        run: npm run build
+
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+
   frontend:
     name: Frontend quality gate
     runs-on: ubuntu-latest

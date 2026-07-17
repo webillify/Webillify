@@ -1,7 +1,7 @@
 # Webillify task backlog
 
-Last prioritized: **2026-07-17 17:27:22 IST**  
-Active assignee: **Codex — WBL-BE-001 started 2026-07-17 17:27:22 IST**  
+Last prioritized: **2026-07-17 17:49:06 IST**  
+Active assignee: **Codex — WBL-BE-003 started 2026-07-17 17:49:06 IST**  
 WIP limit: **One P0 task per engineer**
 
 ## Just completed
@@ -75,35 +75,59 @@ Status: **COMPLETE — 2026-07-17 17:22:35 IST**
 
 Result: WCAG fixes plus 6/6 Chrome desktop/mobile Playwright scenarios with axe scanning.
 
-## Recommended next task
+## Just completed
 
 ### WBL-BE-001 — NestJS API foundation
 
-Status: **IN PROGRESS — started 2026-07-17 17:27:22 IST**
+Status: **COMPLETE — 2026-07-17 17:39:17 IST**
 
 - Scaffold a strict NestJS API with `/api/v1`, validated configuration and structured errors.
 - Add correlation IDs, secure defaults, health/readiness endpoints and generated OpenAPI.
 - Add unit/integration tests and independent build/format commands.
 
+Result: NestJS 11 API with versioning, validated environment, correlation IDs, secure headers/CORS, OpenAPI, error envelope and passing lint/build/3 unit/4 HTTP tests.
+
+## Just completed
+
+### WBL-BE-002 — PostgreSQL tenancy schema and migrations
+
+Status: **COMPLETE — 2026-07-17 17:49:06 IST**
+
+- Introduce Prisma/PostgreSQL configuration and an initial identity/tenancy schema.
+- Encode tenant ownership, normalized uniqueness, role/permission and session constraints.
+- Add deterministic seed data, database readiness and schema/migration verification.
+
+Result: PostgreSQL 17 + Prisma identity/tenancy/RBAC/core-plan/separate-AI schema, composite ownership constraints, clean deploy/seed rehearsal and 6/6 HTTP/database tests.
+
+## Recommended next task
+
+### WBL-BE-003 — Identity and rotating sessions
+
+Status: **IN PROGRESS — started 2026-07-17 17:49:06 IST**
+
+- Implement Argon2id credential verification and short-lived JWT access tokens.
+- Store only hashed refresh tokens, rotate on use and revoke the family on reuse.
+- Add login, refresh, logout and `/me` endpoints with secure cookie behavior and tests.
+
 ## Prioritized queue
 
-| Task ID          | Priority | Task                                         | Status      | Suggested owner    | Depends on      |
-| ---------------- | -------- | -------------------------------------------- | ----------- | ------------------ | --------------- |
-| `WBL-FE-007`     | P0       | Typed data/state foundation                  | COMPLETE    | Codex              | Phase 1         |
-| `WBL-SETUP-002`  | P0       | Environments and API URL contract            | COMPLETE    | Codex              | None            |
-| `WBL-FE-008`     | P0       | Auth state, guards and permission primitives | COMPLETE    | Codex              | FE-007          |
-| `WBL-QA-002`     | P0       | Dashboard/POS/products unit tests            | COMPLETE    | Codex              | FE-007          |
-| `WBL-BE-001`     | P0       | NestJS scaffold and health endpoint          | IN PROGRESS | Codex              | API spec        |
-| `WBL-BE-002`     | P0       | PostgreSQL tenancy schema/migrations         | PLANNED     | Backend            | BE-001          |
-| `WBL-SEC-001`    | P0       | Tenant/branch authorization harness          | PLANNED     | Backend/security   | BE-002          |
-| `WBL-FE-009`     | P1       | Shared loading/error/toast/confirm UX        | COMPLETE    | Codex              | FE-007          |
-| `WBL-FE-010`     | P1       | Customer list/detail/balance UI              | PLANNED     | Frontend           | Data/API        |
-| `WBL-FE-011`     | P1       | Product create/edit/import UI                | PLANNED     | Frontend           | Catalogue API   |
-| `WBL-FE-012`     | P1       | Purchase/supplier workflow UI                | PLANNED     | Frontend           | Purchase API    |
-| `WBL-QA-003`     | P1       | Accessibility/responsive audit               | COMPLETE    | Codex              | FE-008/009      |
-| `WBL-INFRA-001`  | P1       | CI build/test/format pipeline                | CONFIGURED  | Codex              | Initial push    |
-| `WBL-DOMAIN-001` | P0       | Accountant-approved transaction fixtures     | BLOCKED     | Accountant/product | External review |
-| `WBL-DOMAIN-002` | P0       | GST invoice fixture approval                 | BLOCKED     | GST practitioner   | External review |
+| Task ID          | Priority | Task                                         | Status     | Suggested owner    | Depends on      |
+| ---------------- | -------- | -------------------------------------------- | ---------- | ------------------ | --------------- |
+| `WBL-FE-007`     | P0       | Typed data/state foundation                  | COMPLETE   | Codex              | Phase 1         |
+| `WBL-SETUP-002`  | P0       | Environments and API URL contract            | COMPLETE   | Codex              | None            |
+| `WBL-FE-008`     | P0       | Auth state, guards and permission primitives | COMPLETE   | Codex              | FE-007          |
+| `WBL-QA-002`     | P0       | Dashboard/POS/products unit tests            | COMPLETE   | Codex              | FE-007          |
+| `WBL-BE-001`     | P0       | NestJS scaffold and health endpoint          | COMPLETE   | Codex              | API spec        |
+| `WBL-BE-002`     | P0       | PostgreSQL tenancy schema/migrations         | COMPLETE   | Codex              | BE-001          |
+| `WBL-SEC-001`    | P0       | Tenant/branch authorization harness          | PLANNED    | Backend/security   | BE-002          |
+| `WBL-FE-009`     | P1       | Shared loading/error/toast/confirm UX        | COMPLETE   | Codex              | FE-007          |
+| `WBL-FE-010`     | P1       | Customer list/detail/balance UI              | PLANNED    | Frontend           | Data/API        |
+| `WBL-FE-011`     | P1       | Product create/edit/import UI                | PLANNED    | Frontend           | Catalogue API   |
+| `WBL-FE-012`     | P1       | Purchase/supplier workflow UI                | PLANNED    | Frontend           | Purchase API    |
+| `WBL-QA-003`     | P1       | Accessibility/responsive audit               | COMPLETE   | Codex              | FE-008/009      |
+| `WBL-INFRA-001`  | P1       | CI build/test/format pipeline                | CONFIGURED | Codex              | Initial push    |
+| `WBL-DOMAIN-001` | P0       | Accountant-approved transaction fixtures     | BLOCKED    | Accountant/product | External review |
+| `WBL-DOMAIN-002` | P0       | GST invoice fixture approval                 | BLOCKED    | GST practitioner   | External review |
 
 ## Assignment protocol
 

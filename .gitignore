@@ -1,0 +1,17 @@
+# Dependencies and generated output in workspace packages
+**/node_modules/
+**/dist/
+**/coverage/
+**/.angular/
+**/playwright-report/
+**/test-results/
+
+# Local configuration and secrets
+**/.env
+**/.env.*
+!**/.env.example
+
+# Editors and operating systems
+.DS_Store
+Thumbs.db
+*.log

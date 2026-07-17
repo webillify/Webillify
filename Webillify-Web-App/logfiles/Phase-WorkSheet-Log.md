@@ -68,11 +68,11 @@ Exit gate: Existing pages no longer import mock data directly; protected routes 
 
 ## Phase 3 — Backend identity and tenancy
 
-Status: **IN PROGRESS — WBL-BE-001 active**  
+Status: **IN PROGRESS — WBL-BE-001/002 complete; WBL-BE-003 active**  
 Depends on: Phase 2 boundary contracts
 
-- [ ] NestJS modular-monolith scaffold
-- [ ] PostgreSQL migrations and seed strategy
+- [x] NestJS modular-monolith scaffold
+- [x] PostgreSQL migrations and seed strategy
 - [ ] Login, refresh rotation, logout, reset and login history
 - [ ] Organizations, companies, branches, memberships and branch access
 - [ ] Roles, permissions, sensitive-action checks and audit log
