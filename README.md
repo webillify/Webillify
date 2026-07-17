@@ -14,9 +14,9 @@ See [Docs/README.md](Docs/README.md) for the product and engineering documentati
 
 ## Status
 
-The repository now contains a browser-testable Angular 22 application, NestJS 11 API and PostgreSQL 17 database. The implemented connected surface includes real identity/session handling, tenant/branch authorization, versioned core subscriptions, a separately billed Webillify AI plan and credits, catalogue/stock, purchase drafts, atomic purchase posting and supplier payments.
+The repository now contains a browser-testable Angular 22 application, NestJS 11 API and PostgreSQL 17 database. The implemented connected surface includes real identity/session handling, tenant/branch authorization, versioned core subscriptions, a separately billed Webillify AI plan and credits, catalogue/stock, purchase drafts, atomic posting/payments, cancellation and linked purchase returns.
 
-Customers, real POS sales posting, purchase returns/cancellation, reports, production deployment and later AI capability workflows remain tracked work; placeholder or explicit unavailable states are used instead of silently faking those transactions.
+Customers, real POS sales posting, reports, production deployment and later AI capability workflows remain tracked work; placeholder or explicit unavailable states are used instead of silently faking those transactions.
 
 ## Test locally in a browser
 

@@ -8,7 +8,7 @@ Angular 22 standalone PWA for the Webillify billing, POS, inventory and retail-o
 - Real API sign-in, persisted access token, refresh cookie and tenant context
 - Live dashboard with catalogue, stock, purchase and payable summaries
 - Real product catalogue and branch stock status in Products and POS
-- Purchase draft creation, posting and supplier-payment actions
+- Purchase draft, posting, payment, safe cancellation and linked full-return actions
 - Core Business plan and separately billed Webillify AI lifecycle/credit status
 - Typed domain models, repository contracts and explicit test mock/API modes
 - Shared loading, empty and error request-state model

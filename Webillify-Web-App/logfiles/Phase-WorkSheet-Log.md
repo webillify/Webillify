@@ -83,7 +83,7 @@ Exit gate: Authenticated frontend works with real APIs; isolation tests are rele
 
 ## Phase 4 — Catalogue, purchases and inventory
 
-Status: **IN PROGRESS — BE-007 purchase API core complete; compensation browser actions next**
+Status: **IN PROGRESS — connected purchase lifecycle complete; remaining inventory operations continue**
 
 - [x] Product/category/unit/tax/barcode core APIs (CSV import remains queued)
 - [x] Suppliers, purchase bills, payments, cancellation and linked returns

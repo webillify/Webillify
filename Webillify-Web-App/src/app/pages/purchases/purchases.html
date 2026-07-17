@@ -2,7 +2,7 @@
   <div>
     <span class="eyebrow">Purchases & payables</span>
     <h1>Purchase bills</h1>
-    <p>Create reviewable drafts, post stock-in and settle supplier balances.</p>
+    <p>Create drafts, post stock-in, settle balances and record auditable compensation.</p>
   </div>
   <div class="purchase-summary">
     <small>Total outstanding</small>
@@ -105,10 +105,15 @@
       <button
         class="button button--primary"
         type="submit"
-        [disabled]="busy() || !workspace.warehouse"
+        [disabled]="busy() || !workspace.warehouse || !canManage()"
       >
         <app-icon name="plus" /> {{ busy() ? 'Working…' : 'Create draft' }}
       </button>
+      @if (!canManage()) {
+        <p class="read-only-note">
+          You have read-only purchase access. Manage permission is required for changes.
+        </p>
+      }
     </form>
 
     <section class="panel bills-panel">
@@ -132,30 +137,128 @@
             <div class="bill-money">
               <strong>₹{{ bill.totalAmount.toLocaleString('en-IN') }}</strong>
               <small>₹{{ bill.outstandingAmount.toLocaleString('en-IN') }} outstanding</small>
+              @if (bill.returnedAmount > 0) {
+                <small>₹{{ bill.returnedAmount.toLocaleString('en-IN') }} returned</small>
+              }
             </div>
             <div class="bill-actions">
               @if (bill.status === 'DRAFT') {
-                <button
-                  class="button button--primary"
-                  type="button"
-                  [disabled]="busy()"
-                  (click)="post(bill)"
-                >
-                  Post bill
-                </button>
-              } @else if (bill.status === 'POSTED' && bill.outstandingAmount > 0) {
-                <button
-                  class="button button--secondary"
-                  type="button"
-                  [disabled]="busy()"
-                  (click)="pay(bill)"
-                >
-                  Pay outstanding
-                </button>
+                @if (canManage()) {
+                  <button
+                    class="button button--primary"
+                    type="button"
+                    [disabled]="busy()"
+                    (click)="post(bill)"
+                  >
+                    Post bill
+                  </button>
+                } @else {
+                  <span class="read-only-label">Draft · read only</span>
+                }
+              } @else if (bill.status === 'POSTED') {
+                @if (canManage() && bill.outstandingAmount > 0) {
+                  <button
+                    class="button button--secondary"
+                    type="button"
+                    [disabled]="busy()"
+                    (click)="pay(bill)"
+                  >
+                    Pay outstanding
+                  </button>
+                }
+                @if (canReturn(bill)) {
+                  <button
+                    class="button button--secondary"
+                    type="button"
+                    [disabled]="busy()"
+                    [attr.aria-label]="'Return remaining items from ' + bill.reference"
+                    (click)="startCompensation(bill, 'return')"
+                  >
+                    Return remaining
+                  </button>
+                }
+                @if (canCancel(bill)) {
+                  <button
+                    class="button button--text-danger"
+                    type="button"
+                    [disabled]="busy()"
+                    [attr.aria-label]="'Cancel bill ' + bill.reference"
+                    (click)="startCompensation(bill, 'cancel')"
+                  >
+                    Cancel bill
+                  </button>
+                }
+                @if (bill.returnedAmount >= bill.totalAmount) {
+                  <span class="paid-label"><app-icon name="check" /> Returned in full</span>
+                } @else if (bill.outstandingAmount === 0 && bill.paidAmount > 0) {
+                  <span class="paid-label"><app-icon name="check" /> Settled</span>
+                } @else if (!canManage()) {
+                  <span class="read-only-label">Read only</span>
+                }
               } @else {
-                <span class="paid-label"><app-icon name="check" /> Settled</span>
+                <span class="cancelled-label">Cancelled with reversal</span>
               }
             </div>
+            @if (compensation()?.billId === bill.id) {
+              <form
+                class="compensation-form"
+                (ngSubmit)="submitCompensation(bill)"
+                [attr.aria-labelledby]="'compensation-title-' + bill.id"
+              >
+                <div>
+                  <span class="eyebrow">Reason and audit trail required</span>
+                  <h3 [id]="'compensation-title-' + bill.id">
+                    {{
+                      compensation()?.kind === 'cancel'
+                        ? 'Cancel purchase bill'
+                        : 'Return all remaining items'
+                    }}
+                  </h3>
+                  <p>
+                    {{
+                      compensation()?.kind === 'cancel'
+                        ? 'Available only before a payment or return. Stock and payable effects reverse atomically.'
+                        : 'Uses the original cost and tax snapshots and cannot exceed the unreturned quantities.'
+                    }}
+                  </p>
+                </div>
+                <label>
+                  <span>Reason</span>
+                  <textarea
+                    required
+                    minlength="5"
+                    maxlength="500"
+                    rows="3"
+                    [ngModel]="compensationReason()"
+                    (ngModelChange)="compensationReason.set($event)"
+                    name="compensationReason"
+                  ></textarea>
+                </label>
+                <div class="compensation-form__actions">
+                  <button
+                    class="button button--secondary"
+                    type="button"
+                    (click)="closeCompensation()"
+                  >
+                    Keep bill
+                  </button>
+                  <button
+                    class="button button--primary"
+                    [class.button--danger]="compensation()?.kind === 'cancel'"
+                    type="submit"
+                    [disabled]="busy() || compensationReason().trim().length < 5"
+                  >
+                    {{
+                      busy()
+                        ? 'Working…'
+                        : compensation()?.kind === 'cancel'
+                          ? 'Confirm cancellation'
+                          : 'Post purchase return'
+                    }}
+                  </button>
+                </div>
+              </form>
+            }
           </article>
         } @empty {
           <div class="empty-purchases">No supplier bills have been recorded.</div>

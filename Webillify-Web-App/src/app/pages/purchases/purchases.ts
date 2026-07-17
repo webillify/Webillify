@@ -9,6 +9,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
+import { AuthStore } from '../../core/auth/auth.store';
 import { PurchaseRepository } from '../../core/data-access/repositories';
 import { RequestState, requestState } from '../../core/data-access/request-state';
 import { PurchaseBill, PurchaseWorkspace } from '../../core/domain/models';
@@ -29,6 +30,7 @@ export class PurchasesPage {
   private readonly confirmation = inject(ConfirmationService);
   private readonly toast = inject(ToastService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly auth = inject(AuthStore);
 
   readonly state = signal<RequestState<PurchaseWorkspace>>(requestState.loading());
   readonly busy = signal(false);
@@ -39,6 +41,12 @@ export class PurchasesPage {
   readonly quantity = signal(1);
   readonly unitCost = signal(45);
   readonly taxRate = signal(5);
+  readonly compensation = signal<{
+    readonly billId: string;
+    readonly kind: 'cancel' | 'return';
+  } | null>(null);
+  readonly compensationReason = signal('');
+  readonly canManage = computed(() => this.auth.hasPermission('purchases.manage'));
   readonly bills = computed(() => this.state().data?.bills ?? []);
   readonly totalOutstanding = computed(() =>
     this.bills().reduce((total, bill) => total + bill.outstandingAmount, 0),
@@ -115,6 +123,53 @@ export class PurchasesPage {
         },
         error: (error: unknown) => this.operationError(error),
       });
+  }
+
+  canCancel(bill: PurchaseBill): boolean {
+    return (
+      this.canManage() &&
+      bill.status === 'POSTED' &&
+      bill.paidAmount === 0 &&
+      bill.returnedAmount === 0
+    );
+  }
+
+  canReturn(bill: PurchaseBill): boolean {
+    return this.canManage() && bill.status === 'POSTED' && bill.returnedAmount < bill.totalAmount;
+  }
+
+  startCompensation(bill: PurchaseBill, kind: 'cancel' | 'return'): void {
+    this.compensation.set({ billId: bill.id, kind });
+    this.compensationReason.set('');
+  }
+
+  closeCompensation(): void {
+    this.compensation.set(null);
+    this.compensationReason.set('');
+  }
+
+  submitCompensation(bill: PurchaseBill): void {
+    const action = this.compensation();
+    const reason = this.compensationReason().trim();
+    if (!action || action.billId !== bill.id || reason.length < 5) return;
+    this.busy.set(true);
+    const operation =
+      action.kind === 'cancel'
+        ? this.purchases.cancelBill({ bill, reason })
+        : this.purchases.returnRemaining({ bill, reason });
+    operation.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (updated) => {
+        this.replaceBill(updated);
+        this.busy.set(false);
+        this.closeCompensation();
+        this.toast.success(
+          action.kind === 'cancel'
+            ? `${updated.reference} cancelled with a linked stock reversal.`
+            : `${updated.reference} return posted and supplier balance updated.`,
+        );
+      },
+      error: (error: unknown) => this.operationError(error),
+    });
   }
 
   private load(): void {

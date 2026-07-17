@@ -1,6 +1,6 @@
 # Webillify module status
 
-Reconciled: **2026-07-17 20:15:08 IST**
+Reconciled: **2026-07-17 20:25:05 IST**
 Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence passed. `DEMO` is not production-ready.
 
 ## Frontend modules
@@ -15,7 +15,7 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 | `WBL-MOD-006` | POS               | DEMO            | Search, cart, totals and payment selection                       | Transactional API and sessions        |
 | `WBL-MOD-007` | Products          | PARTIAL — API   | Real tenant catalogue and stock projection render in browser     | CRUD, import and API pagination       |
 | `WBL-MOD-008` | Customers         | PLANNED         | Placeholder route only                                           | List/detail/balance/receipt           |
-| `WBL-MOD-009` | Purchases         | PARTIAL — API | Live supplier bills, draft creation, posting and full payment | Add cancellation/return browser actions in FE-016C |
+| `WBL-MOD-009` | Purchases         | COMPLETE — CORE UI/API | Live draft/post/payment/cancel/full-return flows with permission and reason controls | Partial-line editor later |
 | `WBL-MOD-010` | Reports           | PLANNED         | Placeholder route only                                           | Sales/tax/stock/closing reports       |
 | `WBL-MOD-011` | Settings          | PLANNED         | Placeholder route only                                           | Company/branch/users/subscriptions    |
 | `WBL-MOD-012` | Shared icons      | COMPLETE        | Typed reusable `shared/icon.ts`                                  | Accessibility review                  |
@@ -45,8 +45,8 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 
 | Module           | Status      | Evidence/gap                                  |
 | ---------------- | ----------- | --------------------------------------------- |
-| Unit tests       | COMPLETE    | 19 tests/9 files cover current frontend scope |
-| E2E tests        | PARTIAL     | 4 connected desktop/mobile browser journeys and 57 API integration tests pass |
+| Unit tests       | COMPLETE    | 23 tests/10 files cover current frontend scope |
+| E2E tests        | PARTIAL     | 4 connected desktop/mobile mutation journeys and 57 API integration tests pass |
 | Accessibility QA | COMPLETE    | Axe plus keyboard/responsive audit passes     |
 | CI/CD            | CONFIGURED  | GitHub Actions definition; first run pending  |
 | Deployment       | NOT STARTED | Bundle exists; no hosting definition          |
@@ -71,4 +71,5 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 2026-07-17 19:34:26 IST  Connected browser stage       PASS (19 unit + 4 desktop/mobile API journeys)
 2026-07-17 19:46:45 IST  Browser workflow full gate    PASS (web 19+4; API 3+52; production audits 0)
 2026-07-17 20:15:08 IST  Purchase compensation gate    PASS (7 migrations; drift 0; API 3+57; audit 0)
+2026-07-17 20:25:05 IST  Purchase compensation browser PASS (23 unit + 4 browser; API 3+57; audits 0)
 ```

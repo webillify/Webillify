@@ -1,6 +1,6 @@
 # Webillify completed work worksheet
 
-Last updated: **2026-07-17 20:15:08 IST**
+Last updated: **2026-07-17 20:25:05 IST**
 
 | Task ID         | Completed (IST)     | Module/deliverable                                                            | Evidence                                       | Verification                                  |
 | --------------- | ------------------- | ----------------------------------------------------------------------------- | ---------------------------------------------- | --------------------------------------------- |
@@ -36,5 +36,6 @@ Last updated: **2026-07-17 20:15:08 IST**
 | `WBL-FE-016B`   | 2026-07-17 19:46:45 | Live dashboard, purchase workflow and separate core/AI subscription browser UI    | Dashboard/Purchases/Subscriptions pages        | Full web/API gates and accessibility PASS    |
 | `WBL-SETUP-005` | 2026-07-17 19:53:55 | Same-origin Angular development proxy for localhost and LAN browser testing         | `proxy.conf.json`, Angular serve configuration  | HTTP 200; 19 unit; 4 browser tests PASS      |
 | `WBL-BE-007C`   | 2026-07-17 20:15:08 | Auditable purchase cancellation and linked returns with compensating stock/payables | Return schema, protected APIs and E2E matrix    | 3 unit + 57 integration; drift/audit PASS    |
+| `WBL-FE-016C`   | 2026-07-17 20:25:05 | Permission-aware purchase cancellation/full-return browser workflow                  | Purchase page, API repository and E2E journey   | 23 unit + 4 browser; API 3+57 PASS           |
 
-`R0 — Frontend foundation` is complete and the implemented R1 surface now uses real identity, tenant, subscription, catalogue, stock and purchase APIs. The product is still pre-release: purchase compensation browser actions, POS persistence, customers, reporting, administration and production deployment remain pending.
+`R0 — Frontend foundation` is complete and the implemented R1 surface now uses real identity, tenant, subscription, catalogue, stock and purchase APIs. The product is still pre-release: POS persistence, customers, reporting, administration and production deployment remain pending.

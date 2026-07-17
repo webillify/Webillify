@@ -1,14 +1,13 @@
 # Webillify incomplete work worksheet
 
-Last updated: **2026-07-17 20:16:25 IST**
-In progress: **WBL-FE-016C — Codex — purchase cancellation/return browser actions**
-Ready next: **WBL-FE-016C purchase cancellation/return browser actions, then BE-008 real POS sales posting**
+Last updated: **2026-07-17 20:25:05 IST**
+In progress: **None — WBL-FE-016C verified; publication pending**
+Ready next: **WBL-BE-008 real POS invoice/payment/return backend and browser completion**
 
 ## Ready
 
 | Task ID      | Priority | Module/outcome                 | Assignee | Status      |
 | ------------ | -------- | ------------------------------ | -------- | ----------- |
-| `WBL-FE-016C` | P0      | Purchase cancellation/return browser actions | Codex | IN PROGRESS |
 | `WBL-BE-008`  | P0      | Real POS invoice/payment/return backend and browser completion | Unassigned | READY |
 
 ## Planned frontend
@@ -22,7 +21,6 @@ Ready next: **WBL-FE-016C purchase cancellation/return browser actions, then BE-
 | `WBL-FE-014` | P1       | Company/branch/users/roles/settings | Tenancy APIs        |
 | `WBL-FE-015` | P1       | Core subscription/usage screens     | Subscription APIs   |
 | `WBL-AI-001` | P2       | Separate AI plan and credit UI      | AI subscription API |
-| `WBL-FE-016C` | P0      | Purchase cancellation/return actions | BE-007C             |
 
 ## Planned backend, quality and operations
 
@@ -37,7 +35,7 @@ Ready next: **WBL-FE-016C purchase cancellation/return browser actions, then BE-
 | `WBL-BE-007A`   | P0           | Purchases/payables database foundation | COMPLETE    |
 | `WBL-BE-007B`   | P0           | Purchase/payable API and posting effects | COMPLETE    |
 | `WBL-BE-007C`   | P0           | Purchase cancellation and return workflows | COMPLETE  |
-| `WBL-BE-008`    | P0           | POS/invoice/payment/returns           | PLANNED     |
+| `WBL-BE-008`    | P0           | POS/invoice/payment/returns           | READY       |
 | `WBL-BE-009`    | P1           | Reports/exports/closing               | PLANNED     |
 | `WBL-QA-002`    | P0           | Feature unit tests                    | COMPLETE    |
 | `WBL-QA-003`    | P1           | Accessibility/responsive audit        | COMPLETE    |

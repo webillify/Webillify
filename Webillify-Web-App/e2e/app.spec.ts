@@ -68,6 +68,36 @@ test('signs in and renders real workspace navigation and catalogue data', async 
   const seededBill = page.locator('.bill-list article').filter({ hasText: 'DEMO-INV-001' });
   await expect(seededBill).toContainText('Demo Wholesale Supplier');
   await expect(seededBill.getByRole('button', { name: 'Post bill' })).toBeVisible();
+
+  const compensationReference = `E2E-${testInfo.project.name}-${Date.now()}`;
+  await page.getByLabel('Supplier invoice reference').fill(compensationReference);
+  await page.getByRole('button', { name: 'Create draft' }).click();
+  const compensationBill = page
+    .locator('.bill-list article')
+    .filter({ hasText: compensationReference });
+  await expect(compensationBill).toContainText('DRAFT');
+  await compensationBill.getByRole('button', { name: 'Post bill' }).click();
+  const postDialog = page.getByRole('alertdialog', { name: new RegExp(compensationReference) });
+  await postDialog.getByRole('button', { name: 'Post purchase' }).click();
+  await expect(compensationBill).toContainText('POSTED');
+
+  if (testInfo.project.name === 'desktop') {
+    await compensationBill
+      .getByRole('button', {
+        name: new RegExp(`Return remaining items from ${compensationReference}`),
+      })
+      .click();
+    await compensationBill.getByLabel('Reason').fill('Connected browser return verification');
+    await compensationBill.getByRole('button', { name: 'Post purchase return' }).click();
+    await expect(compensationBill).toContainText('Returned in full');
+  } else {
+    await compensationBill
+      .getByRole('button', { name: `Cancel bill ${compensationReference}` })
+      .click();
+    await compensationBill.getByLabel('Reason').fill('Connected browser cancellation verification');
+    await compensationBill.getByRole('button', { name: 'Confirm cancellation' }).click();
+    await expect(compensationBill).toContainText('Cancelled with reversal');
+  }
   await expectNoSeriousAccessibilityViolations(page);
 
   await page.goto('/settings');

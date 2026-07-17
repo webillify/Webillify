@@ -73,6 +73,7 @@ export interface PurchaseBill {
   readonly status: 'DRAFT' | 'POSTED' | 'CANCELLED';
   readonly totalAmount: number;
   readonly paidAmount: number;
+  readonly returnedAmount: number;
   readonly outstandingAmount: number;
 }
 
@@ -98,6 +99,11 @@ export interface CreatePurchaseDraftRequest {
   readonly quantity: number;
   readonly unitCost: number;
   readonly taxRate: number;
+}
+
+export interface PurchaseCompensationRequest {
+  readonly bill: PurchaseBill;
+  readonly reason: string;
 }
 
 export interface SubscriptionOverview {

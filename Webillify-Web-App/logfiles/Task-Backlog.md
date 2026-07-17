@@ -1,8 +1,22 @@
 # Webillify task backlog
 
-Last prioritized: **2026-07-17 20:16:25 IST**
-Active assignee: **Codex — WBL-FE-016C in progress; BE-007C published as `5dde691`**
+Last prioritized: **2026-07-17 20:25:05 IST**
+Active assignee: **Unassigned — WBL-BE-008 ready after FE-016C publication**
 WIP limit: **One P0 task per engineer**
+
+## Just completed
+
+### WBL-FE-016C — Purchase compensation browser workflow
+
+Status: **COMPLETE — 2026-07-17 20:25:05 IST**
+
+- Mapped live returned value and original bill/return line detail into the purchase repository.
+- Added full-remaining return and safe cancellation operations with unique request idempotency keys.
+- Added accessible inline reason forms, destructive-state copy, visible returned/cancelled projections and live refresh.
+- Hid every purchase mutation for read-only users and prohibited cancel actions after payment or return dependencies.
+- Extended connected desktop/mobile journeys to create/post a real bill, then return or cancel it against the API.
+
+Result: production/development builds, 23 unit tests, 4 connected mutation/accessibility journeys, API 3+57 regressions and both production dependency audits pass at 0 vulnerabilities.
 
 ## Just completed
 
@@ -236,7 +250,8 @@ Status: **COMPLETE — CORE API; accounting/GST fixtures remain an external prod
 | `WBL-BE-007A`    | P0       | Purchase/payables database foundation         | COMPLETE   | Codex              | BE-006          |
 | `WBL-BE-007B`    | P0       | Protected purchase posting/payment APIs       | COMPLETE    | Codex              | BE-007A         |
 | `WBL-BE-007C`    | P0       | Purchase cancellation/return compensation     | COMPLETE    | Codex               | BE-007B         |
-| `WBL-FE-016C`    | P0       | Purchase cancellation/return browser actions  | IN PROGRESS | Codex               | BE-007C         |
+| `WBL-FE-016C`    | P0       | Purchase cancellation/return browser actions  | COMPLETE    | Codex               | BE-007C         |
+| `WBL-BE-008`     | P0       | POS invoice/payment/stock/return persistence  | READY       | Backend/full-stack  | BE-006/007      |
 | `WBL-FE-009`     | P1       | Shared loading/error/toast/confirm UX        | COMPLETE   | Codex              | FE-007          |
 | `WBL-FE-010`     | P1       | Customer list/detail/balance UI              | PLANNED    | Frontend           | Data/API        |
 | `WBL-FE-011`     | P1       | Product create/edit/import UI                | PLANNED    | Frontend           | Catalogue API   |

@@ -9,6 +9,7 @@ import {
   PurchaseBill,
   PurchaseWorkspace,
   CreatePurchaseDraftRequest,
+  PurchaseCompensationRequest,
   SubscriptionOverview,
 } from '../domain/models';
 
@@ -39,6 +40,8 @@ export abstract class PurchaseRepository {
   abstract createDraft(request: CreatePurchaseDraftRequest): Observable<PurchaseBill>;
   abstract postBill(id: string): Observable<PurchaseBill>;
   abstract payOutstanding(bill: PurchaseBill): Observable<PurchaseBill>;
+  abstract cancelBill(request: PurchaseCompensationRequest): Observable<PurchaseBill>;
+  abstract returnRemaining(request: PurchaseCompensationRequest): Observable<PurchaseBill>;
 }
 
 export abstract class SubscriptionRepository {

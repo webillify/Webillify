@@ -1,13 +1,13 @@
 # Webillify risk and issue log
 
-Last reviewed: **2026-07-17 20:15:08 IST**
+Last reviewed: **2026-07-17 20:25:05 IST**
 
 | ID             | Type           | Severity | Risk/issue                                                           | Evidence                                          | Mitigation/next action                                    | Owner                | Status                           |
 | -------------- | -------------- | -------- | -------------------------------------------------------------------- | ------------------------------------------------- | --------------------------------------------------------- | -------------------- | -------------------------------- |
-| `WBL-RISK-001` | Risk           | CRITICAL | Frontend was not integrated with backend persistence                 | Auth/catalogue/stock/purchases/plans browser journeys pass | Continue adapters with FE-016C and BE-008            | Full stack           | MITIGATED — CURRENT SURFACE CONNECTED |
+| `WBL-RISK-001` | Risk           | CRITICAL | Frontend was not integrated with backend persistence                 | Auth/catalogue/stock/purchases/plans browser journeys pass | Continue adapters with BE-008                         | Full stack           | MITIGATED — CURRENT SURFACE CONNECTED |
 | `WBL-RISK-002` | Resolved risk  | HIGH     | Angular used demo auth despite secure identity API being ready       | Real login/token/refresh/tenant browser tests pass | Retain connected auth journey as release gate             | Full stack           | RESOLVED 2026-07-17 19:34:26 IST |
 | `WBL-RISK-003` | Resolved issue | HIGH     | Pages directly imported mock data                                    | No page mock-data imports remain                  | Typed repositories and explicit modes shipped in FE-007   | Frontend             | RESOLVED 2026-07-17 16:51:48 IST |
-| `WBL-RISK-004` | Risk           | HIGH     | Full-stack regression coverage remains incomplete                    | Frontend 19+4 connected and API 3+57 tests pass     | Expand QA-004 as transaction modules land                 | QA/backend           | MITIGATING                       |
+| `WBL-RISK-004` | Risk           | HIGH     | Full-stack regression coverage remains incomplete                    | Frontend 23+4 connected and API 3+57 tests pass     | Expand QA-004 as transaction modules land                 | QA/backend           | MITIGATING                       |
 | `WBL-RISK-005` | Risk           | CRITICAL | Accounting/GST rules lack professional approval                      | Product docs label validation gate                | DOMAIN-001/002 before transaction release                 | Product              | BLOCKED EXTERNAL                 |
 | `WBL-RISK-006` | Resolved risk  | HIGH     | Tenant leakage was untested before tenancy existed                   | SEC-001 cross-tenant/branch/permission matrix pass | Retain matrix as a release-blocking CI gate               | Security/backend     | RESOLVED 2026-07-17 18:07:26 IST |
 | `WBL-RISK-007` | Risk           | MEDIUM   | PWA install/offline behavior lacks browser-device QA                 | Build artifact only                               | Add QA checklist/update prompt                            | Frontend/QA          | OPEN                             |

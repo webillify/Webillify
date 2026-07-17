@@ -74,6 +74,17 @@
   width: 15px;
   height: 15px;
 }
+.read-only-note,
+.read-only-label {
+  color: var(--muted);
+  font-size: 10px;
+}
+.read-only-note {
+  margin-top: 9px;
+}
+.read-only-label {
+  font-weight: 700;
+}
 .bills-panel > header {
   display: flex;
   justify-content: space-between;
@@ -119,10 +130,62 @@
 }
 .bill-actions {
   display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
   justify-content: flex-end;
 }
 .bill-actions .button {
   white-space: nowrap;
+}
+.button--text-danger {
+  padding: 8px 5px;
+  color: #a53d38;
+  border: 0;
+  background: transparent;
+}
+.cancelled-label {
+  color: #a53d38;
+  font-size: 10px;
+  font-weight: 800;
+}
+.compensation-form {
+  grid-column: 1 / -1;
+  padding: 14px;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(260px, 1.1fr);
+  gap: 14px;
+  border: 1px solid #e6c5c1;
+  border-radius: 10px;
+  background: #fff8f7;
+}
+.compensation-form h3 {
+  margin: 4px 0 5px;
+  font-size: 14px;
+}
+.compensation-form p,
+.compensation-form label > span {
+  color: var(--muted);
+  font-size: 10px;
+}
+.compensation-form label > span {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 700;
+}
+.compensation-form textarea {
+  width: 100%;
+  padding: 9px 10px;
+  resize: vertical;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  font: inherit;
+}
+.compensation-form__actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
 }
 .paid-label {
   display: inline-flex;
@@ -160,5 +223,8 @@
   }
   .bill-actions {
     justify-content: flex-start;
+  }
+  .compensation-form {
+    grid-template-columns: 1fr;
   }
 }

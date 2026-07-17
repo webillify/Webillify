@@ -82,6 +82,9 @@ Status: **IN PROGRESS — BE-007C verified; frontend compensation actions ready 
 | 2026-07-17 20:15:08 | SECURITY | Added branch-scoped idempotent replay denial; final lint/build/3-unit/57-integration gate       | PASS        |
 | 2026-07-17 20:16:25 | INFRA    | Pushed verified BE-007C purchase compensation stage to GitHub `main`                           | `5dde691`   |
 | 2026-07-17 20:16:25 | FRONTEND | Assigned FE-016C purchase cancellation and return browser actions                               | IN PROGRESS |
+| 2026-07-17 20:20:00 | FRONTEND | Added remaining-quantity return adapter, safe cancel rules and accessible reason forms          | COMPLETE    |
+| 2026-07-17 20:21:23 | TEST     | Added purchase action/read-only unit matrix                                                      | PASS — 23/23 |
+| 2026-07-17 20:25:05 | TEST     | Production build/audits, 4 connected mutation/accessibility journeys and API 3+57 regression    | PASS         |
 
 ---
 

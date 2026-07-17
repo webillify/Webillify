@@ -21,6 +21,7 @@ import {
   PurchaseBill,
   PurchaseWorkspace,
   CreatePurchaseDraftRequest,
+  PurchaseCompensationRequest,
   SubscriptionOverview,
 } from '../../domain/models';
 import {
@@ -80,8 +81,13 @@ interface ApiPurchaseBill {
   readonly status: 'DRAFT' | 'POSTED' | 'CANCELLED';
   readonly totalAmount: string;
   readonly paidAmount: string;
+  readonly returnedAmount: string;
   readonly outstandingAmount: string;
   readonly supplier: { name: string };
+  readonly items?: Array<{ id: string; quantity: string }>;
+  readonly returns?: Array<{
+    items: Array<{ purchaseBillItemId: string; quantity: string }>;
+  }>;
 }
 
 const KNOWN_PERMISSIONS: readonly Permission[] = [
@@ -418,6 +424,62 @@ export class ApiPurchaseRepository implements PurchaseRepository {
         catchError((error: unknown) => throwError(() => apiError(error))),
       );
   }
+
+  cancelBill(request: PurchaseCompensationRequest): Observable<PurchaseBill> {
+    return this.http
+      .post<{ bill: ApiPurchaseBill }>(
+        `${this.environment.apiBaseUrl}/purchase-bills/${request.bill.id}/cancel`,
+        { reason: request.reason },
+        { headers: new HttpHeaders({ 'Idempotency-Key': crypto.randomUUID() }) },
+      )
+      .pipe(
+        map(({ bill }) => mapBill(bill)),
+        catchError((error: unknown) => throwError(() => apiError(error))),
+      );
+  }
+
+  returnRemaining(request: PurchaseCompensationRequest): Observable<PurchaseBill> {
+    return this.http
+      .get<ApiPurchaseBill>(`${this.environment.apiBaseUrl}/purchase-bills/${request.bill.id}`)
+      .pipe(
+        switchMap((bill) => {
+          const returned = new Map<string, number>();
+          for (const purchaseReturn of bill.returns ?? []) {
+            for (const item of purchaseReturn.items) {
+              returned.set(
+                item.purchaseBillItemId,
+                (returned.get(item.purchaseBillItemId) ?? 0) + Number(item.quantity),
+              );
+            }
+          }
+          const items = (bill.items ?? [])
+            .map((item) => ({
+              purchaseBillItemId: item.id,
+              quantity: Number(item.quantity) - (returned.get(item.id) ?? 0),
+            }))
+            .filter(({ quantity }) => quantity > 0);
+          if (items.length === 0)
+            return throwError(() => new Error('This purchase has no quantity left to return.'));
+          return this.http.post(
+            `${this.environment.apiBaseUrl}/purchase-returns`,
+            {
+              purchaseBillId: bill.id,
+              returnDate: new Date().toISOString().slice(0, 10),
+              reason: request.reason,
+              items,
+            },
+            { headers: new HttpHeaders({ 'Idempotency-Key': crypto.randomUUID() }) },
+          );
+        }),
+        switchMap(() =>
+          this.http.get<ApiPurchaseBill>(
+            `${this.environment.apiBaseUrl}/purchase-bills/${request.bill.id}`,
+          ),
+        ),
+        map(mapBill),
+        catchError((error: unknown) => throwError(() => apiError(error))),
+      );
+  }
 }
 
 @Injectable()
@@ -470,6 +532,7 @@ function mapBill(bill: ApiPurchaseBill): PurchaseBill {
     status: bill.status,
     totalAmount: Number(bill.totalAmount),
     paidAmount: Number(bill.paidAmount),
+    returnedAmount: Number(bill.returnedAmount ?? 0),
     outstandingAmount: Number(bill.outstandingAmount),
   };
 }
