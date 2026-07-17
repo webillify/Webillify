@@ -1,7 +1,7 @@
 # Webillify incomplete work worksheet
 
 Last updated: **2026-07-17 19:06:21 IST**
-In progress: **WBL-BE-007B — protected purchase posting and supplier-payment APIs**
+In progress: **WBL-BE-007B — protected purchase posting and supplier-payment APIs; DB stage published as `6618924`**
 Ready next: **Complete BE-007 API/concurrency/reconciliation stage after verified DB foundation**
 
 ## Ready
