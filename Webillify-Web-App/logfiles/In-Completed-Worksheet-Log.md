@@ -1,7 +1,7 @@
 # Webillify incomplete work worksheet
 
 Last updated: **2026-07-17 19:34:26 IST**
-In progress: **WBL-FE-016B — browser purchase workflow and separate AI/core subscription status**
+In progress: **WBL-FE-016B — browser purchase workflow and separate AI/core subscription status; FE-016A published as `d91a0fa`**
 Ready next: **Complete the currently implemented backend surface in the browser, then BE-007C**
 
 ## Ready

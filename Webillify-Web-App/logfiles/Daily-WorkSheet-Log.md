@@ -65,6 +65,7 @@ Status: **IN PROGRESS — BE-004/SEC-001 complete; GitHub publication retry acti
 | 2026-07-17 19:29:25 | FRONTEND | Added real access-token session, refresh cookie, tenant headers and product/stock adapters  | COMPLETE    |
 | 2026-07-17 19:31:00 | TEST     | Browser login exposed localhost/127.0.0.1 CORS origin mismatch                              | FAILED — FIXED |
 | 2026-07-17 19:34:26 | TEST     | Frontend build, 19 unit tests and 4 desktop/mobile connected browser journeys               | PASS        |
+| 2026-07-17 19:36:38 | INFRA    | Pushed connected auth/catalogue/stock browser stage to GitHub `main`                         | `d91a0fa`   |
 
 ---
 
