@@ -1,8 +1,21 @@
 # Webillify task backlog
 
-Last prioritized: **2026-07-17 18:46:55 IST**
-Active assignee: **Unassigned — WBL-BE-007 ready next**
+Last prioritized: **2026-07-17 19:06:21 IST**
+Active assignee: **Codex — WBL-BE-007B in progress**
 WIP limit: **One P0 task per engineer**
+
+## Just completed
+
+### WBL-BE-007A — Purchases/payables database foundation
+
+Status: **COMPLETE — 2026-07-17 19:06:21 IST**
+
+- Added tenant-scoped suppliers, purchase bills/items, supplier payments and allocations.
+- Preserved purchase tax/cost snapshots and prohibited duplicate supplier invoice references per company.
+- Enforced nonnegative money, positive quantities/payments, tenant ownership and append-only posted records in PostgreSQL.
+- Added deterministic draft data and regression tests proving a draft has no stock effect and may be deleted before posting.
+
+Result: migration/seed/schema/drift/lint/build/audit pass with 3 unit and 43 integration tests. `WBL-BE-007B` remains active for protected endpoints and atomic stock/payable effects.
 
 ## Just completed
 
@@ -167,7 +180,8 @@ Status: **READY — accounting/GST fixtures remain an external production gate**
 | `WBL-SEC-001`    | P0       | Tenant/branch authorization harness          | COMPLETE   | Codex              | BE-002/004      |
 | `WBL-BE-005`     | P0       | Core and separate AI entitlements            | COMPLETE   | Codex              | BE-004          |
 | `WBL-BE-006`     | P0       | Catalogue and immutable inventory ledger     | COMPLETE   | Codex              | BE-005          |
-| `WBL-BE-007`     | P0       | Purchases, payments and payables              | READY      | Backend/domain     | BE-006          |
+| `WBL-BE-007A`    | P0       | Purchase/payables database foundation         | COMPLETE   | Codex              | BE-006          |
+| `WBL-BE-007B`    | P0       | Protected purchase posting/payment APIs       | IN PROGRESS | Codex             | BE-007A         |
 | `WBL-FE-009`     | P1       | Shared loading/error/toast/confirm UX        | COMPLETE   | Codex              | FE-007          |
 | `WBL-FE-010`     | P1       | Customer list/detail/balance UI              | PLANNED    | Frontend           | Data/API        |
 | `WBL-FE-011`     | P1       | Product create/edit/import UI                | PLANNED    | Frontend           | Catalogue API   |

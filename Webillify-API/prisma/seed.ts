@@ -26,6 +26,9 @@ const ids = {
   barcode: 'b0000000-0000-4000-8000-000000000001',
   warehouse: 'c0000000-0000-4000-8000-000000000001',
   openingStockSource: 'd0000000-0000-4000-8000-000000000001',
+  supplier: 'e0000000-0000-4000-8000-000000000001',
+  purchaseBill: 'f0000000-0000-4000-8000-000000000001',
+  purchaseBillItem: 'f1000000-0000-4000-8000-000000000001',
 };
 
 const permissionDefinitions = [
@@ -627,6 +630,74 @@ async function main(): Promise<void> {
       variantId: variant.id,
       quantity: '100.000',
       averageCost: '45.0000',
+    },
+  });
+
+  const supplier = await prisma.supplier.upsert({
+    where: {
+      organizationId_normalizedCode: {
+        organizationId: organization.id,
+        normalizedCode: 'DEMO-SUPPLIER',
+      },
+    },
+    update: { name: 'Demo Wholesale Supplier', active: true },
+    create: {
+      id: ids.supplier,
+      organizationId: organization.id,
+      normalizedCode: 'DEMO-SUPPLIER',
+      name: 'Demo Wholesale Supplier',
+      normalizedName: 'demo wholesale supplier',
+      gstin: '33ABCDE1234F1Z5',
+      creditDays: 30,
+    },
+  });
+  const purchaseBill = await prisma.purchaseBill.upsert({
+    where: {
+      organizationId_companyId_supplierId_normalizedReference: {
+        organizationId: organization.id,
+        companyId: company.id,
+        supplierId: supplier.id,
+        normalizedReference: 'DEMO-INV-001',
+      },
+    },
+    update: {},
+    create: {
+      id: ids.purchaseBill,
+      organizationId: organization.id,
+      companyId: company.id,
+      branchId: branch.id,
+      warehouseId: warehouse.id,
+      supplierId: supplier.id,
+      supplierInvoiceReference: 'DEMO-INV-001',
+      normalizedReference: 'DEMO-INV-001',
+      invoiceDate: new Date('2026-07-15T00:00:00.000Z'),
+      dueDate: new Date('2026-08-14T00:00:00.000Z'),
+      taxableValue: '45.00',
+      cgstAmount: '1.13',
+      sgstAmount: '1.12',
+      totalAmount: '47.25',
+      outstandingAmount: '47.25',
+      inputTaxEligible: true,
+    },
+  });
+  await prisma.purchaseBillItem.upsert({
+    where: { id: ids.purchaseBillItem },
+    update: {},
+    create: {
+      id: ids.purchaseBillItem,
+      organizationId: organization.id,
+      purchaseBillId: purchaseBill.id,
+      variantId: variant.id,
+      description: 'Premium Rice 1 kg',
+      hsnSac: '1006',
+      quantity: '1.000',
+      unitCost: '45.0000',
+      taxableValue: '45.00',
+      taxRate: '5.00',
+      cgstAmount: '1.13',
+      sgstAmount: '1.12',
+      lineTotal: '47.25',
+      inputTaxEligible: true,
     },
   });
 }

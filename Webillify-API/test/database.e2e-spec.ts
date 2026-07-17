@@ -150,6 +150,178 @@ describe('PostgreSQL identity and tenancy schema', () => {
     ).rejects.toThrow();
   });
 
+  it('loads the seeded supplier and draft bill without changing stock', async () => {
+    const bill = await prisma.purchaseBill.findUniqueOrThrow({
+      where: {
+        organizationId_companyId_supplierId_normalizedReference: {
+          organizationId: '20000000-0000-4000-8000-000000000001',
+          companyId: '30000000-0000-4000-8000-000000000001',
+          supplierId: 'e0000000-0000-4000-8000-000000000001',
+          normalizedReference: 'DEMO-INV-001',
+        },
+      },
+      include: { supplier: true, items: true },
+    });
+
+    expect(bill).toMatchObject({
+      status: 'DRAFT',
+      supplierInvoiceReference: 'DEMO-INV-001',
+      inputTaxEligible: true,
+      supplier: {
+        normalizedCode: 'DEMO-SUPPLIER',
+        name: 'Demo Wholesale Supplier',
+      },
+    });
+    expect(bill.totalAmount.toString()).toBe('47.25');
+    expect(bill.outstandingAmount.toString()).toBe('47.25');
+    expect(bill.items).toHaveLength(1);
+    expect(bill.items[0]).toMatchObject({
+      description: 'Premium Rice 1 kg',
+      hsnSac: '1006',
+      inputTaxEligible: true,
+    });
+    expect(bill.items[0].quantity.toString()).toBe('1');
+
+    const stock = await prisma.stockBalance.findUniqueOrThrow({
+      where: {
+        organizationId_warehouseId_variantId: {
+          organizationId: bill.organizationId,
+          warehouseId: bill.warehouseId,
+          variantId: bill.items[0].variantId,
+        },
+      },
+    });
+    expect(stock.quantity.toString()).toBe('100');
+  });
+
+  it('rejects duplicate supplier invoice references within a company', async () => {
+    const seeded = await prisma.purchaseBill.findUniqueOrThrow({
+      where: { id: 'f0000000-0000-4000-8000-000000000001' },
+    });
+
+    await expect(
+      prisma.purchaseBill.create({
+        data: {
+          organizationId: seeded.organizationId,
+          companyId: seeded.companyId,
+          branchId: seeded.branchId,
+          warehouseId: seeded.warehouseId,
+          supplierId: seeded.supplierId,
+          supplierInvoiceReference: ' demo-inv-001 ',
+          normalizedReference: 'DEMO-INV-001',
+          invoiceDate: seeded.invoiceDate,
+        },
+      }),
+    ).rejects.toThrow();
+  });
+
+  it('rejects cross-tenant supplier ownership and invalid purchase amounts', async () => {
+    const seeded = await prisma.purchaseBill.findUniqueOrThrow({
+      where: { id: 'f0000000-0000-4000-8000-000000000001' },
+      include: { items: true },
+    });
+    const otherOrganization = await prisma.organization.create({
+      data: {
+        name: 'Purchase Isolation Tenant',
+        slug: `purchase-isolation-${randomUUID()}`,
+      },
+    });
+
+    try {
+      await expect(
+        prisma.purchaseBill.create({
+          data: {
+            organizationId: otherOrganization.id,
+            companyId: seeded.companyId,
+            branchId: seeded.branchId,
+            warehouseId: seeded.warehouseId,
+            supplierId: seeded.supplierId,
+            supplierInvoiceReference: 'CROSS-TENANT',
+            normalizedReference: 'cross-tenant',
+            invoiceDate: new Date(),
+          },
+        }),
+      ).rejects.toThrow();
+
+      await expect(
+        prisma.purchaseBillItem.create({
+          data: {
+            organizationId: seeded.organizationId,
+            purchaseBillId: seeded.id,
+            variantId: seeded.items[0].variantId,
+            description: 'Invalid zero quantity',
+            quantity: '0.000',
+            unitCost: '45.0000',
+            taxableValue: '0.00',
+            taxRate: '5.00',
+            lineTotal: '0.00',
+          },
+        }),
+      ).rejects.toThrow();
+    } finally {
+      await prisma.organization.delete({ where: { id: otherOrganization.id } });
+    }
+  });
+
+  it('makes posted purchase bills immutable at the database boundary', async () => {
+    const seeded = await prisma.purchaseBill.findUniqueOrThrow({
+      where: { id: 'f0000000-0000-4000-8000-000000000001' },
+    });
+
+    await expect(
+      prisma.$transaction(async (transaction) => {
+        const bill = await transaction.purchaseBill.create({
+          data: {
+            organizationId: seeded.organizationId,
+            companyId: seeded.companyId,
+            branchId: seeded.branchId,
+            warehouseId: seeded.warehouseId,
+            supplierId: seeded.supplierId,
+            supplierInvoiceReference: `IMMUTABLE-${randomUUID()}`,
+            normalizedReference: `immutable-${randomUUID()}`,
+            invoiceDate: new Date(),
+          },
+        });
+        await transaction.purchaseBill.update({
+          where: { id: bill.id },
+          data: {
+            status: 'POSTED',
+            postingIdempotencyKey: `schema-test-${randomUUID()}`,
+            postedAt: new Date(),
+            postedByUserId: '10000000-0000-4000-8000-000000000001',
+          },
+        });
+        await transaction.purchaseBill.update({
+          where: { id: bill.id },
+          data: { supplierInvoiceReference: 'MUTATED' },
+        });
+      }),
+    ).rejects.toThrow(/posted purchase bills are immutable/);
+  });
+
+  it('allows a draft purchase bill to be deleted before posting', async () => {
+    const seeded = await prisma.purchaseBill.findUniqueOrThrow({
+      where: { id: 'f0000000-0000-4000-8000-000000000001' },
+    });
+    const bill = await prisma.purchaseBill.create({
+      data: {
+        organizationId: seeded.organizationId,
+        companyId: seeded.companyId,
+        branchId: seeded.branchId,
+        warehouseId: seeded.warehouseId,
+        supplierId: seeded.supplierId,
+        supplierInvoiceReference: `DELETABLE-${randomUUID()}`,
+        normalizedReference: `DELETABLE-${randomUUID()}`,
+        invoiceDate: new Date(),
+      },
+    });
+
+    const deleted = await prisma.purchaseBill.delete({
+      where: { id: bill.id },
+    });
+    expect(deleted.id).toBe(bill.id);
+  });
+
   it('rejects a product linked to another tenant unit', async () => {
     const demoUnit = await prisma.unit.findFirstOrThrow({
       where: { organization: { slug: 'webillify-demo-retail' } },

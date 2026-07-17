@@ -1,14 +1,14 @@
 # Webillify incomplete work worksheet
 
-Last updated: **2026-07-17 18:48:44 IST**
-In progress: **None — WBL-BE-006 verified and published as `1c27559`**
-Ready next: **WBL-BE-007 purchases and payables**
+Last updated: **2026-07-17 19:06:21 IST**
+In progress: **WBL-BE-007B — protected purchase posting and supplier-payment APIs**
+Ready next: **Complete BE-007 API/concurrency/reconciliation stage after verified DB foundation**
 
 ## Ready
 
 | Task ID      | Priority | Module/outcome                 | Assignee | Status      |
 | ------------ | -------- | ------------------------------ | -------- | ----------- |
-| `WBL-BE-007` | P0       | Purchases and payables | Unassigned | READY |
+| `WBL-BE-007B` | P0      | Protected purchase posting/payment APIs | Codex | IN PROGRESS |
 
 ## Planned frontend
 
@@ -32,7 +32,8 @@ Ready next: **WBL-BE-007 purchases and payables**
 | `WBL-BE-004`    | P0           | Organization/branch/RBAC              | COMPLETE    |
 | `WBL-BE-005`    | P0           | Core and AI subscription entitlements | COMPLETE    |
 | `WBL-BE-006`    | P0           | Catalogue and inventory ledger        | COMPLETE    |
-| `WBL-BE-007`    | P0           | Purchases and payables                | PLANNED     |
+| `WBL-BE-007A`   | P0           | Purchases/payables database foundation | COMPLETE    |
+| `WBL-BE-007B`   | P0           | Purchase/payable API and posting effects | IN PROGRESS |
 | `WBL-BE-008`    | P0           | POS/invoice/payment/returns           | PLANNED     |
 | `WBL-BE-009`    | P1           | Reports/exports/closing               | PLANNED     |
 | `WBL-QA-002`    | P0           | Feature unit tests                    | COMPLETE    |

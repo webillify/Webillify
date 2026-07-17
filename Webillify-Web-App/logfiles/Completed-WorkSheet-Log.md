@@ -1,6 +1,6 @@
 # Webillify completed work worksheet
 
-Last updated: **2026-07-17 18:46:55 IST**
+Last updated: **2026-07-17 19:06:21 IST**
 
 | Task ID         | Completed (IST)     | Module/deliverable                                                            | Evidence                                       | Verification                                  |
 | --------------- | ------------------- | ----------------------------------------------------------------------------- | ---------------------------------------------- | --------------------------------------------- |
@@ -30,5 +30,6 @@ Last updated: **2026-07-17 18:46:55 IST**
 | `WBL-SETUP-004` | 2026-07-17 18:09:39 | Published complete root repository history to requested GitHub `main`          | `origin/main`                                  | Push succeeded; upstream tracking configured |
 | `WBL-BE-005`    | 2026-07-17 18:22:53 | Versioned core entitlements and separately billed AI lifecycle/credit service  | `src/modules/subscriptions/`, Prisma migration | 3 unit + 26 integration; concurrency PASS    |
 | `WBL-BE-006`    | 2026-07-17 18:46:55 | Tenant catalogue and immutable stock ledger with protected APIs                 | `src/modules/catalogue/`, Prisma migration     | 3 unit + 38 integration; reconciliation PASS |
+| `WBL-BE-007A`   | 2026-07-17 19:06:21 | Purchase/payables database foundation and deterministic draft fixture           | Prisma schema, migration, seed, DB E2E         | 3 unit + 43 integration; drift/audit PASS    |
 
 `R0 — Frontend foundation` is complete as a **demo baseline**, not a production billing application. Backend, real authentication, persistence and transaction integrity remain pending.

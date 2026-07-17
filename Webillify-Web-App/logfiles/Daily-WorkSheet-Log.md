@@ -49,6 +49,11 @@ Status: **IN PROGRESS — BE-004/SEC-001 complete; GitHub publication retry acti
 | 2026-07-17 18:44:30 | TEST     | Added permission, tenant, idempotency, negative-stock and concurrency matrix      | COMPLETE      |
 | 2026-07-17 18:46:55 | TEST     | Full migration/seed/lint/build/audit, 3 unit and 38 integration suite             | PASS          |
 | 2026-07-17 18:48:44 | INFRA    | Pushed completed BE-006 protected catalogue/inventory API stage to GitHub          | `1c27559`     |
+| 2026-07-17 18:50:00 | BACKEND  | Assigned BE-007 purchases/payables; split database and protected API publication stages | IN PROGRESS |
+| 2026-07-17 18:58:00 | DATABASE | Added tenant suppliers, purchase drafts/items, payable payments and allocations         | COMPLETE    |
+| 2026-07-17 19:02:00 | DATABASE | Added duplicate-reference, amount, ownership and posted-record immutability constraints | COMPLETE    |
+| 2026-07-17 19:03:30 | TEST     | Targeted suite exposed wrong fixture IDs, identifier drift and draft-delete trigger bug | FAILED — FIXED |
+| 2026-07-17 19:06:21 | TEST     | Deploy/seed/schema/drift/lint/build/audit, 3 unit and 43 integration tests               | PASS        |
 
 ---
 
