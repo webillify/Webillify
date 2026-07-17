@@ -1,7 +1,7 @@
 # Webillify incomplete work worksheet
 
-Last updated: **2026-07-17 18:31:45 IST**
-In progress: **WBL-BE-006 — database/immutable-ledger contract verified; API stage next**
+Last updated: **2026-07-17 18:32:35 IST**
+In progress: **WBL-BE-006 — database stage published as `5c18bb7`; API stage next**
 Ready after current: **WBL-BE-007 purchases and payables**
 
 ## Ready
