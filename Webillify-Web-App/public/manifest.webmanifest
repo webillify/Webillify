@@ -1,0 +1,18 @@
+{
+  "name": "Webillify",
+  "short_name": "Webillify",
+  "description": "Smart billing, POS and inventory for Indian retailers.",
+  "theme_color": "#10241f",
+  "background_color": "#f5f7f6",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/dashboard",
+  "icons": [
+    {
+      "src": "icons/webillify.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+| Role                 | Access                            |
+| -------------------- | --------------------------------- |
+| Platform Super Admin | Entire SaaS                       |
+| Organization Owner   | Company settings and subscription |
+| Branch Admin         | Branch operations                 |
+| Store Manager        | Sales, stock and reports          |
+| Cashier              | POS and basic customer access     |
+| Accountant           | Purchases, expenses, reports      |
+| Inventory Staff      | Products and stock                |
+| Auditor              | Read-only                         |
+| Support Agent        | Controlled troubleshooting        |

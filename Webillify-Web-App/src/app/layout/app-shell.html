@@ -1,0 +1,108 @@
+<div class="app-frame">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <aside id="primary-sidebar" class="sidebar" [class.sidebar--open]="mobileNavOpen()">
+    <div class="brand-row">
+      <a class="brand" routerLink="/dashboard" (click)="mobileNavOpen.set(false)">
+        <span class="brand__mark">W</span>
+        <span>Webillify</span>
+      </a>
+      <button
+        class="icon-button sidebar__close"
+        type="button"
+        aria-label="Close navigation"
+        (click)="mobileNavOpen.set(false)"
+      >
+        <app-icon name="close" />
+      </button>
+    </div>
+
+    <div class="branch-picker">
+      <span class="branch-picker__icon"><app-icon name="store" /></span>
+      <span><small>Current branch</small><strong>Ageera · Chennai</strong></span>
+      <app-icon name="chevron" />
+    </div>
+
+    <nav class="side-nav" aria-label="Primary navigation">
+      <span class="side-nav__label">Workspace</span>
+      @for (item of navItems(); track item.route) {
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="is-active"
+          ariaCurrentWhenActive="page"
+          (click)="mobileNavOpen.set(false)"
+        >
+          <app-icon [name]="item.icon" />
+          <span>{{ item.label }}</span>
+        </a>
+      }
+      <span class="side-nav__label side-nav__label--space">Manage</span>
+      <a
+        *appCan="'settings.manage'"
+        routerLink="/settings"
+        routerLinkActive="is-active"
+        ariaCurrentWhenActive="page"
+        (click)="mobileNavOpen.set(false)"
+      >
+        <app-icon name="settings" /><span>Settings</span>
+      </a>
+    </nav>
+
+    <div *appCan="'ai.use'" class="ai-card">
+      <span class="ai-card__icon"><app-icon name="sparkles" /></span>
+      <div>
+        <strong>Webillify AI</strong>
+        <p>Separate plan · 1,224 credits left</p>
+      </div>
+      <button type="button" aria-label="Open AI plan"><app-icon name="arrow" /></button>
+    </div>
+
+    <div class="profile-card">
+      <span class="avatar">{{ auth.initials() }}</span>
+      <span
+        ><strong>{{ auth.user()?.displayName }}</strong
+        ><small>{{ auth.user()?.role }}</small></span
+      >
+      <button type="button" aria-label="Sign out" (click)="signOut()">
+        <app-icon name="logout" />
+      </button>
+    </div>
+  </aside>
+
+  @if (mobileNavOpen()) {
+    <button
+      class="nav-backdrop"
+      type="button"
+      aria-label="Close navigation"
+      (click)="mobileNavOpen.set(false)"
+    ></button>
+  }
+
+  <div class="app-main">
+    <header class="topbar">
+      <button
+        class="icon-button mobile-menu"
+        type="button"
+        aria-label="Open navigation"
+        [attr.aria-expanded]="mobileNavOpen()"
+        aria-controls="primary-sidebar"
+        (click)="mobileNavOpen.set(true)"
+      >
+        <app-icon name="menu" />
+      </button>
+      <label class="global-search">
+        <span class="visually-hidden">Search invoices, products and customers</span>
+        <app-icon name="search" />
+        <input type="search" placeholder="Search invoices, products, customers…" />
+        <kbd>⌘ K</kbd>
+      </label>
+      <div class="topbar__actions">
+        <span class="sync-state"><i></i> Synced</span>
+        <button class="icon-button notification-button" type="button" aria-label="Notifications">
+          <app-icon name="bell" /><span></span>
+        </button>
+        <span class="topbar-avatar" aria-hidden="true">{{ auth.initials() }}</span>
+      </div>
+    </header>
+    <main id="main-content" class="page-shell" tabindex="-1"><router-outlet /></main>
+  </div>
+</div>

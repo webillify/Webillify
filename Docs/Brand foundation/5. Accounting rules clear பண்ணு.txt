@@ -1,0 +1,28 @@
+Billing app build பண்ணுவது UI மட்டும் இல்லை. Transaction rules தவறானால் entire product useless.
+
+Define:
+
+Sale invoice debit/credit impact
+Purchase bill
+Cash payment
+Bank receipt
+Customer credit
+Supplier payable
+Sales return
+Purchase return
+Discount
+Round-off
+GST CGST / SGST / IGST
+Input tax / output tax
+Stock valuation method
+Cancelled invoice behaviour
+Financial-year reset
+Invoice-number locking
+
+ஒரு accountant அல்லது Tally expert உடன் குறைந்தது 2–3 sessions நடத்துவது smart move.
+
+Create:
+
+docs/ACCOUNTING-RULES.md
+docs/GST-WORKFLOW.md
+docs/INVENTORY-RULES.md

@@ -1,0 +1,58 @@
+name: Webillify CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    name: Frontend quality gate
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Webillify-Web-App
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: Webillify-Web-App/package-lock.json
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Check formatting
+        run: npx prettier --check "src/**/*.{ts,html,scss}" "e2e/**/*.ts" "logfiles/*.md" playwright.config.ts package.json
+
+      - name: Run unit tests
+        run: npm test -- --watch=false
+
+      - name: Build production PWA
+        run: npm run build
+
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Run Chrome E2E and accessibility tests
+        run: npm run test:e2e
+
+      - name: Upload E2E report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: Webillify-Web-App/playwright-report
+          retention-days: 7

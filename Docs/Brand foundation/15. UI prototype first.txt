@@ -1,0 +1,23 @@
+Coding முன் Figma அல்லது simple HTML prototype உருவாக்கு:
+
+Login
+Dashboard
+POS screen
+Product creation
+Purchase entry
+Customer ledger
+Supplier ledger
+Stock summary
+Daily closing
+Subscription page
+Mobile dashboard
+
+POS screenக்கு focus:
+
+Big touch targets
+Keyboard shortcuts
+Barcode-first workflow
+Fast product search
+Minimal clicks
+Clear payment buttons
+Thermal-print preview

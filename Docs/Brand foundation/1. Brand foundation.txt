@@ -1,0 +1,41 @@
+Webillify start பண்ணுவதற்கு முன் coding-க்கு jump பண்ணாதே. முதலில் product clarity + accounting workflow + legalcompliance + MVP scope fix பண்ணணும். இல்லையெனில் Odoo மாதிரி எல்லாவற்றையும் build பண்ண முயற்சி செய்து project over-size ஆகிடும்.
+
+1. Brand foundation
+
+Final name
+
+Webillify
+
+Meaning
+
+Web + Bill + ify
+
+இதையும் fix பண்ணு
+
+Tagline
+Logo direction
+Primary colour palette
+Product domain
+Social handles
+Support email
+Product ownership statement
+
+Recommended positioning
+
+Webillify — Ai Based Smart Billing, POS & Business Management
+
+Ownership
+
+A product of Webshopify India
+Created by IAMPMPKSAMY
+
+Domain shortlist
+
+webillify.com
+webillify.in
+app.webillify.com
+api.webillify.com
+status.webillify.com
+docs.webillify.com
+
+Domain வாங்குவதற்கு முன் brand-name, app-store name, social handle, and trademark conflict basic search பண்ணு.

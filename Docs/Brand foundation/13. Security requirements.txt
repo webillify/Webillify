@@ -1,0 +1,22 @@
+Minimum:
+
+Hashed passwords
+JWT rotation
+Refresh-token revocation
+Tenant isolation
+Row-level organization checks
+API rate limiting
+Input validation
+Audit logs
+Encrypted secrets
+Backup encryption
+Login history
+Sensitive-action confirmation
+Admin impersonation audit
+Invoice tamper protection
+
+Critical rule:
+
+One organization must never see another organization’s customers, sales, invoices or stock.
+
+Multi-tenant data-leak test mandatory.

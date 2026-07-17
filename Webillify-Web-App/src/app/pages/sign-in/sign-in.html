@@ -1,0 +1,103 @@
+<main class="auth-page">
+  <section class="auth-story">
+    <a class="brand brand--light" routerLink="/dashboard"
+      ><span class="brand__mark">W</span><span>Webillify</span></a
+    >
+    <div class="auth-story__content">
+      <span class="auth-kicker"><app-icon name="sparkles" /> Retail, made remarkably simple</span>
+      <h1>Run your business.<br /><em>Not your software.</em></h1>
+      <p>
+        Billing, stock, purchases and daily decisions—together in one calm workspace built for
+        Indian retail.
+      </p>
+      <div class="auth-proof">
+        <span class="avatar-stack"><i>AS</i><i>VK</i><i>PK</i></span
+        ><span
+          ><strong>Built with local retailers</strong
+          ><small>Home appliances · Grocery · Multi-branch</small></span
+        >
+      </div>
+    </div>
+    <div class="auth-visual">
+      <span class="floating-card floating-card--one"
+        ><small>Today’s sales</small><strong>₹48,290</strong><em>↗ 12.5%</em></span
+      >
+      <span class="floating-card floating-card--two"
+        ><app-icon name="check" /><span
+          ><strong>Invoice paid</strong><small>WBL-0248 · ₹1,240</small></span
+        ></span
+      >
+      <div class="auth-orb"></div>
+    </div>
+    <footer>© 2026 Webillify · A product of Webshopify India</footer>
+  </section>
+  <section class="auth-form-wrap">
+    <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()">
+      <div class="mobile-auth-brand">
+        <a class="brand" routerLink="/dashboard"
+          ><span class="brand__mark">W</span><span>Webillify</span></a
+        >
+      </div>
+      <span class="eyebrow">Welcome back</span>
+      <h2>Sign in to your workspace</h2>
+      <p>Use the prefilled demo account to explore this first build.</p>
+      <label
+        ><span>Email address</span
+        ><input
+          id="sign-in-email"
+          type="email"
+          formControlName="email"
+          autocomplete="email"
+          [attr.aria-invalid]="form.controls.email.touched && form.controls.email.invalid"
+          [attr.aria-describedby]="
+            form.controls.email.touched && form.controls.email.invalid ? 'email-error' : null
+          "
+        />
+        @if (form.controls.email.touched && form.controls.email.invalid) {
+          <small id="email-error">Enter a valid email address.</small>
+        }
+      </label>
+      <label
+        ><span>Password</span>
+        <div class="password-field">
+          <input
+            [type]="passwordVisible() ? 'text' : 'password'"
+            formControlName="password"
+            autocomplete="current-password"
+            [attr.aria-invalid]="form.controls.password.touched && form.controls.password.invalid"
+            [attr.aria-describedby]="
+              form.controls.password.touched && form.controls.password.invalid
+                ? 'password-error'
+                : null
+            "
+          /><button type="button" (click)="passwordVisible.update((value) => !value)">
+            {{ passwordVisible() ? 'Hide' : 'Show' }}
+          </button>
+        </div>
+        @if (form.controls.password.touched && form.controls.password.invalid) {
+          <small id="password-error">Enter at least 6 characters.</small>
+        }
+      </label>
+      <div class="auth-options">
+        <label><input type="checkbox" formControlName="remember" /> Remember me</label
+        ><button type="button">Forgot password?</button>
+      </div>
+      @if (authState().status === 'error') {
+        <div class="data-state-banner data-state-banner--error" role="alert">
+          {{ authState().error }}
+        </div>
+      }
+      <button class="auth-submit" type="submit" [disabled]="authState().status === 'loading'">
+        {{ authState().status === 'loading' ? 'Signing in…' : 'Sign in' }}
+        <app-icon name="arrow" />
+      </button>
+      <div class="demo-credentials">
+        <app-icon name="check" /><span
+          ><strong>Demo access is ready</strong
+          ><small>No backend account will be created.</small></span
+        >
+      </div>
+      <p class="auth-legal">By continuing, you agree to the Terms and Privacy Policy.</p>
+    </form>
+  </section>
+</main>

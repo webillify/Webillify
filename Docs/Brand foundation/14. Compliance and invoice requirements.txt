@@ -1,0 +1,15 @@
+India retail billing என்பதால் plan செய்ய வேண்டியது:
+
+GSTIN
+HSN/SAC
+CGST / SGST / IGST
+Tax invoice format
+Credit note
+Debit note
+Financial-year invoice series
+Business address
+Place of supply
+Composition taxpayer support later
+E-invoice/e-way bill later, depending on customer segment
+
+Legal/accounting validation இல்லாமல் “GST compliant” என்று market பண்ணாதே.

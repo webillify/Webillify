@@ -1,0 +1,19 @@
+Version 1க்கு 2–3 pilot businesses போதும்.
+
+Possible pilots:
+
+Vetri Home Appliances
+Ageera
+Another local retail shop
+
+Pilot agreement clear ஆகணும்:
+
+Demo / beta product
+Data backup responsibility
+Feedback expectation
+Free period
+Custom request limits
+Production-use disclaimer
+Support timing
+
+ஒரு business கேட்ட ஒவ்வொரு feature-யும் product core feature ஆக வேண்டிய அவசியம் இல்லை.

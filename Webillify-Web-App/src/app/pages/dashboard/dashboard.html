@@ -1,0 +1,199 @@
+<section class="page-heading">
+  <div>
+    <span class="eyebrow">Friday, 17 July</span>
+    <h1>Good afternoon, Samy.</h1>
+    <p>Here’s what’s happening across Ageera today.</p>
+  </div>
+  <div class="heading-actions">
+    <button class="button button--secondary"><app-icon name="calendar" /> 17 Jul 2026</button>
+    <a class="button button--primary" routerLink="/pos"><app-icon name="plus" /> New sale</a>
+  </div>
+</section>
+
+<div class="demo-strip">
+  <span>Demo workspace</span> Numbers shown here are local sample data until the API is connected.
+</div>
+
+<app-data-state
+  [status]="state().status"
+  loadingMessage="Loading dashboard data…"
+  [errorMessage]="state().error"
+  emptyTitle="No dashboard activity yet"
+  emptyMessage="Sales and stock activity will appear here after the first transaction."
+/>
+
+<section class="metric-grid" aria-label="Business summary">
+  <article class="metric-card metric-card--revenue">
+    <div class="metric-card__top">
+      <span class="metric-icon"><app-icon name="rupee" /></span
+      ><span class="trend trend--up">↗ 12.5%</span>
+    </div>
+    <span class="metric-card__label">Today’s sales</span>
+    <strong>₹48,290</strong>
+    <small>₹42,923 this time yesterday</small>
+  </article>
+  <article class="metric-card">
+    <div class="metric-card__top">
+      <span class="metric-icon metric-icon--blue"><app-icon name="receipt" /></span
+      ><span class="trend trend--up">↗ 8.2%</span>
+    </div>
+    <span class="metric-card__label">Invoices</span>
+    <strong>38</strong>
+    <small>Average value ₹1,271</small>
+  </article>
+  <article class="metric-card">
+    <div class="metric-card__top">
+      <span class="metric-icon metric-icon--amber"><app-icon name="warning" /></span
+      ><span class="metric-badge">Needs attention</span>
+    </div>
+    <span class="metric-card__label">Low stock items</span>
+    <strong>12</strong>
+    <small>3 items are currently out of stock</small>
+  </article>
+  <article class="metric-card">
+    <div class="metric-card__top">
+      <span class="metric-icon metric-icon--purple"><app-icon name="users" /></span
+      ><span class="trend trend--down">↘ 3.1%</span>
+    </div>
+    <span class="metric-card__label">Receivables</span>
+    <strong>₹86,450</strong>
+    <small>Across 17 customers</small>
+  </article>
+</section>
+
+<section class="dashboard-grid">
+  <article class="panel sales-chart-panel">
+    <header class="panel__header">
+      <div>
+        <h2>Sales overview</h2>
+        <p>Revenue performance for this month</p>
+      </div>
+      <div class="segmented-control">
+        @for (item of ['Today', 'Week', 'Month']; track item) {
+          <button type="button" [class.is-active]="period() === item" (click)="period.set(item)">
+            {{ item }}
+          </button>
+        }
+      </div>
+    </header>
+    <div class="chart-summary">
+      <strong>₹6.48L</strong><span class="trend trend--up">↗ 18.4%</span
+      ><small>vs previous period</small>
+    </div>
+    <div class="bar-chart" role="img" aria-label="Sample sales chart for the selected period">
+      <div class="chart-lines"><span></span><span></span><span></span><span></span></div>
+      @for (bar of bars(); track $index) {
+        <div class="bar-column">
+          <i [style.height.%]="bar"></i><small>{{ $index + 1 }}</small>
+        </div>
+      }
+    </div>
+  </article>
+
+  <article class="panel quick-panel">
+    <header class="panel__header">
+      <div>
+        <h2>Quick actions</h2>
+        <p>Jump back into daily work</p>
+      </div>
+    </header>
+    <div class="quick-grid">
+      <a routerLink="/pos"
+        ><span class="quick-icon quick-icon--green"><app-icon name="pos" /></span
+        ><strong>New sale</strong><small>Open POS</small></a
+      >
+      <a routerLink="/products"
+        ><span class="quick-icon quick-icon--blue"><app-icon name="box" /></span
+        ><strong>Add product</strong><small>Update catalogue</small></a
+      >
+      <a routerLink="/purchases"
+        ><span class="quick-icon quick-icon--purple"><app-icon name="cart" /></span
+        ><strong>Purchase</strong><small>Record stock-in</small></a
+      >
+      <a routerLink="/customers"
+        ><span class="quick-icon quick-icon--amber"><app-icon name="users" /></span
+        ><strong>Receipt</strong><small>Record payment</small></a
+      >
+    </div>
+    <div class="ai-insight">
+      <span><app-icon name="sparkles" /></span>
+      <div>
+        <small>AI insight</small><strong>Sales are 18% higher this week.</strong>
+        <p>Appliances contributed most of the increase.</p>
+      </div>
+      <button type="button" aria-label="Open AI sales insight"><app-icon name="arrow" /></button>
+    </div>
+  </article>
+</section>
+
+<section class="dashboard-lower-grid">
+  <article class="panel recent-panel">
+    <header class="panel__header">
+      <div>
+        <h2>Recent sales</h2>
+        <p>Latest invoices from this branch</p>
+      </div>
+      <a routerLink="/reports">View all <app-icon name="arrow" /></a>
+    </header>
+    <div class="table-wrap">
+      <table>
+        <caption class="visually-hidden">
+          Recent sales for the current branch
+        </caption>
+        <thead>
+          <tr>
+            <th>Invoice</th>
+            <th>Customer</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (sale of recentSales(); track sale.invoice) {
+            <tr>
+              <td>
+                <strong>{{ sale.invoice }}</strong>
+              </td>
+              <td>{{ sale.customer }}</td>
+              <td>{{ sale.time }}</td>
+              <td>
+                <span class="status" [class.status--credit]="sale.status === 'Credit'">{{
+                  sale.status
+                }}</span>
+              </td>
+              <td>
+                <strong>₹{{ sale.amount.toLocaleString('en-IN') }}</strong>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <article class="panel stock-alert-panel">
+    <header class="panel__header">
+      <div>
+        <h2>Stock alerts</h2>
+        <p>Items requiring attention</p>
+      </div>
+      <a routerLink="/products">View all</a>
+    </header>
+    <div class="stock-alert">
+      <span class="product-thumb" style="--thumb: #bddcea">RF</span>
+      <div><strong>Samsung 253L Refrigerator</strong><small>3 units remaining</small></div>
+      <span class="stock-pill stock-pill--low">Low</span>
+    </div>
+    <div class="stock-alert">
+      <span class="product-thumb" style="--thumb: #d8d5ad">PL</span>
+      <div><strong>Palm Leaf Plates</strong><small>Out of stock</small></div>
+      <span class="stock-pill stock-pill--out">Out</span>
+    </div>
+    <div class="stock-alert">
+      <span class="product-thumb" style="--thumb: #bde2de">FC</span>
+      <div><strong>Herbal Floor Cleaner</strong><small>6 units remaining</small></div>
+      <span class="stock-pill stock-pill--low">Low</span>
+    </div>
+  </article>
+</section>

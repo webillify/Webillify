@@ -1,0 +1,18 @@
+ஒரு one-page document create பண்ணு:
+
+docs/PRODUCT-VISION.md
+
+இதில் பதில் இருக்கணும்:
+
+Current business problem என்ன?
+Vyapar/Tally/Odoo users எதில் struggle பண்ணுறாங்க?
+Webillify என்ன simplify பண்ணும்?
+Why should someone switch?
+Mobile + web ஏன் வேண்டும்?
+Offline billing வேண்டுமா?
+Multi-company ஏன் mandatory?
+Who pays for it?
+
+Core problem example:
+
+Small businesses use separate tools for billing, stock, purchases, expenses and customer follow-up. Webillify brings these into one simple Tamil/English-friendly platform.

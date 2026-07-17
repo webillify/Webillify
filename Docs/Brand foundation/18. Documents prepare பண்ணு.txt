@@ -1,0 +1,23 @@
+Start செய்யும் முன் இந்த files ready ஆகணும்:
+
+README.md
+docs/PRODUCT-VISION.md
+docs/MVP-SCOPE.md
+docs/USER-ROLES.md
+docs/BUSINESS-FLOWS.md
+docs/ACCOUNTING-RULES.md
+docs/GST-WORKFLOW.md
+docs/DATABASE-DESIGN.md
+docs/API-SPEC.md
+docs/SECURITY-MODEL.md
+docs/SUBSCRIPTION-PLANS.md
+docs/PRICING-MODEL.md
+docs/ROADMAP.md
+docs/PILOT-PLAN.md
+First step
+
+இப்போ முதலில் இந்த ஒரு sentence finalise பண்ணு:
+
+Webillify is a multi-company, multi-branch billing, POS, inventory and business-operations platform built for Indian small and medium retail businesses.
+
+இதுக்கு நீ agree என்றால், next logical work Webillify V1 Product Requirement Document உருவாக்குவது.

@@ -1,0 +1,17 @@
+“Every business” என்று target பண்ணாதே.
+
+Version 1க்கு 1–2 business categories மட்டும் select பண்ணு.
+
+உனக்கு best starting users:
+
+Home-appliance stores
+Grocery / organic stores
+Small retail shops
+Multi-branch local businesses
+Billing + inventory தேவைப்படும் SMEs
+
+Vetri Home Appliances மற்றும் Ageera process இரண்டும் உனக்கு real-world research data.
+
+Initial target statement:
+
+Webillify helps small and medium retail businesses manage billing, POS, inventory, purchases, customers, suppliers, expenses and multiple branches from one platform.

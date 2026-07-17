@@ -1,0 +1,24 @@
+Create Company
+→ Add Branch
+→ Add Product
+→ Add Opening Stock
+→ Create Supplier
+→ Enter Purchase
+→ Stock Increases
+→ POS Sale
+→ Stock Decreases
+→ Payment Recorded
+→ Daily Closing
+→ Reports
+
+Credit Sale
+→ Customer Outstanding
+→ Partial Payment
+→ Balance Updated
+→ Receipt Generated
+
+
+Purchase Return
+→ Supplier Balance Reduced
+→ Stock Reduced
+→ Audit Entry Created

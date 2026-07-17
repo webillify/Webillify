@@ -1,0 +1,126 @@
+<section class="page-heading">
+  <div>
+    <span class="eyebrow">Catalogue</span>
+    <h1>Products</h1>
+    <p>Manage pricing, tax codes and branch stock.</p>
+  </div>
+  <div class="heading-actions">
+    <button class="button button--secondary">Import CSV</button
+    ><button class="button button--primary"><app-icon name="plus" /> Add product</button>
+  </div>
+</section>
+
+<section class="mini-metrics">
+  <article>
+    <span><app-icon name="box" /></span>
+    <div>
+      <small>Active products</small><strong>{{ products().length }}</strong>
+    </div>
+  </article>
+  <article>
+    <span class="blue"><app-icon name="rupee" /></span>
+    <div>
+      <small>Retail stock value</small
+      ><strong>₹{{ inventoryValue().toLocaleString('en-IN') }}</strong>
+    </div>
+  </article>
+  <article>
+    <span class="amber"><app-icon name="warning" /></span>
+    <div><small>Low or out of stock</small><strong>4</strong></div>
+  </article>
+</section>
+
+<app-data-state
+  [status]="state().status"
+  loadingMessage="Loading product catalogue…"
+  [errorMessage]="state().error"
+  emptyTitle="No matching products found"
+  emptyMessage="Add a product or import a catalogue to get started."
+/>
+
+<section class="panel products-panel">
+  <div class="products-toolbar">
+    <label
+      ><app-icon name="search" /><input
+        type="search"
+        placeholder="Search name, SKU or category"
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)" /></label
+    ><button type="button">All categories <span>⌄</span></button
+    ><button type="button">All stock <span>⌄</span></button>
+  </div>
+  <div class="table-wrap">
+    <table class="products-table">
+      <caption class="visually-hidden">
+        Product catalogue and branch stock status
+      </caption>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>SKU</th>
+          <th>Category</th>
+          <th>Sale price</th>
+          <th>Stock</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (product of products(); track product.id) {
+          <tr>
+            <td>
+              <div class="product-cell">
+                <span class="product-thumb" [style.--thumb]="product.color">{{
+                  product.initials
+                }}</span>
+                <div>
+                  <strong>{{ product.name }}</strong
+                  ><small>{{ product.unit }}</small>
+                </div>
+              </div>
+            </td>
+            <td>
+              <code>{{ product.sku }}</code>
+            </td>
+            <td>{{ product.category }}</td>
+            <td>
+              <strong>₹{{ product.price.toLocaleString('en-IN') }}</strong>
+            </td>
+            <td>{{ product.stock }} <small>units</small></td>
+            <td>
+              <span
+                class="stock-pill"
+                [class.stock-pill--out]="product.stock === 0"
+                [class.stock-pill--low]="product.stock > 0 && product.stock < 8"
+                >{{
+                  product.stock === 0
+                    ? 'Out of stock'
+                    : product.stock < 8
+                      ? 'Low stock'
+                      : 'In stock'
+                }}</span
+              >
+            </td>
+            <td>
+              <button
+                class="row-menu"
+                type="button"
+                [attr.aria-label]="'Open menu for ' + product.name"
+              >
+                •••
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="7"><div class="table-empty">No matching products found.</div></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <footer class="table-footer">
+    <span>Showing {{ products().length }} of 12 products</span>
+    <div><button disabled>Previous</button><button disabled>Next</button></div>
+  </footer>
+</section>

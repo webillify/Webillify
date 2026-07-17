@@ -1,0 +1,27 @@
+Initial plans simple-ஆ வைத்துக்கோ:
+
+Starter
+1 company
+1 branch
+2 users
+Billing + inventory
+Limited invoices
+Business
+Multiple users
+3 branches
+Purchase and expenses
+Reports
+WhatsApp invoice sharing
+Pro
+Multiple companies
+More branches
+Advanced reports
+API
+Custom roles
+Priority support
+
+Subscription limits database-level enforce ஆகணும்; UI hide மட்டும் போதாது.
+
+Final V1 decision:
+
+Webillify AI is a separate optional add-on subscription. Starter, Business and Pro remain core plans. Core billing/POS must work fully without AI. AI usage, permissions, credits, renewal and cancellation are independent and are defined in ../AI-PLAN.md and ../SUBSCRIPTION-PLANS.md.

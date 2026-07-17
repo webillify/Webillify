@@ -1,0 +1,24 @@
+# Webillify decision log
+
+Decisions are append-only. A changed decision gets a new ID and references the superseded ID.
+
+| Decision ID   | Timestamp (IST)     | Decision                                                             | Reason                                                          | Consequence                                                 | Status |
+| ------------- | ------------------- | -------------------------------------------------------------------- | --------------------------------------------------------------- | ----------------------------------------------------------- | ------ |
+| `WBL-DEC-001` | 2026-07-17 15:00:00 | Use Angular PWA for the web client                                   | Matches documented stack and responsive POS requirement         | One codebase for desktop/tablet/mobile web                  | ACTIVE |
+| `WBL-DEC-002` | 2026-07-17 15:00:00 | Use a NestJS modular monolith for V1                                 | Lower operational complexity than microservices                 | API modules share one deployable boundary                   | ACTIVE |
+| `WBL-DEC-003` | 2026-07-17 15:00:00 | Final V1 invoice posting requires server connectivity                | Offline numbering/conflict design is unresolved                 | PWA may recover carts, not finalize offline invoices        | ACTIVE |
+| `WBL-DEC-004` | 2026-07-17 15:00:00 | Webillify AI is a separate optional subscription                     | Core billing must not depend on AI cost/availability            | Independent entitlement, credits and lifecycle              | ACTIVE |
+| `WBL-DEC-005` | 2026-07-17 15:00:00 | AI cannot autonomously post financial/stock actions                  | Protect transaction integrity and human accountability          | AI produces drafts/insights requiring approval              | ACTIVE |
+| `WBL-DEC-006` | 2026-07-17 16:23:09 | First frontend slice uses clearly labelled mock data                 | Backend does not yet exist; UI direction can still be validated | Demo behavior must not be called production functionality   | ACTIVE |
+| `WBL-DEC-007` | 2026-07-17 16:35:25 | Archive imported Ageera phase history and replace active phase sheet | It claimed unrelated Next.js/NestJS/Ageera work as complete     | Original remains auditable; active status is Webillify-only | ACTIVE |
+| `WBL-DEC-008` | 2026-07-17 16:35:25 | Make `WBL-FE-007` the next task                                      | Current pages directly depend on mock data                      | Stable repository boundary precedes API/auth work           | ACTIVE |
+| `WBL-DEC-009` | 2026-07-17 16:51:48 | Make data mode explicit and fail API mode until implemented          | Silent demo fallback could hide incomplete production wiring    | Environment selects providers; unavailable adapters error   | ACTIVE |
+| `WBL-DEC-010` | 2026-07-17 17:04:48 | Mock auth persists locally but API auth fails explicitly             | Enables guarded UX without representing demo state as secure    | Permission checks deny by default; BE-003 remains mandatory | ACTIVE |
+| `WBL-DEC-011` | 2026-07-17 17:22:35 | Use Playwright plus axe for current browser quality gates            | Real viewport and accessibility behavior need browser evidence  | Desktop/mobile auth, navigation and POS run in CI           | ACTIVE |
+| `WBL-DEC-012` | 2026-07-17 17:27:22 | Track the complete Webillify workspace in one root Git repository    | Product specs, app, API and delivery logs must evolve together  | `main` uses the requested GitHub repository as `origin`     | ACTIVE |
+
+## New decision template
+
+```markdown
+| `WBL-DEC-NNN` | YYYY-MM-DD HH:mm:ss IST | Decision | Reason | Consequence | PROPOSED/ACTIVE/SUPERSEDED |
+```

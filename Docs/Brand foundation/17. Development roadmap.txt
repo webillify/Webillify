@@ -1,0 +1,51 @@
+Phase 0 — Research
+Business workflow study
+Product specification
+Accounting rules
+Wireframes
+Database model
+
+Phase 1 — Foundation
+Authentication
+Organization
+Company
+Branch
+Users
+Roles
+Subscription
+
+Phase 2 — Inventory
+Products
+Categories
+Units
+Taxes
+Stock movements
+Opening stock
+
+Phase 3 — POS
+POS session
+Sales invoice
+Payments
+Print
+Returns
+
+Phase 4 — Purchase & expenses
+Supplier
+Purchase bills
+Payables
+Expenses
+
+Phase 5 — Reports
+Sales
+Stock
+Cash closing
+Receivables
+Payables
+GST summary
+
+Phase 6 — Pilot
+Real shop testing
+Bug fixing
+Data import
+Performance
+Security

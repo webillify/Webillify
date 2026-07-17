@@ -1,0 +1,17 @@
+V1 scope is now locked in ../MVP-SCOPE.md.
+
+Core V1:
+- Organization, company, branch, users and permissions
+- Products, purchases, stock movements and transfers
+- GST-ready POS sales, payments, returns and customer balances
+- Expenses, supplier balances, cash closing and essential reports
+- Responsive PWA with online final posting
+
+Separate optional subscription:
+- Webillify AI; core billing never depends on it
+
+Later:
+- Full accounting ledger, payroll, manufacturing, e-commerce
+- Automated GST filing, e-invoice and e-way bill
+- Full offline posting and conflict resolution
+- Autonomous AI actions

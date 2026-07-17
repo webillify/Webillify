@@ -1,0 +1,194 @@
+<section class="pos-heading">
+  <div>
+    <span class="eyebrow">Point of sale</span>
+    <h1>New sale</h1>
+  </div>
+  <div class="pos-session">
+    <span><i></i> Register open</span><strong>Session #018</strong>
+  </div>
+</section>
+
+<div class="pos-layout">
+  <section class="pos-catalogue">
+    <label class="pos-search"
+      ><span class="visually-hidden">Search or scan products</span><app-icon name="search" /><input
+        type="search"
+        placeholder="Scan barcode or search products…"
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+      /><kbd>F2</kbd></label
+    >
+    <div class="category-tabs">
+      @for (category of categories; track category) {
+        <button
+          type="button"
+          [class.is-active]="selectedCategory() === category"
+          (click)="selectedCategory.set(category)"
+        >
+          {{ category }}
+        </button>
+      }
+    </div>
+    <app-data-state
+      [status]="productState().status"
+      loadingMessage="Loading POS catalogue…"
+      [errorMessage]="productState().error"
+      emptyTitle="No products available"
+      emptyMessage="Add active products before starting a sale."
+    />
+    <div class="product-grid">
+      @for (product of filteredProducts(); track product.id) {
+        <button
+          class="product-card"
+          type="button"
+          [disabled]="product.stock === 0"
+          (click)="add(product)"
+        >
+          <span class="product-card__visual" [style.--product-color]="product.color"
+            ><b>{{ product.initials }}</b
+            ><small>{{ product.category }}</small></span
+          >
+          <span class="product-card__body"
+            ><strong>{{ product.name }}</strong
+            ><small>{{ product.unit }} · {{ product.sku }}</small
+            ><span
+              ><b>₹{{ product.price.toLocaleString('en-IN') }}</b
+              ><em [class.is-low]="product.stock < 8">{{
+                product.stock ? product.stock + ' in stock' : 'Out of stock'
+              }}</em></span
+            ></span
+          >
+          <span class="product-card__add"><app-icon name="plus" /></span>
+        </button>
+      } @empty {
+        <div class="empty-products">
+          <app-icon name="search" /><strong>No products found</strong>
+          <p>Try another product name, SKU or category.</p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <aside class="cart-panel">
+    <header class="cart-header">
+      <div>
+        <h2>Current order</h2>
+        <span>{{ itemCount() }} items</span>
+      </div>
+      <button type="button" [disabled]="cart().length === 0" (click)="clearCart()">Clear</button>
+    </header>
+    <button class="customer-select" type="button">
+      <span class="customer-icon"><app-icon name="users" /></span
+      ><span><small>Customer</small><strong>Walk-in customer</strong></span
+      ><app-icon name="chevron" />
+    </button>
+    <div class="cart-items">
+      @for (item of cart(); track item.product.id) {
+        <article class="cart-item">
+          <span class="product-thumb" [style.--thumb]="item.product.color">{{
+            item.product.initials
+          }}</span>
+          <div class="cart-item__main">
+            <strong>{{ item.product.name }}</strong
+            ><small
+              >₹{{ item.product.price.toLocaleString('en-IN') }} · {{ item.product.unit }}</small
+            >
+            <div class="quantity-control">
+              <button type="button" (click)="changeQuantity(item.product.id, -1)">
+                <app-icon name="minus" /></button
+              ><span>{{ item.quantity }}</span
+              ><button type="button" (click)="changeQuantity(item.product.id, 1)">
+                <app-icon name="plus" />
+              </button>
+            </div>
+          </div>
+          <div class="cart-item__end">
+            <button type="button" aria-label="Remove item" (click)="remove(item.product.id)">
+              <app-icon name="trash" /></button
+            ><strong>₹{{ (item.product.price * item.quantity).toLocaleString('en-IN') }}</strong>
+          </div>
+        </article>
+      } @empty {
+        <div class="empty-cart">
+          <span><app-icon name="cart" /></span><strong>Your cart is empty</strong>
+          <p>Scan a barcode or select a product to begin.</p>
+        </div>
+      }
+    </div>
+    <div class="cart-summary">
+      <p>
+        <span>Taxable value</span
+        ><strong>₹{{ subtotal().toLocaleString('en-IN', { maximumFractionDigits: 2 }) }}</strong>
+      </p>
+      <p>
+        <span>GST included</span
+        ><strong>₹{{ tax().toLocaleString('en-IN', { maximumFractionDigits: 2 }) }}</strong>
+      </p>
+      <p>
+        <button type="button"><app-icon name="plus" /> Add discount</button><strong>₹0.00</strong>
+      </p>
+      <div>
+        <span>Total</span><strong>₹{{ total().toLocaleString('en-IN') }}</strong>
+      </div>
+    </div>
+    <button
+      class="charge-button"
+      type="button"
+      [disabled]="cart().length === 0"
+      (click)="paymentOpen.set(true)"
+    >
+      <span>Charge ₹{{ total().toLocaleString('en-IN') }}</span
+      ><small>F8</small>
+    </button>
+  </aside>
+</div>
+
+@if (paymentOpen()) {
+  <div class="modal-backdrop" (click)="paymentOpen.set(false)">
+    <section
+      #paymentDialog
+      class="payment-modal"
+      role="dialog"
+      tabindex="-1"
+      aria-modal="true"
+      aria-labelledby="payment-title"
+      (click)="$event.stopPropagation()"
+    >
+      <header>
+        <div>
+          <span class="eyebrow">Complete sale</span>
+          <h2 id="payment-title">Choose payment method</h2>
+        </div>
+        <button
+          class="icon-button"
+          type="button"
+          aria-label="Close payment dialog"
+          (click)="closePayment()"
+        >
+          <app-icon name="close" />
+        </button>
+      </header>
+      <div class="amount-due">
+        <span>Amount due</span><strong>₹{{ total().toLocaleString('en-IN') }}</strong
+        ><small>GST included · {{ itemCount() }} items</small>
+      </div>
+      <div class="payment-methods">
+        @for (method of paymentMethods; track method) {
+          <button
+            type="button"
+            [disabled]="saleState().status === 'loading'"
+            (click)="completeSale(method)"
+          >
+            <span>{{
+              method === 'Cash' ? '₹' : method === 'UPI' ? 'UPI' : method === 'Card' ? '▣' : '◎'
+            }}</span
+            ><strong>{{ method }}</strong>
+          </button>
+        }
+      </div>
+      <p class="modal-note">
+        Demo only: completing this sale clears the local cart; it does not create a real invoice.
+      </p>
+    </section>
+  </div>
+}

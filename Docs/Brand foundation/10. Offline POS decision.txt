@@ -1,0 +1,16 @@
+Retail product என்றால் internet down ஆனாலும் billing work ஆக வேண்டுமா என்பதை இப்பவே decide பண்ணு.
+
+Recommended V1 approach:
+
+PWA cache
+Draft bill offline
+Local IndexedDB
+Reconnect ஆனதும் sync
+Conflict detection
+Offline invoice numbering strategy
+
+Offline mode build பண்ணுவது complex. V1.0ல் full offline முடியாவிட்டால்:
+
+Stable LAN/local-server deployment option
+
+கொடுக்கலாம்.
