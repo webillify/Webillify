@@ -1,6 +1,6 @@
 # Webillify risk and issue log
 
-Last reviewed: **2026-07-17 18:07:26 IST**
+Last reviewed: **2026-07-17 18:09:39 IST**
 
 | ID             | Type           | Severity | Risk/issue                                                           | Evidence                                          | Mitigation/next action                                    | Owner                | Status                           |
 | -------------- | -------------- | -------- | -------------------------------------------------------------------- | ------------------------------------------------- | --------------------------------------------------------- | -------------------- | -------------------------------- |
@@ -12,7 +12,7 @@ Last reviewed: **2026-07-17 18:07:26 IST**
 | `WBL-RISK-006` | Resolved risk  | HIGH     | Tenant leakage was untested before tenancy existed                   | SEC-001 cross-tenant/branch/permission matrix pass | Retain matrix as a release-blocking CI gate               | Security/backend     | RESOLVED 2026-07-17 18:07:26 IST |
 | `WBL-RISK-007` | Risk           | MEDIUM   | PWA install/offline behavior lacks browser-device QA                 | Build artifact only                               | Add QA checklist/update prompt                            | Frontend/QA          | OPEN                             |
 | `WBL-RISK-008` | Risk           | MEDIUM   | Proposed pricing and AI credits may not cover costs                  | Pricing marked assumption                         | Pilot cost/usage review                                   | Product/business     | OPEN                             |
-| `WBL-RISK-009` | Issue          | HIGH     | Local Git/CI exist, but requested GitHub remote rejects writes       | HTTPS push returned 403; GitHub app has no access | Grant authenticated user or app write access              | Project owner/DevOps | BLOCKED EXTERNAL                 |
+| `WBL-RISK-009` | Resolved issue | HIGH     | Requested GitHub remote initially rejected writes                    | `main` push succeeded and tracks `origin/main`     | Continue protected-branch and CI configuration on GitHub  | Project owner/DevOps | RESOLVED 2026-07-17 18:09:39 IST |
 | `WBL-RISK-010` | Risk           | MEDIUM   | SVG-only PWA icon may not meet every platform's install requirements | Manifest contains one SVG icon                    | Add tested 192/512 maskable PNG assets                    | Frontend/design      | OPEN                             |
 | `WBL-RISK-011` | Resolved issue | HIGH     | Active phase sheet contained unrelated Ageera history                | Archived file names Ageera domains/modules        | Preserved in archive; replaced with Webillify phase sheet | Project tracking     | RESOLVED 2026-07-17 16:35:25 IST |
 

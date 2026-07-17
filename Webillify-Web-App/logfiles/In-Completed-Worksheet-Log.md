@@ -1,8 +1,8 @@
 # Webillify incomplete work worksheet
 
-Last updated: **2026-07-17 18:07:26 IST**
-In progress: **WBL-SETUP-004 — publish verified commits to GitHub**
-Ready after current: **WBL-BE-005 core and separate AI entitlements**
+Last updated: **2026-07-17 18:09:39 IST**
+In progress: **None — GitHub publication completed**
+Ready next: **WBL-BE-005 core and separate AI entitlements**
 
 ## Ready
 

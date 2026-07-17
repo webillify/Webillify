@@ -1,6 +1,6 @@
 # Webillify completed work worksheet
 
-Last updated: **2026-07-17 18:07:26 IST**
+Last updated: **2026-07-17 18:09:39 IST**
 
 | Task ID         | Completed (IST)     | Module/deliverable                                                            | Evidence                                       | Verification                                  |
 | --------------- | ------------------- | ----------------------------------------------------------------------------- | ---------------------------------------------- | --------------------------------------------- |
@@ -27,5 +27,6 @@ Last updated: **2026-07-17 18:07:26 IST**
 | `WBL-BE-003`    | 2026-07-17 17:58:00 | Core identity: Argon2 login, JWT, refresh rotation/reuse revocation, logout/me | `Webillify-API/src/modules/auth/`              | Lint/build/audit; 11 integration tests PASS  |
 | `WBL-BE-004`    | 2026-07-17 18:07:26 | Organization/branch access APIs and typed permission enforcement              | `Webillify-API/src/modules/access/`            | Lint/build/audit; authorization tests PASS   |
 | `WBL-SEC-001`   | 2026-07-17 18:07:26 | Cross-tenant, cross-branch and permission-denial security matrix               | `test/authorization.e2e-spec.ts`               | API E2E total 15/15 PASS                     |
+| `WBL-SETUP-004` | 2026-07-17 18:09:39 | Published complete root repository history to requested GitHub `main`          | `origin/main`                                  | Push succeeded; upstream tracking configured |
 
 `R0 — Frontend foundation` is complete as a **demo baseline**, not a production billing application. Backend, real authentication, persistence and transaction integrity remain pending.

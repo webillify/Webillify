@@ -1,10 +1,10 @@
 # Webillify master worksheet
 
-Snapshot timestamp: **2026-07-17 18:07:26 IST**
+Snapshot timestamp: **2026-07-17 18:09:39 IST**
 Project status: **ACTIVE — identity, tenancy and authorization API foundation verified**
 Current release: **R1 — Frontend application foundation**  
 Current phase: **Phase 3 — Backend identity and tenancy**  
-Current task: **WBL-SETUP-004 — Publish verified local history to the requested GitHub repository**
+Current task: **WBL-BE-005 — Core and separately billed AI subscription entitlements (ready)**
 
 ## Project snapshot
 
@@ -69,7 +69,7 @@ See [Task-Backlog.md](Task-Backlog.md#recommended-next-task) for the complete as
 - All five original worksheets are populated.
 - Completed claims are mapped to source files or command evidence.
 - Pending modules are task-ID based and assignable.
-- Phase 2 and BE-001/002/003/004 plus SEC-001 are complete. GitHub push is being retried; BE-005 is ready next.
+- Phase 2 and BE-001/002/003/004 plus SEC-001 are complete. GitHub `main` is published and tracking `origin/main`; BE-005 is ready next.
 
 ## Category codes
 

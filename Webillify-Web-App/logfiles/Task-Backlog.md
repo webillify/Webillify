@@ -1,7 +1,7 @@
 # Webillify task backlog
 
-Last prioritized: **2026-07-17 18:07:26 IST**
-Active assignee: **Codex — WBL-SETUP-004 GitHub publication retry**
+Last prioritized: **2026-07-17 18:09:39 IST**
+Active assignee: **Unassigned — WBL-BE-005 ready next**
 WIP limit: **One P0 task per engineer**
 
 ## Just completed
