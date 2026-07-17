@@ -1,10 +1,10 @@
 # Webillify master worksheet
 
-Snapshot timestamp: **2026-07-17 20:25:05 IST**
+Snapshot timestamp: **2026-07-17 20:27:11 IST**
 Project status: **ACTIVE — connected purchase lifecycle verified; POS persistence is next**
 Current release: **R1 — Frontend application foundation**  
 Current phase: **Phase 4 — Catalogue, purchases and inventory**
-Current task: **WBL-BE-008 — Real POS invoice/payment/return workflow (ready next)**
+Current task: **WBL-BE-008A — POS invoice/payment/stock database foundation (in progress)**
 
 ## Project snapshot
 
@@ -78,7 +78,7 @@ See [Task-Backlog.md](Task-Backlog.md#recommended-next-task) for the complete as
 - All five original worksheets are populated.
 - Completed claims are mapped to source files or command evidence.
 - Pending modules are task-ID based and assignable.
-- BE-001 through BE-007C, SEC-001, connected FE-016A/B and SETUP-005 are published. FE-016C is verified with publication pending; BE-008 is ready next.
+- BE-001 through BE-007C, SEC-001, connected FE-016A/B/C and SETUP-005 are published. BE-008A is active next.
 
 ## Category codes
 

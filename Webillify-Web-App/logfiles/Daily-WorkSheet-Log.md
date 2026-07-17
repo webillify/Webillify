@@ -85,6 +85,8 @@ Status: **IN PROGRESS — BE-007C verified; frontend compensation actions ready 
 | 2026-07-17 20:20:00 | FRONTEND | Added remaining-quantity return adapter, safe cancel rules and accessible reason forms          | COMPLETE    |
 | 2026-07-17 20:21:23 | TEST     | Added purchase action/read-only unit matrix                                                      | PASS — 23/23 |
 | 2026-07-17 20:25:05 | TEST     | Production build/audits, 4 connected mutation/accessibility journeys and API 3+57 regression    | PASS         |
+| 2026-07-17 20:27:11 | INFRA    | Pushed verified FE-016C purchase compensation browser stage to GitHub `main`                     | `d9890db`    |
+| 2026-07-17 20:27:11 | BACKEND  | Assigned BE-008A POS invoice/payment/stock database foundation                                   | IN PROGRESS  |
 
 ---
 
