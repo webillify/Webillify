@@ -40,7 +40,7 @@ jobs:
       CORS_ORIGINS: http://localhost:4200
     steps:
       - name: Check out source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -78,7 +78,7 @@ jobs:
         working-directory: Webillify-Web-App
     steps:
       - name: Check out source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
