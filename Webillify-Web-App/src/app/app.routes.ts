@@ -41,12 +41,7 @@ export const routes: Routes = [
       {
         path: 'purchases',
         canActivate: [requirePermission('purchases.read')],
-        loadComponent: () =>
-          import('./pages/placeholder/placeholder').then((m) => m.PlaceholderPage),
-        data: {
-          title: 'Purchases',
-          description: 'Purchase bills, supplier balances and AI-assisted bill drafts are next.',
-        },
+        loadComponent: () => import('./pages/purchases/purchases').then((m) => m.PurchasesPage),
       },
       {
         path: 'reports',
@@ -62,11 +57,7 @@ export const routes: Routes = [
         path: 'settings',
         canActivate: [requirePermission('settings.manage')],
         loadComponent: () =>
-          import('./pages/placeholder/placeholder').then((m) => m.PlaceholderPage),
-        data: {
-          title: 'Settings',
-          description: 'Company, branch, tax, users, roles and subscription settings are planned.',
-        },
+          import('./pages/subscriptions/subscriptions').then((m) => m.SubscriptionsPage),
       },
       {
         path: 'access-denied',

@@ -1,0 +1,131 @@
+.plan-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  max-width: 980px;
+}
+.plan-card {
+  padding: 24px;
+  overflow: hidden;
+  position: relative;
+}
+.plan-card > header {
+  margin-bottom: 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.plan-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  color: var(--brand);
+  border-radius: 12px;
+  background: var(--brand-soft);
+}
+.plan-status {
+  padding: 5px 8px;
+  color: var(--brand-dark);
+  border-radius: 20px;
+  background: var(--brand-soft);
+  font-size: 9px;
+  font-weight: 900;
+}
+.plan-card h2 {
+  margin-bottom: 7px;
+  font-size: 25px;
+}
+.plan-card p {
+  min-height: 38px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+.plan-card dl {
+  margin: 22px 0;
+  display: grid;
+  gap: 8px;
+}
+.plan-card dl div,
+.usage-row {
+  padding: 9px 0;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+}
+.plan-card dt,
+.usage-row span {
+  color: var(--muted);
+  font-size: 10px;
+}
+.plan-card dd,
+.usage-row strong {
+  margin: 0;
+  font-size: 10px;
+  font-weight: 800;
+}
+.ai-plan {
+  border-color: #dcd1f4;
+  background: linear-gradient(145deg, #fff, #faf8ff);
+}
+.ai-plan .plan-icon {
+  color: #7250ac;
+  background: #eee8fa;
+}
+.ai-price {
+  margin: 22px 0;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.ai-price strong {
+  font-size: 27px;
+}
+.ai-price span {
+  color: var(--muted);
+  font-size: 9px;
+}
+.credit-balance {
+  padding: 17px;
+  border: 1px solid #ddd4f0;
+  border-radius: 13px;
+  background: #f7f3ff;
+}
+.credit-balance small,
+.credit-balance strong,
+.credit-balance span {
+  display: block;
+}
+.credit-balance small {
+  color: #6d5a91;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.credit-balance strong {
+  margin: 5px 0;
+  color: #5f3e96;
+  font-size: 28px;
+}
+.credit-balance span {
+  color: var(--muted);
+  font-size: 9px;
+}
+.separation-note {
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #4d3c69;
+  font-size: 10px;
+}
+.separation-note .icon {
+  width: 15px;
+  height: 15px;
+}
+@media (max-width: 760px) {
+  .plan-grid {
+    grid-template-columns: 1fr;
+  }
+}

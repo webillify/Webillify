@@ -1,8 +1,21 @@
 # Webillify task backlog
 
-Last prioritized: **2026-07-17 19:34:26 IST**
-Active assignee: **Codex — WBL-FE-016B browser workflow integration**
+Last prioritized: **2026-07-17 19:46:45 IST**
+Active assignee: **Unassigned — WBL-BE-007C ready after FE-016B publication**
 WIP limit: **One P0 task per engineer**
+
+## Just completed
+
+### WBL-FE-016B — Browser purchases and separate subscriptions
+
+Status: **COMPLETE — 2026-07-17 19:46:45 IST**
+
+- Added a live operational dashboard backed by product, stock, purchase and payable projections.
+- Added supplier bill listing, server-calculated draft creation, immutable posting and full supplier payment actions.
+- Added independent core Business and separately billed ₹799 Webillify AI lifecycle/credit cards.
+- Removed remaining hard-coded financial/credit claims from connected screens.
+
+Result: production/development builds, 19 unit tests, 4 connected desktop/mobile browser journeys with accessibility scanning, 3 API unit tests and 52 API integration/security tests pass. Production dependency audits report 0 vulnerabilities.
 
 ## Just completed
 

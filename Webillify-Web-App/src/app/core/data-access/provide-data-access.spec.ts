@@ -39,9 +39,9 @@ describe('provideDataAccess', () => {
         variants: [{ id: 'variant-1', sku: 'RICE-1KG', name: '1 kg', salePrice: '60.00' }],
       },
     ]);
-    http.expectOne('/api/v1/stock-balances').flush([
-      { quantity: '100.000', variant: { id: 'variant-1' } },
-    ]);
+    http
+      .expectOne('/api/v1/stock-balances')
+      .flush([{ quantity: '100.000', variant: { id: 'variant-1' } }]);
 
     await expect(result).resolves.toEqual([
       expect.objectContaining({ id: 'variant-1', sku: 'RICE-1KG', stock: 100, price: 60 }),

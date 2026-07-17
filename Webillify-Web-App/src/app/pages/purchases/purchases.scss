@@ -1,0 +1,164 @@
+.purchase-summary {
+  padding: 10px 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+.purchase-summary small,
+.purchase-summary strong {
+  display: block;
+}
+.purchase-summary small {
+  color: var(--muted);
+  font-size: 10px;
+}
+.purchase-summary strong {
+  margin-top: 3px;
+  font-size: 20px;
+}
+.purchase-grid {
+  display: grid;
+  grid-template-columns: minmax(300px, 0.72fr) minmax(0, 1.28fr);
+  gap: 18px;
+  align-items: start;
+}
+.purchase-form,
+.bills-panel {
+  padding: 20px;
+}
+.purchase-form h2,
+.bills-panel h2 {
+  margin-bottom: 16px;
+  font-size: 18px;
+}
+.purchase-form label {
+  display: block;
+  margin-bottom: 13px;
+}
+.purchase-form label > span {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+}
+.purchase-form input,
+.purchase-form select {
+  width: 100%;
+  height: 40px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fff;
+}
+.form-pair,
+.form-triple {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.form-triple {
+  grid-template-columns: repeat(3, 1fr);
+}
+.draft-note {
+  margin: 3px 0 15px;
+  padding: 9px;
+  display: flex;
+  gap: 7px;
+  color: #316d5c;
+  border-radius: 8px;
+  background: var(--brand-soft);
+  font-size: 10px;
+}
+.draft-note .icon {
+  width: 15px;
+  height: 15px;
+}
+.bills-panel > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+}
+.bills-panel > header > span {
+  color: var(--muted);
+  font-size: 11px;
+}
+.bill-list {
+  display: grid;
+  gap: 9px;
+}
+.bill-list article {
+  padding: 13px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 145px 130px;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+}
+.bill-main strong,
+.bill-main small,
+.bill-money strong,
+.bill-money small {
+  display: block;
+}
+.bill-main strong {
+  margin: 5px 0 3px;
+  font-size: 12px;
+}
+.bill-main small,
+.bill-money small {
+  color: var(--muted);
+  font-size: 9px;
+}
+.bill-money {
+  text-align: right;
+}
+.bill-money strong {
+  font-size: 13px;
+}
+.bill-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+.bill-actions .button {
+  white-space: nowrap;
+}
+.paid-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--brand);
+  font-size: 10px;
+  font-weight: 800;
+}
+.paid-label .icon {
+  width: 14px;
+  height: 14px;
+}
+.empty-purchases {
+  padding: 40px;
+  color: var(--muted);
+  text-align: center;
+}
+@media (max-width: 900px) {
+  .purchase-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 620px) {
+  .form-pair,
+  .form-triple {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .bill-list article {
+    grid-template-columns: 1fr;
+  }
+  .bill-money {
+    text-align: left;
+  }
+  .bill-actions {
+    justify-content: flex-start;
+  }
+}

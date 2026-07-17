@@ -66,6 +66,10 @@ Status: **IN PROGRESS — BE-004/SEC-001 complete; GitHub publication retry acti
 | 2026-07-17 19:31:00 | TEST     | Browser login exposed localhost/127.0.0.1 CORS origin mismatch                              | FAILED — FIXED |
 | 2026-07-17 19:34:26 | TEST     | Frontend build, 19 unit tests and 4 desktop/mobile connected browser journeys               | PASS        |
 | 2026-07-17 19:36:38 | INFRA    | Pushed connected auth/catalogue/stock browser stage to GitHub `main`                         | `d91a0fa`   |
+| 2026-07-17 19:37:00 | FRONTEND | Started purchase workflow, subscription and separate AI-plan browser stage                  | IN PROGRESS |
+| 2026-07-17 19:41:03 | FRONTEND | Added purchase draft/post/pay UI and separate core/AI subscription usage screens            | COMPLETE    |
+| 2026-07-17 19:44:00 | FRONTEND | Replaced remaining dashboard and shell sample figures with live operational projections      | COMPLETE    |
+| 2026-07-17 19:46:45 | TEST     | Prod/dev builds, 19 unit, 4 connected browser, 3 API unit and 52 API integration tests       | PASS        |
 
 ---
 

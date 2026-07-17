@@ -6,6 +6,10 @@ import {
   DashboardSnapshot,
   OrganizationContext,
   Product,
+  PurchaseBill,
+  PurchaseWorkspace,
+  CreatePurchaseDraftRequest,
+  SubscriptionOverview,
 } from '../domain/models';
 
 export abstract class DashboardRepository {
@@ -28,4 +32,15 @@ export abstract class AuthRepository {
   abstract getSession(): Observable<AuthSession | null>;
   abstract signIn(credentials: SignInCredentials): Observable<AuthSession>;
   abstract signOut(): Observable<void>;
+}
+
+export abstract class PurchaseRepository {
+  abstract getWorkspace(): Observable<PurchaseWorkspace>;
+  abstract createDraft(request: CreatePurchaseDraftRequest): Observable<PurchaseBill>;
+  abstract postBill(id: string): Observable<PurchaseBill>;
+  abstract payOutstanding(bill: PurchaseBill): Observable<PurchaseBill>;
+}
+
+export abstract class SubscriptionRepository {
+  abstract getOverview(): Observable<SubscriptionOverview>;
 }

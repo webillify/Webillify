@@ -6,6 +6,8 @@ import {
   ApiPosRepository,
   ApiProductRepository,
   ApiWorkspaceRepository,
+  ApiPurchaseRepository,
+  ApiSubscriptionRepository,
 } from './api/api.repositories';
 import {
   MockAuthRepository,
@@ -20,6 +22,8 @@ import {
   PosRepository,
   ProductRepository,
   WorkspaceRepository,
+  PurchaseRepository,
+  SubscriptionRepository,
 } from './repositories';
 
 export const APP_ENVIRONMENT = new InjectionToken<AppEnvironment>('APP_ENVIRONMENT');
@@ -39,5 +43,7 @@ export function provideDataAccess(config: AppEnvironment) {
       useClass: isMock ? MockWorkspaceRepository : ApiWorkspaceRepository,
     },
     { provide: AuthRepository, useClass: isMock ? MockAuthRepository : ApiAuthRepository },
+    { provide: PurchaseRepository, useClass: ApiPurchaseRepository },
+    { provide: SubscriptionRepository, useClass: ApiSubscriptionRepository },
   ]);
 }

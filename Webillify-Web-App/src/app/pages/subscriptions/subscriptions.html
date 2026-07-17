@@ -1,0 +1,73 @@
+<section class="page-heading">
+  <div>
+    <span class="eyebrow">Plans & usage</span>
+    <h1>Subscriptions</h1>
+    <p>Core Webillify billing and the optional AI add-on have independent lifecycle and usage.</p>
+  </div>
+</section>
+
+<app-data-state
+  [status]="state().status"
+  loadingMessage="Loading core and AI subscription status…"
+  [errorMessage]="state().error"
+  emptyTitle="No subscription data"
+  emptyMessage="Subscription status is not available for this workspace."
+/>
+
+@if (state().data; as overview) {
+  <section class="plan-grid">
+    <article class="panel plan-card core-plan">
+      <header>
+        <span class="plan-icon"><app-icon name="store" /></span>
+        <span class="plan-status">{{ overview.core.status }}</span>
+      </header>
+      <span class="eyebrow">Core subscription</span>
+      <h2>{{ overview.core.planName }}</h2>
+      <p>Billing, inventory, purchases, users and branch entitlements.</p>
+      <dl>
+        <div>
+          <dt>Plan code</dt>
+          <dd>{{ overview.core.planCode }}</dd>
+        </div>
+        <div>
+          <dt>Billing interval</dt>
+          <dd>{{ overview.core.billingInterval }}</dd>
+        </div>
+        <div>
+          <dt>Current period ends</dt>
+          <dd>{{ overview.core.periodEnd | date: 'mediumDate' }}</dd>
+        </div>
+      </dl>
+      <div class="usage-row">
+        <span>Branches</span
+        ><strong>{{ overview.core.branchesUsed }} / {{ overview.core.branchLimit ?? '∞' }}</strong>
+      </div>
+      <div class="usage-row">
+        <span>Users</span
+        ><strong>{{ overview.core.usersUsed }} / {{ overview.core.userLimit ?? '∞' }}</strong>
+      </div>
+    </article>
+
+    <article class="panel plan-card ai-plan">
+      <header>
+        <span class="plan-icon"><app-icon name="sparkles" /></span>
+        <span class="plan-status">{{ overview.ai.status }}</span>
+      </header>
+      <span class="eyebrow">Separately billed add-on</span>
+      <h2>{{ overview.ai.planName }}</h2>
+      <p>Optional AI extraction, questions, summaries and reviewed draft assistance.</p>
+      <div class="ai-price">
+        <strong>₹{{ overview.ai.monthlyPrice }}</strong
+        ><span>/ organization / month</span>
+      </div>
+      <div class="credit-balance">
+        <small>Available AI credits</small>
+        <strong>{{ overview.ai.availableCredits.toLocaleString('en-IN') }}</strong>
+        <span>{{ overview.ai.monthlyCredits }} credits in the current trial cycle</span>
+      </div>
+      <div class="separation-note">
+        <app-icon name="check" /> AI cancellation never disables core billing or inventory.
+      </div>
+    </article>
+  </section>
+}

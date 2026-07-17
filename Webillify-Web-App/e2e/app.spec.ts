@@ -62,4 +62,19 @@ test('signs in and renders real workspace navigation and catalogue data', async 
   await expect(
     page.getByRole('status').filter({ hasText: /Sales posting is not implemented/ }),
   ).toBeVisible();
+
+  await page.goto('/purchases');
+  await expect(page.getByRole('heading', { name: 'Purchase bills' })).toBeVisible();
+  const seededBill = page.locator('.bill-list article').filter({ hasText: 'DEMO-INV-001' });
+  await expect(seededBill).toContainText('Demo Wholesale Supplier');
+  await expect(page.getByRole('button', { name: 'Post bill' })).toBeVisible();
+  await expectNoSeriousAccessibilityViolations(page);
+
+  await page.goto('/settings');
+  await expect(page.getByRole('heading', { name: 'Subscriptions' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Business' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Webillify AI' })).toBeVisible();
+  await expect(page.getByText('₹799')).toBeVisible();
+  await expect(page.getByText('300', { exact: true })).toBeVisible();
+  await expectNoSeriousAccessibilityViolations(page);
 });

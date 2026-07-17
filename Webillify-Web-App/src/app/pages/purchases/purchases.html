@@ -1,0 +1,166 @@
+<section class="page-heading">
+  <div>
+    <span class="eyebrow">Purchases & payables</span>
+    <h1>Purchase bills</h1>
+    <p>Create reviewable drafts, post stock-in and settle supplier balances.</p>
+  </div>
+  <div class="purchase-summary">
+    <small>Total outstanding</small>
+    <strong>₹{{ totalOutstanding().toLocaleString('en-IN') }}</strong>
+  </div>
+</section>
+
+<app-data-state
+  [status]="state().status"
+  loadingMessage="Loading suppliers and purchase bills…"
+  [errorMessage]="state().error"
+  emptyTitle="No purchase workspace data"
+  emptyMessage="Add a supplier, product and warehouse before recording a purchase."
+/>
+
+@if (state().data; as workspace) {
+  <section class="purchase-grid">
+    <form class="panel purchase-form" (ngSubmit)="createDraft()">
+      <header>
+        <span class="eyebrow">No stock effect until posted</span>
+        <h2>New purchase draft</h2>
+      </header>
+      <label>
+        <span>Supplier</span>
+        <select [ngModel]="supplierId()" (ngModelChange)="supplierId.set($event)" name="supplier">
+          @for (supplier of workspace.suppliers; track supplier.id) {
+            <option [value]="supplier.id">{{ supplier.name }}</option>
+          }
+        </select>
+      </label>
+      <div class="form-pair">
+        <label>
+          <span>Supplier invoice reference</span>
+          <input
+            required
+            maxlength="100"
+            [ngModel]="reference()"
+            (ngModelChange)="reference.set($event)"
+            name="reference"
+          />
+        </label>
+        <label>
+          <span>Invoice date</span>
+          <input
+            type="date"
+            required
+            [ngModel]="invoiceDate()"
+            (ngModelChange)="invoiceDate.set($event)"
+            name="invoiceDate"
+          />
+        </label>
+      </div>
+      <label>
+        <span>Product variant</span>
+        <select [ngModel]="variantId()" (ngModelChange)="variantId.set($event)" name="variant">
+          @for (variant of workspace.variants; track variant.id) {
+            <option [value]="variant.id">{{ variant.label }} · {{ variant.sku }}</option>
+          }
+        </select>
+      </label>
+      <div class="form-triple">
+        <label>
+          <span>Quantity</span>
+          <input
+            type="number"
+            min="0.001"
+            step="0.001"
+            [ngModel]="quantity()"
+            (ngModelChange)="quantity.set(+$event)"
+            name="quantity"
+          />
+        </label>
+        <label>
+          <span>Unit cost</span>
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            [ngModel]="unitCost()"
+            (ngModelChange)="unitCost.set(+$event)"
+            name="unitCost"
+          />
+        </label>
+        <label>
+          <span>GST rate %</span>
+          <input
+            type="number"
+            min="0"
+            max="100"
+            step="0.01"
+            [ngModel]="taxRate()"
+            (ngModelChange)="taxRate.set(+$event)"
+            name="taxRate"
+          />
+        </label>
+      </div>
+      <div class="draft-note">
+        <app-icon name="check" /> Intrastate CGST/SGST and totals are recalculated by the server.
+      </div>
+      <button
+        class="button button--primary"
+        type="submit"
+        [disabled]="busy() || !workspace.warehouse"
+      >
+        <app-icon name="plus" /> {{ busy() ? 'Working…' : 'Create draft' }}
+      </button>
+    </form>
+
+    <section class="panel bills-panel">
+      <header>
+        <div>
+          <span class="eyebrow">Live API records</span>
+          <h2>Supplier bills</h2>
+        </div>
+        <span>{{ bills().length }} records</span>
+      </header>
+      <div class="bill-list">
+        @for (bill of bills(); track bill.id) {
+          <article>
+            <div class="bill-main">
+              <span class="status" [class.status--credit]="bill.status === 'DRAFT'">{{
+                bill.status
+              }}</span>
+              <strong>{{ bill.reference }}</strong>
+              <small>{{ bill.supplierName }} · {{ bill.invoiceDate | date: 'mediumDate' }}</small>
+            </div>
+            <div class="bill-money">
+              <strong>₹{{ bill.totalAmount.toLocaleString('en-IN') }}</strong>
+              <small>₹{{ bill.outstandingAmount.toLocaleString('en-IN') }} outstanding</small>
+            </div>
+            <div class="bill-actions">
+              @if (bill.status === 'DRAFT') {
+                <button
+                  class="button button--primary"
+                  type="button"
+                  [disabled]="busy()"
+                  (click)="post(bill)"
+                >
+                  Post bill
+                </button>
+              } @else if (bill.status === 'POSTED' && bill.outstandingAmount > 0) {
+                <button
+                  class="button button--secondary"
+                  type="button"
+                  [disabled]="busy()"
+                  (click)="pay(bill)"
+                >
+                  Pay outstanding
+                </button>
+              } @else {
+                <span class="paid-label"><app-icon name="check" /> Settled</span>
+              }
+            </div>
+          </article>
+        } @empty {
+          <div class="empty-purchases">No supplier bills have been recorded.</div>
+        }
+      </div>
+    </section>
+  </section>
+}

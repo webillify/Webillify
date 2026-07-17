@@ -1,6 +1,6 @@
 # Webillify completed work worksheet
 
-Last updated: **2026-07-17 19:34:26 IST**
+Last updated: **2026-07-17 19:46:45 IST**
 
 | Task ID         | Completed (IST)     | Module/deliverable                                                            | Evidence                                       | Verification                                  |
 | --------------- | ------------------- | ----------------------------------------------------------------------------- | ---------------------------------------------- | --------------------------------------------- |
@@ -33,5 +33,6 @@ Last updated: **2026-07-17 19:34:26 IST**
 | `WBL-BE-007A`   | 2026-07-17 19:06:21 | Purchase/payables database foundation and deterministic draft fixture           | Prisma schema, migration, seed, DB E2E         | 3 unit + 43 integration; drift/audit PASS    |
 | `WBL-BE-007B`   | 2026-07-17 19:22:18 | Protected supplier, purchase draft/post and supplier-payment core APIs           | `src/modules/purchases/`, projection migration | 3 unit + 52 integration; concurrency PASS    |
 | `WBL-FE-016A`   | 2026-07-17 19:34:26 | Real API auth, tenant workspace, catalogue and stock browser integration          | Angular API repositories/session/interceptor   | Build; 19 unit; 4 connected browser PASS     |
+| `WBL-FE-016B`   | 2026-07-17 19:46:45 | Live dashboard, purchase workflow and separate core/AI subscription browser UI    | Dashboard/Purchases/Subscriptions pages        | Full web/API gates and accessibility PASS    |
 
 `R0 — Frontend foundation` is complete as a **demo baseline**, not a production billing application. Backend, real authentication, persistence and transaction integrity remain pending.

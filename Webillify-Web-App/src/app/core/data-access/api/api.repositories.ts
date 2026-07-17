@@ -18,6 +18,10 @@ import {
   DashboardSnapshot,
   OrganizationContext,
   Product,
+  PurchaseBill,
+  PurchaseWorkspace,
+  CreatePurchaseDraftRequest,
+  SubscriptionOverview,
 } from '../../domain/models';
 import {
   AuthRepository,
@@ -25,6 +29,8 @@ import {
   PosRepository,
   ProductRepository,
   WorkspaceRepository,
+  PurchaseRepository,
+  SubscriptionRepository,
 } from '../repositories';
 import { APP_ENVIRONMENT } from '../provide-data-access';
 import { ApiSessionStore, StoredApiSession } from './api-session';
@@ -55,6 +61,27 @@ interface ApiProduct {
 interface ApiStockBalance {
   readonly quantity: string;
   readonly variant: { id: string };
+  readonly warehouse: { id: string; name: string; branchId: string };
+}
+
+interface ApiSupplier {
+  readonly id: string;
+  readonly normalizedCode: string;
+  readonly name: string;
+  readonly gstin: string | null;
+  readonly creditDays: number;
+}
+
+interface ApiPurchaseBill {
+  readonly id: string;
+  readonly supplierId: string;
+  readonly supplierInvoiceReference: string;
+  readonly invoiceDate: string;
+  readonly status: 'DRAFT' | 'POSTED' | 'CANCELLED';
+  readonly totalAmount: string;
+  readonly paidAmount: string;
+  readonly outstandingAmount: string;
+  readonly supplier: { name: string };
 }
 
 const KNOWN_PERMISSIONS: readonly Permission[] = [
@@ -221,8 +248,58 @@ export class ApiWorkspaceRepository implements WorkspaceRepository {
 
 @Injectable()
 export class ApiDashboardRepository implements DashboardRepository {
+  private readonly http = inject(HttpClient);
+  private readonly environment = inject(APP_ENVIRONMENT);
+
   getSnapshot(): Observable<DashboardSnapshot> {
-    return of({ recentSales: [], salesBars: Array.from({ length: 12 }, () => 0) });
+    return forkJoin({
+      products: this.http.get<ApiProduct[]>(`${this.environment.apiBaseUrl}/products`),
+      balances: this.http.get<ApiStockBalance[]>(`${this.environment.apiBaseUrl}/stock-balances`),
+      bills: this.http.get<ApiPurchaseBill[]>(`${this.environment.apiBaseUrl}/purchase-bills`),
+    }).pipe(
+      map(({ products, balances, bills }) => {
+        const values = bills.slice(0, 12).map((bill) => Number(bill.totalAmount));
+        const maximum = Math.max(...values, 1);
+        const productNames = new Map(
+          products.flatMap((product) =>
+            product.variants.map((variant) => [variant.id, product.name] as const),
+          ),
+        );
+        return {
+          recentSales: bills.slice(0, 6).map((bill) => ({
+            invoice: bill.supplierInvoiceReference,
+            customer: bill.supplier.name,
+            time: new Date(bill.invoiceDate).toLocaleDateString('en-IN', {
+              day: '2-digit',
+              month: 'short',
+            }),
+            amount: Number(bill.totalAmount),
+            status: Number(bill.outstandingAmount) === 0 ? ('Paid' as const) : ('Credit' as const),
+          })),
+          salesBars: values.length
+            ? values.map((value) => Math.max(8, Math.round((value / maximum) * 100)))
+            : Array.from({ length: 12 }, () => 0),
+          metrics: {
+            productCount: products.reduce((total, product) => total + product.variants.length, 0),
+            stockUnits: balances.reduce((total, balance) => total + Number(balance.quantity), 0),
+            purchaseBillCount: bills.length,
+            outstandingPayables: bills.reduce(
+              (total, bill) => total + Number(bill.outstandingAmount),
+              0,
+            ),
+            purchaseTotal: bills.reduce((total, bill) => total + Number(bill.totalAmount), 0),
+          },
+          stockAlerts: balances
+            .filter((balance) => Number(balance.quantity) < 8)
+            .slice(0, 4)
+            .map((balance) => ({
+              name: productNames.get(balance.variant.id) ?? 'Product variant',
+              stock: Number(balance.quantity),
+            })),
+        };
+      }),
+      catchError((error: unknown) => throwError(() => apiError(error))),
+    );
   }
 }
 
@@ -233,6 +310,172 @@ export class ApiPosRepository implements PosRepository {
       () => new Error('Sales posting is not implemented in the current backend stage yet.'),
     );
   }
+}
+
+@Injectable()
+export class ApiPurchaseRepository implements PurchaseRepository {
+  private readonly http = inject(HttpClient);
+  private readonly environment = inject(APP_ENVIRONMENT);
+  private readonly session = inject(ApiSessionStore);
+
+  getWorkspace(): Observable<PurchaseWorkspace> {
+    return forkJoin({
+      suppliers: this.http.get<ApiSupplier[]>(`${this.environment.apiBaseUrl}/suppliers`),
+      bills: this.http.get<ApiPurchaseBill[]>(`${this.environment.apiBaseUrl}/purchase-bills`),
+      products: this.http.get<ApiProduct[]>(`${this.environment.apiBaseUrl}/products`),
+      balances: this.http.get<ApiStockBalance[]>(`${this.environment.apiBaseUrl}/stock-balances`),
+    }).pipe(
+      map(({ suppliers, bills, products, balances }) => ({
+        suppliers: suppliers.map((supplier) => ({
+          id: supplier.id,
+          code: supplier.normalizedCode,
+          name: supplier.name,
+          gstin: supplier.gstin,
+          creditDays: supplier.creditDays,
+        })),
+        bills: bills.map(mapBill),
+        variants: products.flatMap((product) =>
+          product.variants.map((variant) => ({
+            id: variant.id,
+            sku: variant.sku,
+            label: variant.name ? `${product.name} · ${variant.name}` : product.name,
+          })),
+        ),
+        warehouse: balances[0]?.warehouse
+          ? { id: balances[0].warehouse.id, name: balances[0].warehouse.name }
+          : null,
+      })),
+      catchError((error: unknown) => throwError(() => apiError(error))),
+    );
+  }
+
+  createDraft(request: CreatePurchaseDraftRequest): Observable<PurchaseBill> {
+    const workspace = this.session.snapshot?.session.workspace;
+    if (!workspace) return throwError(() => new Error('No active branch is selected.'));
+    return this.http
+      .post<ApiPurchaseBill>(`${this.environment.apiBaseUrl}/purchase-bills`, {
+        branchId: workspace.branchId,
+        warehouseId: request.warehouseId,
+        supplierId: request.supplierId,
+        supplierInvoiceReference: request.reference,
+        invoiceDate: request.invoiceDate,
+        taxTreatment: 'INTRASTATE',
+        inputTaxEligible: true,
+        roundOff: 0,
+        items: [
+          {
+            variantId: request.variantId,
+            quantity: request.quantity,
+            unitCost: request.unitCost,
+            taxRate: request.taxRate,
+            inputTaxEligible: true,
+          },
+        ],
+      })
+      .pipe(
+        map(mapBill),
+        catchError((error: unknown) => throwError(() => apiError(error))),
+      );
+  }
+
+  postBill(id: string): Observable<PurchaseBill> {
+    return this.http
+      .post<{ bill: ApiPurchaseBill }>(
+        `${this.environment.apiBaseUrl}/purchase-bills/${id}/post`,
+        {},
+        { headers: new HttpHeaders({ 'Idempotency-Key': crypto.randomUUID() }) },
+      )
+      .pipe(
+        map(({ bill }) => mapBill(bill)),
+        catchError((error: unknown) => throwError(() => apiError(error))),
+      );
+  }
+
+  payOutstanding(bill: PurchaseBill): Observable<PurchaseBill> {
+    const workspace = this.session.snapshot?.session.workspace;
+    if (!workspace) return throwError(() => new Error('No active branch is selected.'));
+    return this.http
+      .post(
+        `${this.environment.apiBaseUrl}/supplier-payments`,
+        {
+          branchId: workspace.branchId,
+          supplierId: bill.supplierId,
+          method: 'BANK',
+          amount: bill.outstandingAmount,
+          reference: `WEB-${bill.reference}`.slice(0, 120),
+          paidAt: new Date().toISOString(),
+          allocations: [{ purchaseBillId: bill.id, amount: bill.outstandingAmount }],
+        },
+        { headers: new HttpHeaders({ 'Idempotency-Key': crypto.randomUUID() }) },
+      )
+      .pipe(
+        switchMap(() =>
+          this.http.get<ApiPurchaseBill>(
+            `${this.environment.apiBaseUrl}/purchase-bills/${bill.id}`,
+          ),
+        ),
+        map(mapBill),
+        catchError((error: unknown) => throwError(() => apiError(error))),
+      );
+  }
+}
+
+@Injectable()
+export class ApiSubscriptionRepository implements SubscriptionRepository {
+  private readonly http = inject(HttpClient);
+  private readonly environment = inject(APP_ENVIRONMENT);
+
+  getOverview(): Observable<SubscriptionOverview> {
+    return forkJoin({
+      core: this.http.get<any>(`${this.environment.apiBaseUrl}/subscription`),
+      usage: this.http.get<any>(`${this.environment.apiBaseUrl}/usage`),
+      aiPlan: this.http.get<any>(`${this.environment.apiBaseUrl}/ai/plan`),
+      aiUsage: this.http.get<any>(`${this.environment.apiBaseUrl}/ai/usage`),
+    }).pipe(
+      map(({ core, usage, aiPlan, aiUsage }) => ({
+        core: {
+          planName: core.subscription.plan.name,
+          planCode: core.subscription.plan.code,
+          status: core.subscription.status,
+          billingInterval: core.subscription.billingInterval,
+          periodEnd: core.subscription.currentPeriodEnd,
+          mutationAllowed: core.mutationAllowed,
+          branchesUsed: usage.usage.branches,
+          branchLimit: numberEntitlement(core.subscription.entitlements['branches.max']),
+          usersUsed: usage.usage.users,
+          userLimit: numberEntitlement(core.subscription.entitlements['users.max']),
+        },
+        ai: {
+          planName: aiPlan.name,
+          status: aiUsage.subscription?.status ?? 'NOT_SUBSCRIBED',
+          usable: aiUsage.usable,
+          monthlyPrice: Number(aiPlan.monthlyPrice),
+          availableCredits: aiUsage.availableCredits,
+          monthlyCredits: aiUsage.subscription?.monthlyCredits ?? 0,
+          separateFromCore: aiPlan.separateFromCore,
+        },
+      })),
+      catchError((error: unknown) => throwError(() => apiError(error))),
+    );
+  }
+}
+
+function mapBill(bill: ApiPurchaseBill): PurchaseBill {
+  return {
+    id: bill.id,
+    supplierId: bill.supplierId,
+    supplierName: bill.supplier.name,
+    reference: bill.supplierInvoiceReference,
+    invoiceDate: bill.invoiceDate,
+    status: bill.status,
+    totalAmount: Number(bill.totalAmount),
+    paidAmount: Number(bill.paidAmount),
+    outstandingAmount: Number(bill.outstandingAmount),
+  };
+}
+
+function numberEntitlement(value: unknown): number | null {
+  return typeof value === 'number' ? value : null;
 }
 
 function apiError(error: unknown): Error {

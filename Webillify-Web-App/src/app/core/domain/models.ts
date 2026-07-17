@@ -21,6 +21,14 @@ export interface RecentSale {
 export interface DashboardSnapshot {
   readonly recentSales: readonly RecentSale[];
   readonly salesBars: readonly number[];
+  readonly metrics?: {
+    readonly productCount: number;
+    readonly stockUnits: number;
+    readonly purchaseBillCount: number;
+    readonly outstandingPayables: number;
+    readonly purchaseTotal: number;
+  };
+  readonly stockAlerts?: ReadonlyArray<{ readonly name: string; readonly stock: number }>;
 }
 
 export interface CartItem {
@@ -46,4 +54,72 @@ export interface OrganizationContext {
   readonly organizationName: string;
   readonly branchId: string;
   readonly branchName: string;
+}
+
+export interface Supplier {
+  readonly id: string;
+  readonly code: string;
+  readonly name: string;
+  readonly gstin: string | null;
+  readonly creditDays: number;
+}
+
+export interface PurchaseBill {
+  readonly id: string;
+  readonly supplierId: string;
+  readonly supplierName: string;
+  readonly reference: string;
+  readonly invoiceDate: string;
+  readonly status: 'DRAFT' | 'POSTED' | 'CANCELLED';
+  readonly totalAmount: number;
+  readonly paidAmount: number;
+  readonly outstandingAmount: number;
+}
+
+export interface PurchaseOption {
+  readonly id: string;
+  readonly label: string;
+  readonly sku: string;
+}
+
+export interface PurchaseWorkspace {
+  readonly suppliers: readonly Supplier[];
+  readonly bills: readonly PurchaseBill[];
+  readonly variants: readonly PurchaseOption[];
+  readonly warehouse: { readonly id: string; readonly name: string } | null;
+}
+
+export interface CreatePurchaseDraftRequest {
+  readonly supplierId: string;
+  readonly warehouseId: string;
+  readonly variantId: string;
+  readonly reference: string;
+  readonly invoiceDate: string;
+  readonly quantity: number;
+  readonly unitCost: number;
+  readonly taxRate: number;
+}
+
+export interface SubscriptionOverview {
+  readonly core: {
+    readonly planName: string;
+    readonly planCode: string;
+    readonly status: string;
+    readonly billingInterval: string;
+    readonly periodEnd: string;
+    readonly mutationAllowed: boolean;
+    readonly branchesUsed: number;
+    readonly branchLimit: number | null;
+    readonly usersUsed: number;
+    readonly userLimit: number | null;
+  };
+  readonly ai: {
+    readonly planName: string;
+    readonly status: string;
+    readonly usable: boolean;
+    readonly monthlyPrice: number;
+    readonly availableCredits: number;
+    readonly monthlyCredits: number;
+    readonly separateFromCore: boolean;
+  };
 }

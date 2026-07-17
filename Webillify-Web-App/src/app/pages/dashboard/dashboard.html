@@ -1,17 +1,22 @@
 <section class="page-heading">
   <div>
-    <span class="eyebrow">Friday, 17 July</span>
-    <h1>Good afternoon, Samy.</h1>
-    <p>Here’s what’s happening across Ageera today.</p>
+    <span class="eyebrow">Connected workspace</span>
+    <h1>Good afternoon, {{ auth.user()?.displayName }}.</h1>
+    <p>
+      Live operational data for {{ auth.session()?.workspace?.organizationName }} ·
+      {{ auth.session()?.workspace?.branchName }}.
+    </p>
   </div>
   <div class="heading-actions">
-    <button class="button button--secondary"><app-icon name="calendar" /> 17 Jul 2026</button>
+    <a class="button button--secondary" routerLink="/purchases"
+      ><app-icon name="cart" /> New purchase</a
+    >
     <a class="button button--primary" routerLink="/pos"><app-icon name="plus" /> New sale</a>
   </div>
 </section>
 
 <div class="demo-strip">
-  <span>Demo workspace</span> Numbers shown here are local sample data until the API is connected.
+  <span>Live local API</span> Values below are calculated from the current tenant database.
 </div>
 
 <app-data-state
@@ -26,38 +31,38 @@
   <article class="metric-card metric-card--revenue">
     <div class="metric-card__top">
       <span class="metric-icon"><app-icon name="rupee" /></span
-      ><span class="trend trend--up">↗ 12.5%</span>
+      ><span class="metric-badge">Live projection</span>
     </div>
-    <span class="metric-card__label">Today’s sales</span>
-    <strong>₹48,290</strong>
-    <small>₹42,923 this time yesterday</small>
+    <span class="metric-card__label">Stock on hand</span>
+    <strong>{{ metrics().stockUnits.toLocaleString('en-IN') }}</strong>
+    <small>Across the assigned branch warehouse</small>
   </article>
   <article class="metric-card">
     <div class="metric-card__top">
       <span class="metric-icon metric-icon--blue"><app-icon name="receipt" /></span
-      ><span class="trend trend--up">↗ 8.2%</span>
+      ><span class="metric-badge">Catalogue</span>
     </div>
-    <span class="metric-card__label">Invoices</span>
-    <strong>38</strong>
-    <small>Average value ₹1,271</small>
+    <span class="metric-card__label">Product variants</span>
+    <strong>{{ metrics().productCount }}</strong>
+    <small>Active variants available to this tenant</small>
   </article>
   <article class="metric-card">
     <div class="metric-card__top">
       <span class="metric-icon metric-icon--amber"><app-icon name="warning" /></span
-      ><span class="metric-badge">Needs attention</span>
+      ><span class="metric-badge">Purchasing</span>
     </div>
-    <span class="metric-card__label">Low stock items</span>
-    <strong>12</strong>
-    <small>3 items are currently out of stock</small>
+    <span class="metric-card__label">Purchase bills</span>
+    <strong>{{ metrics().purchaseBillCount }}</strong>
+    <small>Draft and posted supplier documents</small>
   </article>
   <article class="metric-card">
     <div class="metric-card__top">
       <span class="metric-icon metric-icon--purple"><app-icon name="users" /></span
-      ><span class="trend trend--down">↘ 3.1%</span>
+      ><span class="metric-badge">Payables</span>
     </div>
-    <span class="metric-card__label">Receivables</span>
-    <strong>₹86,450</strong>
-    <small>Across 17 customers</small>
+    <span class="metric-card__label">Supplier outstanding</span>
+    <strong>₹{{ metrics().outstandingPayables.toLocaleString('en-IN') }}</strong>
+    <small>Allocation-reconciled outstanding amount</small>
   </article>
 </section>
 
@@ -65,8 +70,8 @@
   <article class="panel sales-chart-panel">
     <header class="panel__header">
       <div>
-        <h2>Sales overview</h2>
-        <p>Revenue performance for this month</p>
+        <h2>Purchase value overview</h2>
+        <p>Latest supplier bill totals</p>
       </div>
       <div class="segmented-control">
         @for (item of ['Today', 'Week', 'Month']; track item) {
@@ -77,10 +82,10 @@
       </div>
     </header>
     <div class="chart-summary">
-      <strong>₹6.48L</strong><span class="trend trend--up">↗ 18.4%</span
-      ><small>vs previous period</small>
+      <strong>₹{{ metrics().purchaseTotal.toLocaleString('en-IN') }}</strong
+      ><small>recorded purchase value</small>
     </div>
-    <div class="bar-chart" role="img" aria-label="Sample sales chart for the selected period">
+    <div class="bar-chart" role="img" aria-label="Relative values of recent purchase bills">
       <div class="chart-lines"><span></span><span></span><span></span><span></span></div>
       @for (bar of bars(); track $index) {
         <div class="bar-column">
@@ -118,8 +123,8 @@
     <div class="ai-insight">
       <span><app-icon name="sparkles" /></span>
       <div>
-        <small>AI insight</small><strong>Sales are 18% higher this week.</strong>
-        <p>Appliances contributed most of the increase.</p>
+        <small>Separate AI plan</small><strong>AI is optional and independently metered.</strong>
+        <p>Open Settings to review the live add-on status and credit balance.</p>
       </div>
       <button type="button" aria-label="Open AI sales insight"><app-icon name="arrow" /></button>
     </div>
@@ -130,21 +135,21 @@
   <article class="panel recent-panel">
     <header class="panel__header">
       <div>
-        <h2>Recent sales</h2>
-        <p>Latest invoices from this branch</p>
+        <h2>Recent purchase activity</h2>
+        <p>Latest supplier documents from this branch</p>
       </div>
       <a routerLink="/reports">View all <app-icon name="arrow" /></a>
     </header>
     <div class="table-wrap">
       <table>
         <caption class="visually-hidden">
-          Recent sales for the current branch
+          Recent purchase bills for the current branch
         </caption>
         <thead>
           <tr>
-            <th>Invoice</th>
-            <th>Customer</th>
-            <th>Time</th>
+            <th>Reference</th>
+            <th>Supplier</th>
+            <th>Date</th>
             <th>Status</th>
             <th>Amount</th>
           </tr>
@@ -176,24 +181,23 @@
     <header class="panel__header">
       <div>
         <h2>Stock alerts</h2>
-        <p>Items requiring attention</p>
+        <p>Live items below eight units</p>
       </div>
       <a routerLink="/products">View all</a>
     </header>
-    <div class="stock-alert">
-      <span class="product-thumb" style="--thumb: #bddcea">RF</span>
-      <div><strong>Samsung 253L Refrigerator</strong><small>3 units remaining</small></div>
-      <span class="stock-pill stock-pill--low">Low</span>
-    </div>
-    <div class="stock-alert">
-      <span class="product-thumb" style="--thumb: #d8d5ad">PL</span>
-      <div><strong>Palm Leaf Plates</strong><small>Out of stock</small></div>
-      <span class="stock-pill stock-pill--out">Out</span>
-    </div>
-    <div class="stock-alert">
-      <span class="product-thumb" style="--thumb: #bde2de">FC</span>
-      <div><strong>Herbal Floor Cleaner</strong><small>6 units remaining</small></div>
-      <span class="stock-pill stock-pill--low">Low</span>
-    </div>
+    @for (alert of stockAlerts(); track alert.name) {
+      <div class="stock-alert">
+        <span class="product-thumb">{{ alert.name.slice(0, 2).toUpperCase() }}</span>
+        <div>
+          <strong>{{ alert.name }}</strong
+          ><small>{{ alert.stock }} units remaining</small>
+        </div>
+        <span class="stock-pill" [class.stock-pill--out]="alert.stock === 0">{{
+          alert.stock === 0 ? 'Out' : 'Low'
+        }}</span>
+      </div>
+    } @empty {
+      <div class="shared-empty-state"><strong>No low-stock alerts</strong></div>
+    }
   </article>
 </section>

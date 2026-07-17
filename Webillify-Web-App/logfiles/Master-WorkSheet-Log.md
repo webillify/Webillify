@@ -1,10 +1,10 @@
 # Webillify master worksheet
 
-Snapshot timestamp: **2026-07-17 19:34:26 IST**
+Snapshot timestamp: **2026-07-17 19:46:45 IST**
 Project status: **ACTIVE — identity, tenancy, authorization and independent subscription foundations verified**
 Current release: **R1 — Frontend application foundation**  
 Current phase: **Phase 4 — Catalogue, purchases and inventory**
-Current task: **WBL-FE-016B — Browser purchases and separate core/AI subscription status**
+Current task: **WBL-BE-007C — Purchase cancellation and return compensation (ready next)**
 
 ## Project snapshot
 
@@ -13,17 +13,17 @@ Current task: **WBL-FE-016B — Browser purchases and separate core/AI subscript
 | Product specifications          | COMPLETE             | Parent `Docs/` contains populated V1 product, accounting, GST, API, database, security, pricing, AI, roadmap, and pilot specifications |
 | Angular application scaffold    | COMPLETE             | Angular 22 standalone app, strict TypeScript, routing and lazy-loaded pages                                                            |
 | Responsive application shell    | COMPLETE             | Sidebar, top bar, branch picker, mobile navigation and placeholder routes                                                              |
-| Dashboard UI                    | COMPLETE — DEMO DATA | KPI cards, sample chart, quick actions, recent sales and stock alerts                                                                  |
+| Dashboard UI                    | COMPLETE — API DATA  | Live product, stock, purchase and payable metrics with no hard-coded financial figures                                                |
 | POS UI                          | COMPLETE — DEMO DATA | Search, categories, interactive cart, totals, payment selection and demo completion                                                    |
 | Product catalogue UI            | PARTIAL — API DATA  | Searchable table renders real tenant product variants and branch stock; create/import remains pending                                |
 | Authentication                  | COMPLETE — CORE API | Angular real login/session/tenant integration works against Argon2/JWT/rotating-session API in desktop/mobile Chrome                  |
 | PWA foundation                  | COMPLETE             | Manifest, icon, service worker registration and production `ngsw` output                                                               |
 | Customers                       | PLANNED              | Placeholder route only                                                                                                                 |
-| Purchases                       | IN PROGRESS — CORE API | Protected supplier/draft/post/payment APIs pass; cancellation, returns and frontend remain pending                                  |
+| Purchases                       | IN PROGRESS — CORE UI/API | Browser draft/post/payment and protected APIs pass; cancellation and returns remain pending                                      |
 | Reports                         | PLANNED              | Placeholder route only                                                                                                                 |
-| Settings / roles / subscription | PLANNED              | Placeholder route only                                                                                                                 |
+| Settings / roles / subscription | PARTIAL — API DATA   | Core Business plan and separate Webillify AI lifecycle/credits render live; role editing pending                                      |
 | Backend and persistence         | IN PROGRESS          | Identity through purchase posting/payments pass entitlement, isolation, idempotency, concurrency and reconciliation tests              |
-| Webillify AI integration        | PARTIAL — API READY  | Separate plan/lifecycle/usage APIs and atomic credit service pass; capability workflows and UI remain pending                         |
+| Webillify AI integration        | PARTIAL — PLAN UI/API | Separate plan/lifecycle/credits render live; extraction/questions/summaries remain pending                                            |
 | Data access and request state   | COMPLETE             | Typed models/repositories, mock/API modes, environment configuration and visible request errors                                        |
 | Automated tests                 | PARTIAL              | 19 frontend unit, 4 connected browser/accessibility journeys, 3 API unit and 52 backend integration/security tests pass                |
 | Production deployment           | PARTIAL              | Production build and GitHub CI definition exist; hosting/deployment environments remain pending                                        |
@@ -46,6 +46,7 @@ Current task: **WBL-FE-016B — Browser purchases and separate core/AI subscript
 | 2026-07-17 19:06:21 IST | Purchases/payables DB gate     | PASS — 3 unit + 43 integration; schema drift and audit 0                 |
 | 2026-07-17 19:22:18 IST | Purchase posting/payment gate  | PASS — 3 unit + 52 integration; concurrency, drift and audit 0           |
 | 2026-07-17 19:34:26 IST | Connected browser integration  | PASS — real auth/catalogue/stock; 19 unit + 4 desktop/mobile journeys     |
+| 2026-07-17 19:46:45 IST | Browser workflow full gate     | PASS — live dashboard/purchases/plans; web 19+4 and API 3+52             |
 
 ## Current goal
 

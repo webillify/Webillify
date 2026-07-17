@@ -1,15 +1,15 @@
 # Webillify incomplete work worksheet
 
-Last updated: **2026-07-17 19:34:26 IST**
-In progress: **WBL-FE-016B — browser purchase workflow and separate AI/core subscription status; FE-016A published as `d91a0fa`**
-Ready next: **Complete the currently implemented backend surface in the browser, then BE-007C**
+Last updated: **2026-07-17 19:46:45 IST**
+In progress: **None — WBL-FE-016B verified; publication pending**
+Ready next: **WBL-BE-007C purchase cancellation/returns, then BE-008 real POS sales posting**
 
 ## Ready
 
 | Task ID      | Priority | Module/outcome                 | Assignee | Status      |
 | ------------ | -------- | ------------------------------ | -------- | ----------- |
-| `WBL-FE-016B` | P0      | Browser purchases and separate AI/core plan screens | Codex | IN PROGRESS |
 | `WBL-BE-007C` | P0      | Purchase cancellation/returns with compensating effects | Unassigned | READY |
+| `WBL-BE-008`  | P0      | Real POS invoice/payment/return backend and browser completion | Unassigned | READY |
 
 ## Planned frontend
 

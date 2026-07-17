@@ -1,6 +1,6 @@
 # Webillify module status
 
-Reconciled: **2026-07-17 19:34:26 IST**
+Reconciled: **2026-07-17 19:46:45 IST**
 Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence passed. `DEMO` is not production-ready.
 
 ## Frontend modules
@@ -11,17 +11,17 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 | `WBL-MOD-002` | Routing           | COMPLETE        | Lazy routes with protected, guest and permission guards          | Real server authorization             |
 | `WBL-MOD-003` | Application shell | COMPLETE        | Responsive shell in `src/app/layout/`                            | Real organization/branch state        |
 | `WBL-MOD-004` | Sign-in           | COMPLETE — API | Real login/access token/refresh cookie, workspace hydration and sign-out | Password reset later            |
-| `WBL-MOD-005` | Dashboard         | DEMO            | KPI/chart/actions/sales/stock via typed repository               | Real API and focused tests            |
+| `WBL-MOD-005` | Dashboard         | COMPLETE — API  | Live catalogue, stock, purchase and payable projections          | Add sales metrics with BE-008         |
 | `WBL-MOD-006` | POS               | DEMO            | Search, cart, totals and payment selection                       | Transactional API and sessions        |
 | `WBL-MOD-007` | Products          | PARTIAL — API   | Real tenant catalogue and stock projection render in browser     | CRUD, import and API pagination       |
 | `WBL-MOD-008` | Customers         | PLANNED         | Placeholder route only                                           | List/detail/balance/receipt           |
-| `WBL-MOD-009` | Purchases         | PLANNED         | Placeholder route only                                           | Supplier/bill/payment/return          |
+| `WBL-MOD-009` | Purchases         | COMPLETE — CORE API | Live supplier bills, draft creation, posting and full payment | Cancellation/returns with BE-007C |
 | `WBL-MOD-010` | Reports           | PLANNED         | Placeholder route only                                           | Sales/tax/stock/closing reports       |
 | `WBL-MOD-011` | Settings          | PLANNED         | Placeholder route only                                           | Company/branch/users/subscriptions    |
 | `WBL-MOD-012` | Shared icons      | COMPLETE        | Typed reusable `shared/icon.ts`                                  | Accessibility review                  |
 | `WBL-MOD-013` | Data access/state | COMPLETE — API | Real auth/workspace/product/stock adapters plus explicit mock mode | Extend per new backend module        |
 | `WBL-MOD-014` | PWA baseline      | COMPLETE        | Manifest, icon, service worker and `ngsw` output                 | Browser install/offline QA            |
-| `WBL-MOD-015` | Webillify AI UI   | PLANNED         | Navigation indicator only                                        | Entitlement, credits and AI workflows |
+| `WBL-MOD-015` | Webillify AI UI   | PARTIAL — PLAN API | Separate ₹799 plan, lifecycle and live credits displayed       | AI capability workflows               |
 | `WBL-MOD-016` | Shared feedback   | COMPLETE        | Data state, toast and confirmation primitives                    | Accessibility audit                   |
 
 ## Backend/platform modules
@@ -69,4 +69,5 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 2026-07-17 19:06:21 IST  Purchases/payables DB gate    PASS (3 unit + 43 integration; drift/audit 0)
 2026-07-17 19:22:18 IST  Purchase posting/payment gate PASS (3 unit + 52 integration; concurrency/drift/audit 0)
 2026-07-17 19:34:26 IST  Connected browser stage       PASS (19 unit + 4 desktop/mobile API journeys)
+2026-07-17 19:46:45 IST  Browser workflow full gate    PASS (web 19+4; API 3+52; production audits 0)
 ```
