@@ -1,6 +1,6 @@
 # Webillify module status
 
-Reconciled: **2026-07-17 18:22:53 IST**
+Reconciled: **2026-07-17 18:31:45 IST**
 Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence passed. `DEMO` is not production-ready.
 
 ## Frontend modules
@@ -33,8 +33,8 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 | `WBL-MOD-103` | Tenancy/RBAC       | COMPLETE    | Tenant resolution, branch scope and permissions; 15 API E2E pass |
 | `WBL-MOD-104` | Core subscriptions | COMPLETE    | Versioned plan/usage APIs and active-mutation enforcement tested |
 | `WBL-MOD-105` | AI subscription    | COMPLETE — CORE | Independent plan/lifecycle/credits; atomic consume/refund and concurrency tested |
-| `WBL-MOD-106` | Catalogue          | NOT STARTED | Products, variants, barcodes, units and tax           |
-| `WBL-MOD-107` | Inventory          | NOT STARTED | Movement ledger, balances, counts, transfers          |
+| `WBL-MOD-106` | Catalogue          | IN PROGRESS | Tenant categories/units/taxes/products/variants/barcodes schema and seed pass |
+| `WBL-MOD-107` | Inventory          | IN PROGRESS | Warehouse, append-only movement ledger and rebuildable balance projection pass |
 | `WBL-MOD-108` | Purchases/payables | NOT STARTED | Suppliers, bills, returns and payments                |
 | `WBL-MOD-109` | Sales/receivables  | NOT STARTED | POS sessions, invoices, returns and receipts          |
 | `WBL-MOD-110` | Reports/exports    | NOT STARTED | Reconciled reports and scoped exports                 |
@@ -64,4 +64,5 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 2026-07-17 18:07:26 IST  API lint/build/audit          PASS (0 vulnerabilities)
 2026-07-17 18:07:26 IST  API unit + E2E                PASS (3 + 15 tests)
 2026-07-17 18:22:53 IST  Subscription API full gate    PASS (3 unit + 26 integration; audit 0)
+2026-07-17 18:31:45 IST  Catalogue/inventory DB gate   PASS (3 unit + 29 integration; audit 0)
 ```

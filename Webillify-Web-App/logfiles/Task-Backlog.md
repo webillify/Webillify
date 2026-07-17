@@ -1,7 +1,7 @@
 # Webillify task backlog
 
-Last prioritized: **2026-07-17 18:22:53 IST**
-Active assignee: **Unassigned — WBL-BE-006 ready next**
+Last prioritized: **2026-07-17 18:31:45 IST**
+Active assignee: **Codex — WBL-BE-006 started 2026-07-17 18:25:00 IST**
 WIP limit: **One P0 task per engineer**
 
 ## Just completed
@@ -139,7 +139,7 @@ Result: three versioned core offers, independent AI plan/usage lifecycle, server
 
 ### WBL-BE-006 — Catalogue and immutable inventory ledger
 
-Status: **READY**
+Status: **IN PROGRESS — database/ledger contract PASS; API stage next**
 
 - Add tenant-scoped products, variants, categories, units, taxes and barcode identities.
 - Record stock changes as immutable movements with rebuildable branch balances.
@@ -158,7 +158,7 @@ Status: **READY**
 | `WBL-BE-004`     | P0       | Organization/branch/RBAC APIs                | COMPLETE   | Codex              | BE-002/003      |
 | `WBL-SEC-001`    | P0       | Tenant/branch authorization harness          | COMPLETE   | Codex              | BE-002/004      |
 | `WBL-BE-005`     | P0       | Core and separate AI entitlements            | COMPLETE   | Codex              | BE-004          |
-| `WBL-BE-006`     | P0       | Catalogue and immutable inventory ledger     | READY      | Backend            | BE-005          |
+| `WBL-BE-006`     | P0       | Catalogue and immutable inventory ledger     | IN PROGRESS | Codex             | BE-005          |
 | `WBL-FE-009`     | P1       | Shared loading/error/toast/confirm UX        | COMPLETE   | Codex              | FE-007          |
 | `WBL-FE-010`     | P1       | Customer list/detail/balance UI              | PLANNED    | Frontend           | Data/API        |
 | `WBL-FE-011`     | P1       | Product create/edit/import UI                | PLANNED    | Frontend           | Catalogue API   |

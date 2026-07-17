@@ -1,10 +1,10 @@
 # Webillify master worksheet
 
-Snapshot timestamp: **2026-07-17 18:24:34 IST**
+Snapshot timestamp: **2026-07-17 18:31:45 IST**
 Project status: **ACTIVE — identity, tenancy, authorization and independent subscription foundations verified**
 Current release: **R1 — Frontend application foundation**  
 Current phase: **Phase 3 — Backend identity and tenancy**  
-Current task: **WBL-BE-006 — Catalogue and immutable inventory ledger (ready next)**
+Current task: **WBL-BE-006 — Catalogue and immutable inventory ledger (API stage next)**
 
 ## Project snapshot
 
@@ -41,6 +41,7 @@ Current task: **WBL-BE-006 — Catalogue and immutable inventory ledger (ready n
 | 2026-07-17 18:07:26 IST | API lint/build/audit          | PASS — 0 dependency vulnerabilities                                     |
 | 2026-07-17 18:07:26 IST | API unit and E2E suites       | PASS — 3 unit + 15 API/database/security tests                           |
 | 2026-07-17 18:22:53 IST | Subscription regression suite | PASS — 3 unit + 26 API/database/security/subscription tests              |
+| 2026-07-17 18:31:45 IST | Catalogue/inventory DB gate    | PASS — 3 unit + 29 integration; immutable ledger and audit 0            |
 
 ## Current goal
 

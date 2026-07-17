@@ -3,6 +3,7 @@ import {
   MembershipStatus,
   OrganizationStatus,
   PrismaClient,
+  StockMovementType,
   SubscriptionStatus,
 } from '@prisma/client';
 import argon2 from 'argon2';
@@ -17,6 +18,14 @@ const ids = {
   branch: '40000000-0000-4000-8000-000000000001',
   membership: '50000000-0000-4000-8000-000000000001',
   cashierMembership: '50000000-0000-4000-8000-000000000002',
+  category: '60000000-0000-4000-8000-000000000001',
+  unit: '70000000-0000-4000-8000-000000000001',
+  taxRate: '80000000-0000-4000-8000-000000000001',
+  product: '90000000-0000-4000-8000-000000000001',
+  variant: 'a0000000-0000-4000-8000-000000000001',
+  barcode: 'b0000000-0000-4000-8000-000000000001',
+  warehouse: 'c0000000-0000-4000-8000-000000000001',
+  openingStockSource: 'd0000000-0000-4000-8000-000000000001',
 };
 
 const permissionDefinitions = [
@@ -24,6 +33,8 @@ const permissionDefinitions = [
   ['pos.create', 'Create and post point-of-sale invoices', true],
   ['products.read', 'View the product catalogue', false],
   ['products.manage', 'Create and update products', true],
+  ['inventory.read', 'View stock balances and movements', false],
+  ['inventory.adjust', 'Post reviewed stock adjustments', true],
   ['customers.read', 'View customers and balances', false],
   ['customers.manage', 'Manage customers and receipts', true],
   ['purchases.read', 'View suppliers and purchase bills', false],
@@ -443,6 +454,179 @@ async function main(): Promise<void> {
       referenceType: 'AI_SUBSCRIPTION_PERIOD',
       referenceId: aiSubscription.id,
       expiresAt: periodEnd,
+    },
+  });
+
+  const category = await prisma.category.upsert({
+    where: {
+      organizationId_normalizedCode: {
+        organizationId: organization.id,
+        normalizedCode: 'GROCERY',
+      },
+    },
+    update: { name: 'Grocery', active: true },
+    create: {
+      id: ids.category,
+      organizationId: organization.id,
+      name: 'Grocery',
+      normalizedCode: 'GROCERY',
+    },
+  });
+  const unit = await prisma.unit.upsert({
+    where: {
+      organizationId_code: {
+        organizationId: organization.id,
+        code: 'KG',
+      },
+    },
+    update: { name: 'Kilogram', symbol: 'kg', active: true },
+    create: {
+      id: ids.unit,
+      organizationId: organization.id,
+      code: 'KG',
+      name: 'Kilogram',
+      symbol: 'kg',
+      decimalPlaces: 3,
+    },
+  });
+  const taxRate = await prisma.taxRate.upsert({
+    where: {
+      organizationId_code_effectiveFrom: {
+        organizationId: organization.id,
+        code: 'GST5',
+        effectiveFrom,
+      },
+    },
+    update: { name: 'GST 5%', rate: '5.00', cessRate: '0.00', active: true },
+    create: {
+      id: ids.taxRate,
+      organizationId: organization.id,
+      code: 'GST5',
+      name: 'GST 5%',
+      rate: '5.00',
+      effectiveFrom,
+    },
+  });
+  const product = await prisma.product.upsert({
+    where: {
+      organizationId_normalizedCode: {
+        organizationId: organization.id,
+        normalizedCode: 'RICE-PREMIUM',
+      },
+    },
+    update: { name: 'Premium Rice', active: true },
+    create: {
+      id: ids.product,
+      organizationId: organization.id,
+      categoryId: category.id,
+      baseUnitId: unit.id,
+      defaultTaxRateId: taxRate.id,
+      normalizedCode: 'RICE-PREMIUM',
+      name: 'Premium Rice',
+      productType: 'GOODS',
+      hsnSac: '1006',
+      priceTaxMode: 'EXCLUSIVE',
+    },
+  });
+  const variant = await prisma.productVariant.upsert({
+    where: {
+      organizationId_sku: {
+        organizationId: organization.id,
+        sku: 'RICE-PREMIUM-1KG',
+      },
+    },
+    update: {
+      salePrice: '60.00',
+      purchaseCost: '45.0000',
+      active: true,
+    },
+    create: {
+      id: ids.variant,
+      organizationId: organization.id,
+      productId: product.id,
+      sku: 'RICE-PREMIUM-1KG',
+      name: '1 kg',
+      salePrice: '60.00',
+      purchaseCost: '45.0000',
+    },
+  });
+  await prisma.productBarcode.upsert({
+    where: {
+      organizationId_barcode: {
+        organizationId: organization.id,
+        barcode: '8901234567890',
+      },
+    },
+    update: { variantId: variant.id, primary: true },
+    create: {
+      id: ids.barcode,
+      organizationId: organization.id,
+      variantId: variant.id,
+      barcode: '8901234567890',
+      primary: true,
+    },
+  });
+  const warehouse = await prisma.warehouse.upsert({
+    where: {
+      organizationId_normalizedCode: {
+        organizationId: organization.id,
+        normalizedCode: 'CHENNAI-MAIN',
+      },
+    },
+    update: { name: 'Chennai Main Stock', active: true },
+    create: {
+      id: ids.warehouse,
+      organizationId: organization.id,
+      companyId: company.id,
+      branchId: branch.id,
+      normalizedCode: 'CHENNAI-MAIN',
+      name: 'Chennai Main Stock',
+    },
+  });
+  const openingMovement = await prisma.stockMovement.findUnique({
+    where: {
+      organizationId_idempotencyKey_warehouseId_variantId_movementType: {
+        organizationId: organization.id,
+        idempotencyKey: 'seed-opening-stock-v1',
+        warehouseId: warehouse.id,
+        variantId: variant.id,
+        movementType: StockMovementType.OPENING_STOCK,
+      },
+    },
+  });
+  if (!openingMovement)
+    await prisma.stockMovement.create({
+      data: {
+        organizationId: organization.id,
+        companyId: company.id,
+        branchId: branch.id,
+        warehouseId: warehouse.id,
+        variantId: variant.id,
+        actorUserId: user.id,
+        movementType: StockMovementType.OPENING_STOCK,
+        quantity: '100.000',
+        unitCost: '45.0000',
+        occurredAt: effectiveFrom,
+        sourceType: 'OPENING_STOCK',
+        sourceId: ids.openingStockSource,
+        idempotencyKey: 'seed-opening-stock-v1',
+      },
+    });
+  await prisma.stockBalance.upsert({
+    where: {
+      organizationId_warehouseId_variantId: {
+        organizationId: organization.id,
+        warehouseId: warehouse.id,
+        variantId: variant.id,
+      },
+    },
+    update: { quantity: '100.000', averageCost: '45.0000' },
+    create: {
+      organizationId: organization.id,
+      warehouseId: warehouse.id,
+      variantId: variant.id,
+      quantity: '100.000',
+      averageCost: '45.0000',
     },
   });
 }

@@ -1,14 +1,14 @@
 # Webillify incomplete work worksheet
 
-Last updated: **2026-07-17 18:24:34 IST**
-In progress: **None — WBL-BE-005 verified and published as `5225b7c`**
-Ready next: **WBL-BE-006 catalogue and inventory ledger**
+Last updated: **2026-07-17 18:31:45 IST**
+In progress: **WBL-BE-006 — database/immutable-ledger contract verified; API stage next**
+Ready after current: **WBL-BE-007 purchases and payables**
 
 ## Ready
 
 | Task ID      | Priority | Module/outcome                 | Assignee | Status      |
 | ------------ | -------- | ------------------------------ | -------- | ----------- |
-| `WBL-BE-006` | P0       | Catalogue and immutable inventory ledger | Unassigned | READY |
+| `WBL-BE-006` | P0       | Catalogue and immutable inventory ledger | Codex | IN PROGRESS |
 
 ## Planned frontend
 

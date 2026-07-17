@@ -82,6 +82,100 @@ describe('PostgreSQL identity and tenancy schema', () => {
     ).rejects.toThrow();
   });
 
+  it('loads a tenant-owned catalogue and reconciled opening stock projection', async () => {
+    const product = await prisma.product.findFirstOrThrow({
+      where: {
+        organization: { slug: 'webillify-demo-retail' },
+        normalizedCode: 'RICE-PREMIUM',
+      },
+      include: {
+        category: true,
+        baseUnit: true,
+        defaultTaxRate: true,
+        variants: { include: { barcodes: true, stockBalances: true } },
+      },
+    });
+    expect(product).toMatchObject({
+      name: 'Premium Rice',
+      hsnSac: '1006',
+      category: { normalizedCode: 'GROCERY' },
+      baseUnit: { code: 'KG' },
+      defaultTaxRate: { code: 'GST5' },
+    });
+    expect(product.variants).toHaveLength(1);
+    expect(product.variants[0].barcodes[0].barcode).toBe('8901234567890');
+    expect(product.variants[0].stockBalances[0].quantity.toString()).toBe(
+      '100',
+    );
+
+    const movementTotal = await prisma.stockMovement.aggregate({
+      where: {
+        organizationId: product.organizationId,
+        variantId: product.variants[0].id,
+        warehouseId: product.variants[0].stockBalances[0].warehouseId,
+      },
+      _sum: { quantity: true },
+    });
+    expect(movementTotal._sum.quantity?.toString()).toBe('100');
+  });
+
+  it('enforces append-only non-zero stock movements in PostgreSQL', async () => {
+    const movement = await prisma.stockMovement.findFirstOrThrow({
+      where: { idempotencyKey: 'seed-opening-stock-v1' },
+    });
+    await expect(
+      prisma.stockMovement.update({
+        where: { id: movement.id },
+        data: { quantity: '99.000' },
+      }),
+    ).rejects.toThrow(/append-only/);
+    await expect(
+      prisma.stockMovement.create({
+        data: {
+          organizationId: movement.organizationId,
+          companyId: movement.companyId,
+          branchId: movement.branchId,
+          warehouseId: movement.warehouseId,
+          variantId: movement.variantId,
+          actorUserId: movement.actorUserId,
+          movementType: 'ADJUSTMENT_IN',
+          quantity: '0.000',
+          unitCost: '45.0000',
+          occurredAt: new Date(),
+          sourceType: 'SCHEMA_TEST',
+          sourceId: randomUUID(),
+          idempotencyKey: `schema-test-${randomUUID()}`,
+        },
+      }),
+    ).rejects.toThrow();
+  });
+
+  it('rejects a product linked to another tenant unit', async () => {
+    const demoUnit = await prisma.unit.findFirstOrThrow({
+      where: { organization: { slug: 'webillify-demo-retail' } },
+    });
+    const otherOrganization = await prisma.organization.create({
+      data: {
+        name: 'Catalogue Isolation Tenant',
+        slug: `catalogue-isolation-${randomUUID()}`,
+      },
+    });
+    try {
+      await expect(
+        prisma.product.create({
+          data: {
+            organizationId: otherOrganization.id,
+            baseUnitId: demoUnit.id,
+            normalizedCode: 'INVALID-TENANT-UNIT',
+            name: 'Invalid tenant product',
+          },
+        }),
+      ).rejects.toThrow();
+    } finally {
+      await prisma.organization.delete({ where: { id: otherOrganization.id } });
+    }
+  });
+
   it('rejects a branch linked to a company from another organization', async () => {
     const demoCompany = await prisma.company.findFirstOrThrow({
       where: { organization: { slug: 'webillify-demo-retail' } },

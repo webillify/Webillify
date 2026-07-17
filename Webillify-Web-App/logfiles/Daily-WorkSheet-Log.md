@@ -41,6 +41,9 @@ Status: **IN PROGRESS — BE-004/SEC-001 complete; GitHub publication retry acti
 | 2026-07-17 18:21:30 | TEST     | Concurrent charges exposed Prisma serialization conflict propagation           | FAILED — FIXED |
 | 2026-07-17 18:22:53 | TEST     | Added bounded retry; full 3-unit/26-integration/build/audit gate                | PASS           |
 | 2026-07-17 18:24:34 | INFRA    | Pushed completed BE-005 API enforcement stage and detailed history to GitHub    | `5225b7c`      |
+| 2026-07-17 18:25:00 | BACKEND  | Assigned BE-006 catalogue and immutable inventory ledger                        | IN PROGRESS    |
+| 2026-07-17 18:30:15 | DATABASE | Added tenant catalogue, warehouses, append-only movements and balance projection | COMPLETE      |
+| 2026-07-17 18:31:45 | TEST     | Migration/seed/schema/lint/build/audit plus 3 unit and 29 integration tests      | PASS          |
 
 ---
 
