@@ -1,8 +1,23 @@
 # Webillify task backlog
 
-Last prioritized: **2026-07-17 20:27:11 IST**
-Active assignee: **Codex — WBL-BE-008A in progress; FE-016C published as `d9890db`**
+Last prioritized: **2026-07-17 20:36:50 IST**
+Active assignee: **Unassigned — WBL-BE-008B ready after BE-008A publication**
 WIP limit: **One P0 task per engineer**
+
+## Just completed
+
+### WBL-BE-008A — POS persistence database foundation
+
+Status: **COMPLETE — 2026-07-17 20:36:50 IST**
+
+- Added tenant customers with explicit receivable/credit projections and credit limits.
+- Added company financial-year invoice series with unique server-number identity.
+- Added branch/register POS sessions, opening/closing cash projections and immutable cash movements.
+- Added sales invoices/items with immutable price, cost, HSN/tax and total snapshots.
+- Added split sales tenders with session/invoice ownership and payment-projection reconciliation.
+- Enforced open-register uniqueness, ownership, tax-mode, money, state and append-only invariants in PostgreSQL.
+
+Result: clean eight-migration replay/seed, zero schema drift, lint/build, production audit 0, 3 unit and 62 integration/security tests pass.
 
 ## Just completed
 
@@ -252,7 +267,7 @@ Status: **COMPLETE — CORE API; accounting/GST fixtures remain an external prod
 | `WBL-BE-007C`    | P0       | Purchase cancellation/return compensation     | COMPLETE    | Codex               | BE-007B         |
 | `WBL-FE-016C`    | P0       | Purchase cancellation/return browser actions  | COMPLETE    | Codex               | BE-007C         |
 | `WBL-BE-008`     | P0       | POS invoice/payment/stock/return persistence  | READY       | Backend/full-stack  | BE-006/007      |
-| `WBL-BE-008A`    | P0       | POS invoice/payment/stock database foundation | IN PROGRESS | Codex               | BE-006/007      |
+| `WBL-BE-008A`    | P0       | POS invoice/payment/stock database foundation | COMPLETE    | Codex               | BE-006/007      |
 | `WBL-BE-008B`    | P0       | Protected atomic POS posting API              | READY AFTER 008A | Backend         | BE-008A         |
 | `WBL-FE-009`     | P1       | Shared loading/error/toast/confirm UX        | COMPLETE   | Codex              | FE-007          |
 | `WBL-FE-010`     | P1       | Customer list/detail/balance UI              | PLANNED    | Frontend           | Data/API        |

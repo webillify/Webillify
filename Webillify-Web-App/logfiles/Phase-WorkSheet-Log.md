@@ -96,14 +96,14 @@ Exit gate: Stock balances reconcile to movements and approved purchase/return fi
 
 ## Phase 5 — POS, sales, returns and receivables
 
-Status: **PLANNED**
+Status: **IN PROGRESS — BE-008A database foundation complete; protected posting API next**
 
-- [ ] POS sessions and cash movements
+- [x] POS sessions and cash movement persistence/constraints
 - [ ] Server-calculated draft and atomic invoice posting
-- [ ] Cash/card/UPI/bank/credit/split payments
+- [x] Cash/card/UPI/bank split-payment persistence/constraints (posting API pending)
 - [ ] Customer balances, receipts and allocations
 - [ ] Sales return, credit note and cancellation/reversal
-- [ ] PDF/thermal invoice and financial-year series
+- [ ] PDF/thermal invoice; financial-year series persistence complete
 - [ ] Offline recoverable cart only; final posting remains online in V1
 
 Exit gate: GST/accounting fixtures, invoice immutability, retry idempotency and stock concurrency tests pass.

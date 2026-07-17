@@ -1,14 +1,14 @@
 # Webillify incomplete work worksheet
 
-Last updated: **2026-07-17 20:27:11 IST**
-In progress: **WBL-BE-008A — Codex — POS invoice/payment/stock database foundation**
+Last updated: **2026-07-17 20:36:50 IST**
+In progress: **None — WBL-BE-008A verified; publication pending**
 Ready next: **WBL-BE-008B protected POS posting API after BE-008A**
 
 ## Ready
 
 | Task ID      | Priority | Module/outcome                 | Assignee | Status      |
 | ------------ | -------- | ------------------------------ | -------- | ----------- |
-| `WBL-BE-008A` | P0      | POS invoice/payment/stock database foundation | Codex | IN PROGRESS |
+| `WBL-BE-008A` | P0      | POS invoice/payment/stock database foundation | Codex | COMPLETE — PUBLISHING |
 | `WBL-BE-008B` | P0      | Protected atomic POS posting API | Unassigned | READY AFTER 008A |
 
 ## Planned frontend

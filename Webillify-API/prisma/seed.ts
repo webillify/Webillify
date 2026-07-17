@@ -29,6 +29,8 @@ const ids = {
   supplier: 'e0000000-0000-4000-8000-000000000001',
   purchaseBill: 'f0000000-0000-4000-8000-000000000001',
   purchaseBillItem: 'f1000000-0000-4000-8000-000000000001',
+  customer: 'f2000000-0000-4000-8000-000000000001',
+  invoiceSeries: 'f3000000-0000-4000-8000-000000000001',
 };
 
 const permissionDefinitions = [
@@ -698,6 +700,48 @@ async function main(): Promise<void> {
       sgstAmount: '1.12',
       lineTotal: '47.25',
       inputTaxEligible: true,
+    },
+  });
+
+  await prisma.customer.upsert({
+    where: {
+      organizationId_normalizedCode: {
+        organizationId: organization.id,
+        normalizedCode: 'DEMO-CUSTOMER',
+      },
+    },
+    update: { name: 'Demo Credit Customer', active: true },
+    create: {
+      id: ids.customer,
+      organizationId: organization.id,
+      normalizedCode: 'DEMO-CUSTOMER',
+      name: 'Demo Credit Customer',
+      normalizedName: 'demo credit customer',
+      phone: '+919876543210',
+      creditDays: 15,
+      creditLimit: '25000.00',
+    },
+  });
+  await prisma.invoiceSeries.upsert({
+    where: {
+      organizationId_companyId_documentType_financialYear_prefix: {
+        organizationId: organization.id,
+        companyId: company.id,
+        documentType: 'SALES_INVOICE',
+        financialYear: '2026-27',
+        prefix: 'WBL',
+      },
+    },
+    update: { active: true },
+    create: {
+      id: ids.invoiceSeries,
+      organizationId: organization.id,
+      companyId: company.id,
+      documentType: 'SALES_INVOICE',
+      financialYear: '2026-27',
+      prefix: 'WBL',
+      nextNumber: 1,
+      padding: 5,
     },
   });
 }

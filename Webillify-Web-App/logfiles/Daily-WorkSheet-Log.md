@@ -87,6 +87,9 @@ Status: **IN PROGRESS — BE-007C verified; frontend compensation actions ready 
 | 2026-07-17 20:25:05 | TEST     | Production build/audits, 4 connected mutation/accessibility journeys and API 3+57 regression    | PASS         |
 | 2026-07-17 20:27:11 | INFRA    | Pushed verified FE-016C purchase compensation browser stage to GitHub `main`                     | `d9890db`    |
 | 2026-07-17 20:27:11 | BACKEND  | Assigned BE-008A POS invoice/payment/stock database foundation                                   | IN PROGRESS  |
+| 2026-07-17 20:32:00 | DATABASE | Added customers, financial-year sequences, POS sessions, invoices/items, tenders and cash records | COMPLETE   |
+| 2026-07-17 20:34:00 | TEST     | Added ownership, numbering, tax, split-payment, closing and append-only database matrix           | PASS — 5/5 |
+| 2026-07-17 20:36:50 | TEST     | Clean eight-migration replay/seed/drift, lint/build/audit, 3 unit and 62 integration tests         | PASS       |
 
 ---
 

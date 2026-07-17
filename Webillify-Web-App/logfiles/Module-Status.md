@@ -1,6 +1,6 @@
 # Webillify module status
 
-Reconciled: **2026-07-17 20:25:05 IST**
+Reconciled: **2026-07-17 20:36:50 IST**
 Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence passed. `DEMO` is not production-ready.
 
 ## Frontend modules
@@ -36,7 +36,7 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 | `WBL-MOD-106` | Catalogue          | COMPLETE    | Protected product/reference APIs, atomic identifiers and tenant isolation pass |
 | `WBL-MOD-107` | Inventory          | COMPLETE — CORE | Branch-scoped balances/movements and concurrent idempotent adjustments pass |
 | `WBL-MOD-108` | Purchases/payables | COMPLETE — CORE API | Supplier/draft/post/payment plus idempotent cancellation/returns and reconciled stock/payable/credit effects pass |
-| `WBL-MOD-109` | Sales/receivables  | NOT STARTED | POS sessions, invoices, returns and receipts          |
+| `WBL-MOD-109` | Sales/receivables  | IN PROGRESS — DB | Tenant customers, financial-year series, POS sessions, immutable invoice/items/tenders and cash schema pass; posting API next |
 | `WBL-MOD-110` | Reports/exports    | NOT STARTED | Reconciled reports and scoped exports                 |
 | `WBL-MOD-111` | Audit/files/worker | NOT STARTED | Audit trail, secure files and outbox jobs             |
 | `WBL-MOD-112` | AI capabilities    | NOT STARTED | Extraction, questions, summaries and drafts           |
@@ -46,7 +46,7 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 | Module           | Status      | Evidence/gap                                  |
 | ---------------- | ----------- | --------------------------------------------- |
 | Unit tests       | COMPLETE    | 23 tests/10 files cover current frontend scope |
-| E2E tests        | PARTIAL     | 4 connected desktop/mobile mutation journeys and 57 API integration tests pass |
+| E2E tests        | PARTIAL     | 4 connected desktop/mobile mutation journeys and 62 API integration tests pass |
 | Accessibility QA | COMPLETE    | Axe plus keyboard/responsive audit passes     |
 | CI/CD            | CONFIGURED  | GitHub Actions definition; first run pending  |
 | Deployment       | NOT STARTED | Bundle exists; no hosting definition          |
@@ -72,4 +72,5 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 2026-07-17 19:46:45 IST  Browser workflow full gate    PASS (web 19+4; API 3+52; production audits 0)
 2026-07-17 20:15:08 IST  Purchase compensation gate    PASS (7 migrations; drift 0; API 3+57; audit 0)
 2026-07-17 20:25:05 IST  Purchase compensation browser PASS (23 unit + 4 browser; API 3+57; audits 0)
+2026-07-17 20:36:50 IST  POS persistence database gate  PASS (8 migrations; drift 0; API 3+62; audit 0)
 ```

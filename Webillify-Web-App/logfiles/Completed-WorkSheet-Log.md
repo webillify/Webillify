@@ -1,6 +1,6 @@
 # Webillify completed work worksheet
 
-Last updated: **2026-07-17 20:25:05 IST**
+Last updated: **2026-07-17 20:36:50 IST**
 
 | Task ID         | Completed (IST)     | Module/deliverable                                                            | Evidence                                       | Verification                                  |
 | --------------- | ------------------- | ----------------------------------------------------------------------------- | ---------------------------------------------- | --------------------------------------------- |
@@ -37,5 +37,6 @@ Last updated: **2026-07-17 20:25:05 IST**
 | `WBL-SETUP-005` | 2026-07-17 19:53:55 | Same-origin Angular development proxy for localhost and LAN browser testing         | `proxy.conf.json`, Angular serve configuration  | HTTP 200; 19 unit; 4 browser tests PASS      |
 | `WBL-BE-007C`   | 2026-07-17 20:15:08 | Auditable purchase cancellation and linked returns with compensating stock/payables | Return schema, protected APIs and E2E matrix    | 3 unit + 57 integration; drift/audit PASS    |
 | `WBL-FE-016C`   | 2026-07-17 20:25:05 | Permission-aware purchase cancellation/full-return browser workflow                  | Purchase page, API repository and E2E journey   | 23 unit + 4 browser; API 3+57 PASS           |
+| `WBL-BE-008A`   | 2026-07-17 20:36:50 | Tenant POS/customer/invoice-series/invoice/item/payment/cash database foundation      | Prisma schema, migration, seed and DB E2E       | 3 unit + 62 integration; drift/audit PASS    |
 
 `R0 — Frontend foundation` is complete and the implemented R1 surface now uses real identity, tenant, subscription, catalogue, stock and purchase APIs. The product is still pre-release: POS persistence, customers, reporting, administration and production deployment remain pending.
