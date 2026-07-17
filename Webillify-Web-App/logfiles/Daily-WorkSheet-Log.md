@@ -70,6 +70,10 @@ Status: **IN PROGRESS — BE-004/SEC-001 complete; GitHub publication retry acti
 | 2026-07-17 19:41:03 | FRONTEND | Added purchase draft/post/pay UI and separate core/AI subscription usage screens            | COMPLETE    |
 | 2026-07-17 19:44:00 | FRONTEND | Replaced remaining dashboard and shell sample figures with live operational projections      | COMPLETE    |
 | 2026-07-17 19:46:45 | TEST     | Prod/dev builds, 19 unit, 4 connected browser, 3 API unit and 52 API integration tests       | PASS        |
+| 2026-07-17 19:48:24 | INFRA    | Pushed live dashboard/purchases/separate-plan browser stage to GitHub `main`                 | `f814a5b`   |
+| 2026-07-17 19:50:00 | INFRA    | Added same-origin dev API proxy; localhost and LAN web/readiness endpoints verified           | PASS 200    |
+| 2026-07-17 19:53:02 | TEST     | Repeat-run browser gate exposed an ambiguous draft-bill action selector                       | FAILED — FIXED |
+| 2026-07-17 19:53:55 | TEST     | Scoped purchase assertion; 19 unit and 4 desktop/mobile connected browser tests passed        | PASS        |
 
 ---
 

@@ -27,5 +27,10 @@ npm run build
 - `GET /api/v1/health/ready` — dependency readiness (database checks are added with BE-002)
 - `/api/docs` — Swagger UI
 - `/api/docs/openapi.json` — generated OpenAPI document
+- `/api/v1/auth/*`, `/api/v1/me` — login, rotating refresh, logout and identity context
+- `/api/v1/organizations`, `/api/v1/branches`, `/api/v1/roles`, `/api/v1/permissions`
+- `/api/v1/plans`, `/api/v1/subscription`, `/api/v1/usage`, `/api/v1/ai/plan`, `/api/v1/ai/usage`
+- `/api/v1/products`, reference data, stock balances, movements and adjustments
+- `/api/v1/suppliers`, `/api/v1/purchase-bills`, posting and `/api/v1/supplier-payments`
 
-Every response returns `X-Correlation-Id`. Errors use the stable envelope documented in `../Docs/API-SPEC.md`. Request DTOs are transformed, whitelisted, and reject unknown fields. Production identity, tenancy, persistence, and transaction modules remain release-gated work.
+Every response returns `X-Correlation-Id`. Errors use the stable envelope documented in `../Docs/API-SPEC.md`. Request DTOs are transformed, whitelisted, and reject unknown fields. Implemented mutations enforce tenancy, permissions, active core entitlement, idempotency and atomic transaction boundaries.

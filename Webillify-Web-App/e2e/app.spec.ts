@@ -67,7 +67,7 @@ test('signs in and renders real workspace navigation and catalogue data', async 
   await expect(page.getByRole('heading', { name: 'Purchase bills' })).toBeVisible();
   const seededBill = page.locator('.bill-list article').filter({ hasText: 'DEMO-INV-001' });
   await expect(seededBill).toContainText('Demo Wholesale Supplier');
-  await expect(page.getByRole('button', { name: 'Post bill' })).toBeVisible();
+  await expect(seededBill.getByRole('button', { name: 'Post bill' })).toBeVisible();
   await expectNoSeriousAccessibilityViolations(page);
 
   await page.goto('/settings');

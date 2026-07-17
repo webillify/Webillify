@@ -1,7 +1,7 @@
 # Webillify master worksheet
 
-Snapshot timestamp: **2026-07-17 19:46:45 IST**
-Project status: **ACTIVE — identity, tenancy, authorization and independent subscription foundations verified**
+Snapshot timestamp: **2026-07-17 19:53:55 IST**
+Project status: **ACTIVE — connected browser surface verified on localhost and LAN; transactional modules continue**
 Current release: **R1 — Frontend application foundation**  
 Current phase: **Phase 4 — Catalogue, purchases and inventory**
 Current task: **WBL-BE-007C — Purchase cancellation and return compensation (ready next)**
@@ -76,7 +76,7 @@ See [Task-Backlog.md](Task-Backlog.md#recommended-next-task) for the complete as
 - All five original worksheets are populated.
 - Completed claims are mapped to source files or command evidence.
 - Pending modules are task-ID based and assignable.
-- BE-001 through BE-006, SEC-001 and BE-007A/B are complete and published. BE-007C is ready next.
+- BE-001 through BE-006, SEC-001, BE-007A/B and connected FE-016A/B are complete and published. BE-007C is ready next.
 
 ## Category codes
 

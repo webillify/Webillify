@@ -1,7 +1,7 @@
 # Webillify task backlog
 
-Last prioritized: **2026-07-17 19:46:45 IST**
-Active assignee: **Unassigned — WBL-BE-007C ready after FE-016B publication**
+Last prioritized: **2026-07-17 19:53:55 IST**
+Active assignee: **Unassigned — WBL-BE-007C ready; FE-016B published as `f814a5b`**
 WIP limit: **One P0 task per engineer**
 
 ## Just completed

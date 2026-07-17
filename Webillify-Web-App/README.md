@@ -5,16 +5,17 @@ Angular 22 standalone PWA for the Webillify billing, POS, inventory and retail-o
 ## Current slice
 
 - Responsive application shell and branch navigation
-- Demo sign-in experience
-- Dashboard with operational summaries
-- Interactive POS catalogue, cart and mock payment completion
-- Product catalogue and stock status table
-- Typed domain models, repository contracts and explicit mock/API data modes
+- Real API sign-in, persisted access token, refresh cookie and tenant context
+- Live dashboard with catalogue, stock, purchase and payable summaries
+- Real product catalogue and branch stock status in Products and POS
+- Purchase draft creation, posting and supplier-payment actions
+- Core Business plan and separately billed Webillify AI lifecycle/credit status
+- Typed domain models, repository contracts and explicit test mock/API modes
 - Shared loading, empty and error request-state model
 - Installable production PWA/service worker
-- Placeholder routes for customers, purchases, reports and settings
+- Placeholder routes for customers and reports
 
-All displayed business data is local sample data. There is no backend persistence yet, and the UI identifies demo-only transaction behavior.
+Development and production builds use the API adapters. Real POS sales posting is explicitly unavailable until BE-008; the UI does not pretend that a sale was persisted.
 
 ## Commands
 
@@ -24,11 +25,11 @@ npm test -- --watch=false
 npm run build
 ```
 
-The development server runs at `http://localhost:4200`. Production output is written under `dist/webillify-web-app/`.
+The development server runs at `http://localhost:4200` and proxies `/api` to `http://localhost:3000`. Production output is written under `dist/webillify-web-app/`.
 
 ## Architecture direction
 
-Routes are lazy-loaded standalone components. Pages depend on typed repository contracts rather than demo data files. The current environment selects mock repositories; selecting API mode returns an explicit not-implemented error until the NestJS adapters are built, so production wiring cannot silently fall back to sample data.
+Routes are lazy-loaded standalone components. Pages depend on typed repository contracts rather than direct data files. Connected environments select API repositories, while isolated unit tests may explicitly provide mock repositories.
 
 ## Development tracking
 
