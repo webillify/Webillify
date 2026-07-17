@@ -80,6 +80,8 @@ Status: **IN PROGRESS — BE-007C verified; frontend compensation actions ready 
 | 2026-07-17 20:06:00 | TEST     | Clean replay found three PostgreSQL 63-character identifier name drifts                         | FAILED — FIXED |
 | 2026-07-17 20:11:37 | TEST     | Seven migrations/seed/drift/lint/build/audit, 3 unit and 57 integration tests                   | PASS        |
 | 2026-07-17 20:15:08 | SECURITY | Added branch-scoped idempotent replay denial; final lint/build/3-unit/57-integration gate       | PASS        |
+| 2026-07-17 20:16:25 | INFRA    | Pushed verified BE-007C purchase compensation stage to GitHub `main`                           | `5dde691`   |
+| 2026-07-17 20:16:25 | FRONTEND | Assigned FE-016C purchase cancellation and return browser actions                               | IN PROGRESS |
 
 ---
 

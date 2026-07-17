@@ -1,14 +1,14 @@
 # Webillify incomplete work worksheet
 
-Last updated: **2026-07-17 20:15:08 IST**
-In progress: **None — WBL-BE-007C verified; publication pending**
+Last updated: **2026-07-17 20:16:25 IST**
+In progress: **WBL-FE-016C — Codex — purchase cancellation/return browser actions**
 Ready next: **WBL-FE-016C purchase cancellation/return browser actions, then BE-008 real POS sales posting**
 
 ## Ready
 
 | Task ID      | Priority | Module/outcome                 | Assignee | Status      |
 | ------------ | -------- | ------------------------------ | -------- | ----------- |
-| `WBL-FE-016C` | P0      | Purchase cancellation/return browser actions | Unassigned | READY |
+| `WBL-FE-016C` | P0      | Purchase cancellation/return browser actions | Codex | IN PROGRESS |
 | `WBL-BE-008`  | P0      | Real POS invoice/payment/return backend and browser completion | Unassigned | READY |
 
 ## Planned frontend

@@ -1,7 +1,7 @@
 # Webillify task backlog
 
-Last prioritized: **2026-07-17 20:15:08 IST**
-Active assignee: **Unassigned — WBL-FE-016C ready after BE-007C publication**
+Last prioritized: **2026-07-17 20:16:25 IST**
+Active assignee: **Codex — WBL-FE-016C in progress; BE-007C published as `5dde691`**
 WIP limit: **One P0 task per engineer**
 
 ## Just completed
@@ -236,7 +236,7 @@ Status: **COMPLETE — CORE API; accounting/GST fixtures remain an external prod
 | `WBL-BE-007A`    | P0       | Purchase/payables database foundation         | COMPLETE   | Codex              | BE-006          |
 | `WBL-BE-007B`    | P0       | Protected purchase posting/payment APIs       | COMPLETE    | Codex              | BE-007A         |
 | `WBL-BE-007C`    | P0       | Purchase cancellation/return compensation     | COMPLETE    | Codex               | BE-007B         |
-| `WBL-FE-016C`    | P0       | Purchase cancellation/return browser actions  | READY       | Frontend/full-stack | BE-007C         |
+| `WBL-FE-016C`    | P0       | Purchase cancellation/return browser actions  | IN PROGRESS | Codex               | BE-007C         |
 | `WBL-FE-009`     | P1       | Shared loading/error/toast/confirm UX        | COMPLETE   | Codex              | FE-007          |
 | `WBL-FE-010`     | P1       | Customer list/detail/balance UI              | PLANNED    | Frontend           | Data/API        |
 | `WBL-FE-011`     | P1       | Product create/edit/import UI                | PLANNED    | Frontend           | Catalogue API   |

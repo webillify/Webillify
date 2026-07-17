@@ -1,10 +1,10 @@
 # Webillify master worksheet
 
-Snapshot timestamp: **2026-07-17 20:15:08 IST**
+Snapshot timestamp: **2026-07-17 20:16:25 IST**
 Project status: **ACTIVE — purchase compensation API verified; browser actions and POS persistence continue**
 Current release: **R1 — Frontend application foundation**  
 Current phase: **Phase 4 — Catalogue, purchases and inventory**
-Current task: **WBL-FE-016C — Purchase cancellation and return browser actions (ready next)**
+Current task: **WBL-FE-016C — Purchase cancellation and return browser actions (in progress)**
 
 ## Project snapshot
 
@@ -61,7 +61,7 @@ The connected frontend and secure API foundations are verified. The immediate go
 | ------------------ | -------------------------------------------------------------------------------------- |
 | Task ID            | `WBL-FE-016C`                                                                           |
 | Title              | Purchase cancellation and linked return actions in the connected browser workflow        |
-| Status             | READY                                                                                   |
+| Status             | IN PROGRESS                                                                             |
 | Priority           | P0                                                                                     |
 | Suggested assignee | Frontend/full-stack engineer                                                            |
 | Estimate           | One development stage                                                                   |
@@ -77,7 +77,7 @@ See [Task-Backlog.md](Task-Backlog.md#recommended-next-task) for the complete as
 - All five original worksheets are populated.
 - Completed claims are mapped to source files or command evidence.
 - Pending modules are task-ID based and assignable.
-- BE-001 through BE-006, SEC-001, BE-007A/B, connected FE-016A/B and SETUP-005 are published. BE-007C is verified with publication pending; FE-016C is ready next.
+- BE-001 through BE-007C, SEC-001, connected FE-016A/B and SETUP-005 are published. FE-016C is active next.
 
 ## Category codes
 
