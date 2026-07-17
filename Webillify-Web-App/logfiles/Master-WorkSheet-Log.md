@@ -74,7 +74,7 @@ See [Task-Backlog.md](Task-Backlog.md#recommended-next-task) for the complete as
 - All five original worksheets are populated.
 - Completed claims are mapped to source files or command evidence.
 - Pending modules are task-ID based and assignable.
-- BE-001 through BE-006, SEC-001 and BE-007A/B are complete. BE-007C is ready after the next publication receipt.
+- BE-001 through BE-006, SEC-001 and BE-007A/B are complete and published. BE-007C is ready next.
 
 ## Category codes
 

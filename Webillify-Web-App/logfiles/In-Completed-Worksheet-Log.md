@@ -1,7 +1,7 @@
 # Webillify incomplete work worksheet
 
 Last updated: **2026-07-17 19:22:18 IST**
-In progress: **None — BE-007B verified; publication pending**
+In progress: **None — BE-007B verified and published as `593ed67`**
 Ready next: **WBL-BE-007C — purchase cancellation and return compensating workflows**
 
 ## Ready
