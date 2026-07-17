@@ -16,7 +16,9 @@ import { RequirePermissions } from '../../core/authorization/require-permissions
 import { TenantAccessGuard } from '../../core/authorization/tenant-access.guard';
 import type { CorrelatedRequest } from '../../core/http/correlation-id.middleware';
 import { AccessTokenGuard } from '../auth/access-token.guard';
+import { CancelPurchaseBillDto } from './dto/cancel-purchase-bill.dto';
 import { CreatePurchaseBillDto } from './dto/create-purchase-bill.dto';
+import { CreatePurchaseReturnDto } from './dto/create-purchase-return.dto';
 import { CreateSupplierPaymentDto } from './dto/create-supplier-payment.dto';
 import { CreateSupplierDto } from './dto/create-supplier.dto';
 import { PurchasesService } from './purchases.service';
@@ -78,6 +80,40 @@ export class PurchasesController {
       request.correlationId,
       idempotencyKey,
       id,
+    );
+  }
+
+  @Post('purchase-bills/:id/cancel')
+  @RequirePermissions('purchases.manage')
+  cancelBill(
+    @Req() request: TenantRequest & CorrelatedRequest,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Headers('idempotency-key') idempotencyKey: string,
+    @Body() input: CancelPurchaseBillDto,
+  ): Promise<object> {
+    return this.purchases.cancelBill(
+      request.tenant,
+      request.identity.userId,
+      request.correlationId,
+      idempotencyKey,
+      id,
+      input,
+    );
+  }
+
+  @Post('purchase-returns')
+  @RequirePermissions('purchases.manage')
+  createReturn(
+    @Req() request: TenantRequest & CorrelatedRequest,
+    @Headers('idempotency-key') idempotencyKey: string,
+    @Body() input: CreatePurchaseReturnDto,
+  ): Promise<object> {
+    return this.purchases.createReturn(
+      request.tenant,
+      request.identity.userId,
+      request.correlationId,
+      idempotencyKey,
+      input,
     );
   }
 

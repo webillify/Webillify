@@ -1,6 +1,6 @@
 # Webillify module status
 
-Reconciled: **2026-07-17 19:46:45 IST**
+Reconciled: **2026-07-17 20:15:08 IST**
 Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence passed. `DEMO` is not production-ready.
 
 ## Frontend modules
@@ -15,7 +15,7 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 | `WBL-MOD-006` | POS               | DEMO            | Search, cart, totals and payment selection                       | Transactional API and sessions        |
 | `WBL-MOD-007` | Products          | PARTIAL — API   | Real tenant catalogue and stock projection render in browser     | CRUD, import and API pagination       |
 | `WBL-MOD-008` | Customers         | PLANNED         | Placeholder route only                                           | List/detail/balance/receipt           |
-| `WBL-MOD-009` | Purchases         | COMPLETE — CORE API | Live supplier bills, draft creation, posting and full payment | Cancellation/returns with BE-007C |
+| `WBL-MOD-009` | Purchases         | PARTIAL — API | Live supplier bills, draft creation, posting and full payment | Add cancellation/return browser actions in FE-016C |
 | `WBL-MOD-010` | Reports           | PLANNED         | Placeholder route only                                           | Sales/tax/stock/closing reports       |
 | `WBL-MOD-011` | Settings          | PLANNED         | Placeholder route only                                           | Company/branch/users/subscriptions    |
 | `WBL-MOD-012` | Shared icons      | COMPLETE        | Typed reusable `shared/icon.ts`                                  | Accessibility review                  |
@@ -35,7 +35,7 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 | `WBL-MOD-105` | AI subscription    | COMPLETE — CORE | Independent plan/lifecycle/credits; atomic consume/refund and concurrency tested |
 | `WBL-MOD-106` | Catalogue          | COMPLETE    | Protected product/reference APIs, atomic identifiers and tenant isolation pass |
 | `WBL-MOD-107` | Inventory          | COMPLETE — CORE | Branch-scoped balances/movements and concurrent idempotent adjustments pass |
-| `WBL-MOD-108` | Purchases/payables | IN PROGRESS — CORE API | Supplier/draft/post/payment and reconciled stock/payable effects pass; returns/cancellation pending |
+| `WBL-MOD-108` | Purchases/payables | COMPLETE — CORE API | Supplier/draft/post/payment plus idempotent cancellation/returns and reconciled stock/payable/credit effects pass |
 | `WBL-MOD-109` | Sales/receivables  | NOT STARTED | POS sessions, invoices, returns and receipts          |
 | `WBL-MOD-110` | Reports/exports    | NOT STARTED | Reconciled reports and scoped exports                 |
 | `WBL-MOD-111` | Audit/files/worker | NOT STARTED | Audit trail, secure files and outbox jobs             |
@@ -46,7 +46,7 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 | Module           | Status      | Evidence/gap                                  |
 | ---------------- | ----------- | --------------------------------------------- |
 | Unit tests       | COMPLETE    | 19 tests/9 files cover current frontend scope |
-| E2E tests        | PARTIAL     | 6 current-frontend Chrome scenarios pass      |
+| E2E tests        | PARTIAL     | 4 connected desktop/mobile browser journeys and 57 API integration tests pass |
 | Accessibility QA | COMPLETE    | Axe plus keyboard/responsive audit passes     |
 | CI/CD            | CONFIGURED  | GitHub Actions definition; first run pending  |
 | Deployment       | NOT STARTED | Bundle exists; no hosting definition          |
@@ -70,4 +70,5 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 2026-07-17 19:22:18 IST  Purchase posting/payment gate PASS (3 unit + 52 integration; concurrency/drift/audit 0)
 2026-07-17 19:34:26 IST  Connected browser stage       PASS (19 unit + 4 desktop/mobile API journeys)
 2026-07-17 19:46:45 IST  Browser workflow full gate    PASS (web 19+4; API 3+52; production audits 0)
+2026-07-17 20:15:08 IST  Purchase compensation gate    PASS (7 migrations; drift 0; API 3+57; audit 0)
 ```

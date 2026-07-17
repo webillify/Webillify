@@ -5,9 +5,9 @@ Append-only history. Newest session first; corrections use a new timestamped ame
 ## 2026-07-17 — GitHub baseline, CI and backend foundation
 
 Session start: **17:22:35 IST**  
-Tasks: **WBL-SETUP-003 + WBL-INFRA-001 + WBL-BE-001/002/003/004 + WBL-SEC-001**
+Tasks: **WBL-SETUP-003/004/005 + WBL-INFRA-001 + WBL-BE-001 through BE-007C + WBL-SEC-001 + WBL-FE-016A/B**
 Assignee: **Codex**  
-Status: **IN PROGRESS — BE-004/SEC-001 complete; GitHub publication retry active**
+Status: **IN PROGRESS — BE-007C verified; frontend compensation actions ready next**
 
 | Timestamp (IST)     | Category | Activity                                                                   | Result         |
 | ------------------- | -------- | -------------------------------------------------------------------------- | -------------- |
@@ -75,6 +75,11 @@ Status: **IN PROGRESS — BE-004/SEC-001 complete; GitHub publication retry acti
 | 2026-07-17 19:53:02 | TEST     | Repeat-run browser gate exposed an ambiguous draft-bill action selector                       | FAILED — FIXED |
 | 2026-07-17 19:53:55 | TEST     | Scoped purchase assertion; 19 unit and 4 desktop/mobile connected browser tests passed        | PASS        |
 | 2026-07-17 19:55:14 | INFRA    | Pushed verified same-origin localhost/LAN browser runtime stage to GitHub `main`               | `c80a77f`   |
+| 2026-07-17 19:56:00 | BACKEND  | Assigned BE-007C purchase cancellation and linked purchase-return compensation                 | IN PROGRESS |
+| 2026-07-17 20:02:00 | DATABASE | Added append-only returns, auditable cancellation fields and payment/return projection triggers | COMPLETE   |
+| 2026-07-17 20:06:00 | TEST     | Clean replay found three PostgreSQL 63-character identifier name drifts                         | FAILED — FIXED |
+| 2026-07-17 20:11:37 | TEST     | Seven migrations/seed/drift/lint/build/audit, 3 unit and 57 integration tests                   | PASS        |
+| 2026-07-17 20:15:08 | SECURITY | Added branch-scoped idempotent replay denial; final lint/build/3-unit/57-integration gate       | PASS        |
 
 ---
 

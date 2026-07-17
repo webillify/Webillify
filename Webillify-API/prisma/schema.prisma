@@ -95,21 +95,23 @@ enum PaymentMethod {
 }
 
 model User {
-  id                  String                   @id @default(uuid()) @db.Uuid
-  email               String                   @unique @db.VarChar(320)
-  normalizedEmail     String                   @unique @map("normalized_email") @db.VarChar(320)
-  displayName         String                   @map("display_name") @db.VarChar(160)
-  passwordHash        String?                  @map("password_hash") @db.VarChar(255)
-  status              UserStatus               @default(INVITED)
-  emailVerifiedAt     DateTime?                @map("email_verified_at") @db.Timestamptz(3)
-  lastLoginAt         DateTime?                @map("last_login_at") @db.Timestamptz(3)
-  createdAt           DateTime                 @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt           DateTime                 @updatedAt @map("updated_at") @db.Timestamptz(3)
-  memberships         OrganizationMembership[]
-  sessions            LoginSession[]
-  stockMovements      StockMovement[]          @relation("StockMovementActor")
-  postedPurchaseBills PurchaseBill[]           @relation("PurchaseBillPostedBy")
-  supplierPayments    SupplierPayment[]        @relation("SupplierPaymentActor")
+  id                     String                   @id @default(uuid()) @db.Uuid
+  email                  String                   @unique @db.VarChar(320)
+  normalizedEmail        String                   @unique @map("normalized_email") @db.VarChar(320)
+  displayName            String                   @map("display_name") @db.VarChar(160)
+  passwordHash           String?                  @map("password_hash") @db.VarChar(255)
+  status                 UserStatus               @default(INVITED)
+  emailVerifiedAt        DateTime?                @map("email_verified_at") @db.Timestamptz(3)
+  lastLoginAt            DateTime?                @map("last_login_at") @db.Timestamptz(3)
+  createdAt              DateTime                 @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt              DateTime                 @updatedAt @map("updated_at") @db.Timestamptz(3)
+  memberships            OrganizationMembership[]
+  sessions               LoginSession[]
+  stockMovements         StockMovement[]          @relation("StockMovementActor")
+  postedPurchaseBills    PurchaseBill[]           @relation("PurchaseBillPostedBy")
+  cancelledPurchaseBills PurchaseBill[]           @relation("PurchaseBillCancelledBy")
+  postedPurchaseReturns  PurchaseReturn[]         @relation("PurchaseReturnPostedBy")
+  supplierPayments       SupplierPayment[]        @relation("SupplierPaymentActor")
 
   @@map("users")
 }
@@ -142,6 +144,7 @@ model Organization {
   stockBalances    StockBalance[]
   suppliers        Supplier[]
   purchaseBills    PurchaseBill[]
+  purchaseReturns  PurchaseReturn[]
   supplierPayments SupplierPayment[]
 
   @@map("organizations")
@@ -182,6 +185,7 @@ model Company {
   warehouses        Warehouse[]
   stockMovements    StockMovement[]
   purchaseBills     PurchaseBill[]
+  purchaseReturns   PurchaseReturn[]
   supplierPayments  SupplierPayment[]
 
   @@unique([organizationId, normalizedCode])
@@ -206,6 +210,7 @@ model Branch {
   warehouses       Warehouse[]
   stockMovements   StockMovement[]
   purchaseBills    PurchaseBill[]
+  purchaseReturns  PurchaseReturn[]
   supplierPayments SupplierPayment[]
 
   @@unique([organizationId, normalizedCode])
@@ -488,24 +493,25 @@ model Product {
 }
 
 model ProductVariant {
-  id             String             @id @default(uuid()) @db.Uuid
-  organizationId String             @map("organization_id") @db.Uuid
-  productId      String             @map("product_id") @db.Uuid
-  sku            String             @db.VarChar(80)
-  name           String?            @db.VarChar(140)
-  salePrice      Decimal            @map("sale_price") @db.Decimal(14, 2)
-  purchaseCost   Decimal            @default(0) @map("purchase_cost") @db.Decimal(14, 4)
-  trackInventory Boolean            @default(true) @map("track_inventory")
-  serialTracked  Boolean            @default(false) @map("serial_tracked")
-  active         Boolean            @default(true)
-  createdAt      DateTime           @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt      DateTime           @updatedAt @map("updated_at") @db.Timestamptz(3)
-  organization   Organization       @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  product        Product            @relation(fields: [productId, organizationId], references: [id, organizationId], onDelete: Restrict)
-  barcodes       ProductBarcode[]
-  stockMovements StockMovement[]
-  stockBalances  StockBalance[]
-  purchaseItems  PurchaseBillItem[]
+  id                  String               @id @default(uuid()) @db.Uuid
+  organizationId      String               @map("organization_id") @db.Uuid
+  productId           String               @map("product_id") @db.Uuid
+  sku                 String               @db.VarChar(80)
+  name                String?              @db.VarChar(140)
+  salePrice           Decimal              @map("sale_price") @db.Decimal(14, 2)
+  purchaseCost        Decimal              @default(0) @map("purchase_cost") @db.Decimal(14, 4)
+  trackInventory      Boolean              @default(true) @map("track_inventory")
+  serialTracked       Boolean              @default(false) @map("serial_tracked")
+  active              Boolean              @default(true)
+  createdAt           DateTime             @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt           DateTime             @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization        Organization         @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  product             Product              @relation(fields: [productId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  barcodes            ProductBarcode[]
+  stockMovements      StockMovement[]
+  stockBalances       StockBalance[]
+  purchaseItems       PurchaseBillItem[]
+  purchaseReturnItems PurchaseReturnItem[]
 
   @@unique([organizationId, sku])
   @@unique([id, organizationId])
@@ -530,22 +536,23 @@ model ProductBarcode {
 }
 
 model Warehouse {
-  id             String          @id @default(uuid()) @db.Uuid
-  organizationId String          @map("organization_id") @db.Uuid
-  companyId      String          @map("company_id") @db.Uuid
-  branchId       String          @map("branch_id") @db.Uuid
-  normalizedCode String          @map("normalized_code") @db.VarChar(40)
-  name           String          @db.VarChar(140)
-  saleable       Boolean         @default(true)
-  active         Boolean         @default(true)
-  createdAt      DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt      DateTime        @updatedAt @map("updated_at") @db.Timestamptz(3)
-  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  company        Company         @relation(fields: [companyId, organizationId], references: [id, organizationId], onDelete: Restrict)
-  branch         Branch          @relation(fields: [branchId, organizationId], references: [id, organizationId], onDelete: Restrict)
-  stockMovements StockMovement[]
-  stockBalances  StockBalance[]
-  purchaseBills  PurchaseBill[]
+  id              String           @id @default(uuid()) @db.Uuid
+  organizationId  String           @map("organization_id") @db.Uuid
+  companyId       String           @map("company_id") @db.Uuid
+  branchId        String           @map("branch_id") @db.Uuid
+  normalizedCode  String           @map("normalized_code") @db.VarChar(40)
+  name            String           @db.VarChar(140)
+  saleable        Boolean          @default(true)
+  active          Boolean          @default(true)
+  createdAt       DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime         @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization    Organization     @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  company         Company          @relation(fields: [companyId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  branch          Branch           @relation(fields: [branchId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  stockMovements  StockMovement[]
+  stockBalances   StockBalance[]
+  purchaseBills   PurchaseBill[]
+  purchaseReturns PurchaseReturn[]
 
   @@unique([organizationId, normalizedCode])
   @@unique([id, organizationId])
@@ -603,21 +610,22 @@ model StockBalance {
 }
 
 model Supplier {
-  id             String            @id @default(uuid()) @db.Uuid
-  organizationId String            @map("organization_id") @db.Uuid
-  normalizedCode String            @map("normalized_code") @db.VarChar(60)
-  name           String            @db.VarChar(180)
-  normalizedName String            @map("normalized_name") @db.VarChar(180)
-  gstin          String?           @db.VarChar(15)
-  phone          String?           @db.VarChar(30)
-  email          String?           @db.VarChar(320)
-  creditDays     Int               @default(0) @map("credit_days") @db.SmallInt
-  active         Boolean           @default(true)
-  createdAt      DateTime          @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt      DateTime          @updatedAt @map("updated_at") @db.Timestamptz(3)
-  organization   Organization      @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  purchaseBills  PurchaseBill[]
-  payments       SupplierPayment[]
+  id              String            @id @default(uuid()) @db.Uuid
+  organizationId  String            @map("organization_id") @db.Uuid
+  normalizedCode  String            @map("normalized_code") @db.VarChar(60)
+  name            String            @db.VarChar(180)
+  normalizedName  String            @map("normalized_name") @db.VarChar(180)
+  gstin           String?           @db.VarChar(15)
+  phone           String?           @db.VarChar(30)
+  email           String?           @db.VarChar(320)
+  creditDays      Int               @default(0) @map("credit_days") @db.SmallInt
+  active          Boolean           @default(true)
+  createdAt       DateTime          @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime          @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization    Organization      @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  purchaseBills   PurchaseBill[]
+  purchaseReturns PurchaseReturn[]
+  payments        SupplierPayment[]
 
   @@unique([organizationId, normalizedCode])
   @@unique([id, organizationId])
@@ -626,76 +634,149 @@ model Supplier {
 }
 
 model PurchaseBill {
-  id                       String                      @id @default(uuid()) @db.Uuid
-  organizationId           String                      @map("organization_id") @db.Uuid
-  companyId                String                      @map("company_id") @db.Uuid
-  branchId                 String                      @map("branch_id") @db.Uuid
-  warehouseId              String                      @map("warehouse_id") @db.Uuid
-  supplierId               String                      @map("supplier_id") @db.Uuid
-  status                   PurchaseBillStatus          @default(DRAFT)
-  supplierInvoiceReference String                      @map("supplier_invoice_reference") @db.VarChar(100)
-  normalizedReference      String                      @map("normalized_reference") @db.VarChar(100)
-  invoiceDate              DateTime                    @map("invoice_date") @db.Date
-  dueDate                  DateTime?                   @map("due_date") @db.Date
-  currency                 String                      @default("INR") @db.Char(3)
-  taxableValue             Decimal                     @default(0) @map("taxable_value") @db.Decimal(14, 2)
-  cgstAmount               Decimal                     @default(0) @map("cgst_amount") @db.Decimal(14, 2)
-  sgstAmount               Decimal                     @default(0) @map("sgst_amount") @db.Decimal(14, 2)
-  igstAmount               Decimal                     @default(0) @map("igst_amount") @db.Decimal(14, 2)
-  cessAmount               Decimal                     @default(0) @map("cess_amount") @db.Decimal(14, 2)
-  roundOff                 Decimal                     @default(0) @map("round_off") @db.Decimal(5, 2)
-  totalAmount              Decimal                     @default(0) @map("total_amount") @db.Decimal(14, 2)
-  paidAmount               Decimal                     @default(0) @map("paid_amount") @db.Decimal(14, 2)
-  outstandingAmount        Decimal                     @default(0) @map("outstanding_amount") @db.Decimal(14, 2)
-  inputTaxEligible         Boolean                     @default(false) @map("input_tax_eligible")
-  postingIdempotencyKey    String?                     @map("posting_idempotency_key") @db.VarChar(120)
-  postedAt                 DateTime?                   @map("posted_at") @db.Timestamptz(3)
-  postedByUserId           String?                     @map("posted_by_user_id") @db.Uuid
-  createdAt                DateTime                    @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt                DateTime                    @updatedAt @map("updated_at") @db.Timestamptz(3)
-  organization             Organization                @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  company                  Company                     @relation(fields: [companyId, organizationId], references: [id, organizationId], onDelete: Restrict)
-  branch                   Branch                      @relation(fields: [branchId, organizationId], references: [id, organizationId], onDelete: Restrict)
-  warehouse                Warehouse                   @relation(fields: [warehouseId, organizationId], references: [id, organizationId], onDelete: Restrict)
-  supplier                 Supplier                    @relation(fields: [supplierId, organizationId], references: [id, organizationId], onDelete: Restrict)
-  postedBy                 User?                       @relation("PurchaseBillPostedBy", fields: [postedByUserId], references: [id], onDelete: Restrict)
-  items                    PurchaseBillItem[]
-  allocations              SupplierPaymentAllocation[]
+  id                         String                      @id @default(uuid()) @db.Uuid
+  organizationId             String                      @map("organization_id") @db.Uuid
+  companyId                  String                      @map("company_id") @db.Uuid
+  branchId                   String                      @map("branch_id") @db.Uuid
+  warehouseId                String                      @map("warehouse_id") @db.Uuid
+  supplierId                 String                      @map("supplier_id") @db.Uuid
+  status                     PurchaseBillStatus          @default(DRAFT)
+  supplierInvoiceReference   String                      @map("supplier_invoice_reference") @db.VarChar(100)
+  normalizedReference        String                      @map("normalized_reference") @db.VarChar(100)
+  invoiceDate                DateTime                    @map("invoice_date") @db.Date
+  dueDate                    DateTime?                   @map("due_date") @db.Date
+  currency                   String                      @default("INR") @db.Char(3)
+  taxableValue               Decimal                     @default(0) @map("taxable_value") @db.Decimal(14, 2)
+  cgstAmount                 Decimal                     @default(0) @map("cgst_amount") @db.Decimal(14, 2)
+  sgstAmount                 Decimal                     @default(0) @map("sgst_amount") @db.Decimal(14, 2)
+  igstAmount                 Decimal                     @default(0) @map("igst_amount") @db.Decimal(14, 2)
+  cessAmount                 Decimal                     @default(0) @map("cess_amount") @db.Decimal(14, 2)
+  roundOff                   Decimal                     @default(0) @map("round_off") @db.Decimal(5, 2)
+  totalAmount                Decimal                     @default(0) @map("total_amount") @db.Decimal(14, 2)
+  paidAmount                 Decimal                     @default(0) @map("paid_amount") @db.Decimal(14, 2)
+  returnedAmount             Decimal                     @default(0) @map("returned_amount") @db.Decimal(14, 2)
+  outstandingAmount          Decimal                     @default(0) @map("outstanding_amount") @db.Decimal(14, 2)
+  inputTaxEligible           Boolean                     @default(false) @map("input_tax_eligible")
+  postingIdempotencyKey      String?                     @map("posting_idempotency_key") @db.VarChar(120)
+  postedAt                   DateTime?                   @map("posted_at") @db.Timestamptz(3)
+  postedByUserId             String?                     @map("posted_by_user_id") @db.Uuid
+  cancellationIdempotencyKey String?                     @map("cancellation_idempotency_key") @db.VarChar(120)
+  cancelledAt                DateTime?                   @map("cancelled_at") @db.Timestamptz(3)
+  cancelledByUserId          String?                     @map("cancelled_by_user_id") @db.Uuid
+  cancellationReason         String?                     @map("cancellation_reason") @db.VarChar(500)
+  createdAt                  DateTime                    @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt                  DateTime                    @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization               Organization                @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  company                    Company                     @relation(fields: [companyId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  branch                     Branch                      @relation(fields: [branchId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  warehouse                  Warehouse                   @relation(fields: [warehouseId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  supplier                   Supplier                    @relation(fields: [supplierId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  postedBy                   User?                       @relation("PurchaseBillPostedBy", fields: [postedByUserId], references: [id], onDelete: Restrict)
+  cancelledBy                User?                       @relation("PurchaseBillCancelledBy", fields: [cancelledByUserId], references: [id], onDelete: Restrict)
+  items                      PurchaseBillItem[]
+  returns                    PurchaseReturn[]
+  allocations                SupplierPaymentAllocation[]
 
   @@unique([id, organizationId])
   @@unique([organizationId, companyId, supplierId, normalizedReference])
   @@unique([organizationId, postingIdempotencyKey])
+  @@unique([organizationId, cancellationIdempotencyKey])
   @@index([organizationId, branchId, status, invoiceDate])
   @@index([organizationId, supplierId, status, dueDate])
   @@map("purchase_bills")
 }
 
 model PurchaseBillItem {
-  id               String         @id @default(uuid()) @db.Uuid
-  organizationId   String         @map("organization_id") @db.Uuid
-  purchaseBillId   String         @map("purchase_bill_id") @db.Uuid
-  variantId        String         @map("variant_id") @db.Uuid
-  description      String         @db.VarChar(240)
-  hsnSac           String?        @map("hsn_sac") @db.VarChar(12)
-  quantity         Decimal        @db.Decimal(18, 3)
-  unitCost         Decimal        @map("unit_cost") @db.Decimal(14, 4)
-  discountAmount   Decimal        @default(0) @map("discount_amount") @db.Decimal(14, 2)
-  taxableValue     Decimal        @map("taxable_value") @db.Decimal(14, 2)
-  taxRate          Decimal        @map("tax_rate") @db.Decimal(5, 2)
-  cgstAmount       Decimal        @default(0) @map("cgst_amount") @db.Decimal(14, 2)
-  sgstAmount       Decimal        @default(0) @map("sgst_amount") @db.Decimal(14, 2)
-  igstAmount       Decimal        @default(0) @map("igst_amount") @db.Decimal(14, 2)
-  cessAmount       Decimal        @default(0) @map("cess_amount") @db.Decimal(14, 2)
-  lineTotal        Decimal        @map("line_total") @db.Decimal(14, 2)
-  inputTaxEligible Boolean        @default(false) @map("input_tax_eligible")
-  createdAt        DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt        DateTime       @updatedAt @map("updated_at") @db.Timestamptz(3)
-  purchaseBill     PurchaseBill   @relation(fields: [purchaseBillId, organizationId], references: [id, organizationId], onDelete: Cascade)
-  variant          ProductVariant @relation(fields: [variantId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  id               String               @id @default(uuid()) @db.Uuid
+  organizationId   String               @map("organization_id") @db.Uuid
+  purchaseBillId   String               @map("purchase_bill_id") @db.Uuid
+  variantId        String               @map("variant_id") @db.Uuid
+  description      String               @db.VarChar(240)
+  hsnSac           String?              @map("hsn_sac") @db.VarChar(12)
+  quantity         Decimal              @db.Decimal(18, 3)
+  unitCost         Decimal              @map("unit_cost") @db.Decimal(14, 4)
+  discountAmount   Decimal              @default(0) @map("discount_amount") @db.Decimal(14, 2)
+  taxableValue     Decimal              @map("taxable_value") @db.Decimal(14, 2)
+  taxRate          Decimal              @map("tax_rate") @db.Decimal(5, 2)
+  cgstAmount       Decimal              @default(0) @map("cgst_amount") @db.Decimal(14, 2)
+  sgstAmount       Decimal              @default(0) @map("sgst_amount") @db.Decimal(14, 2)
+  igstAmount       Decimal              @default(0) @map("igst_amount") @db.Decimal(14, 2)
+  cessAmount       Decimal              @default(0) @map("cess_amount") @db.Decimal(14, 2)
+  lineTotal        Decimal              @map("line_total") @db.Decimal(14, 2)
+  inputTaxEligible Boolean              @default(false) @map("input_tax_eligible")
+  createdAt        DateTime             @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime             @updatedAt @map("updated_at") @db.Timestamptz(3)
+  purchaseBill     PurchaseBill         @relation(fields: [purchaseBillId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  variant          ProductVariant       @relation(fields: [variantId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  returnItems      PurchaseReturnItem[]
 
   @@unique([id, organizationId])
   @@index([organizationId, purchaseBillId])
   @@map("purchase_bill_items")
+}
+
+model PurchaseReturn {
+  id                     String               @id @default(uuid()) @db.Uuid
+  organizationId         String               @map("organization_id") @db.Uuid
+  companyId              String               @map("company_id") @db.Uuid
+  branchId               String               @map("branch_id") @db.Uuid
+  warehouseId            String               @map("warehouse_id") @db.Uuid
+  supplierId             String               @map("supplier_id") @db.Uuid
+  purchaseBillId         String               @map("purchase_bill_id") @db.Uuid
+  returnDate             DateTime             @map("return_date") @db.Date
+  reason                 String               @db.VarChar(500)
+  taxableValue           Decimal              @map("taxable_value") @db.Decimal(14, 2)
+  cgstAmount             Decimal              @map("cgst_amount") @db.Decimal(14, 2)
+  sgstAmount             Decimal              @map("sgst_amount") @db.Decimal(14, 2)
+  igstAmount             Decimal              @map("igst_amount") @db.Decimal(14, 2)
+  cessAmount             Decimal              @map("cess_amount") @db.Decimal(14, 2)
+  roundOff               Decimal              @default(0) @map("round_off") @db.Decimal(5, 2)
+  totalAmount            Decimal              @map("total_amount") @db.Decimal(14, 2)
+  appliedToPayableAmount Decimal              @map("applied_to_payable_amount") @db.Decimal(14, 2)
+  supplierCreditAmount   Decimal              @map("supplier_credit_amount") @db.Decimal(14, 2)
+  idempotencyKey         String               @map("idempotency_key") @db.VarChar(120)
+  postedAt               DateTime             @default(now()) @map("posted_at") @db.Timestamptz(3)
+  postedByUserId         String               @map("posted_by_user_id") @db.Uuid
+  createdAt              DateTime             @default(now()) @map("created_at") @db.Timestamptz(3)
+  organization           Organization         @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  company                Company              @relation(fields: [companyId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  branch                 Branch               @relation(fields: [branchId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  warehouse              Warehouse            @relation(fields: [warehouseId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  supplier               Supplier             @relation(fields: [supplierId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  purchaseBill           PurchaseBill         @relation(fields: [purchaseBillId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  postedBy               User                 @relation("PurchaseReturnPostedBy", fields: [postedByUserId], references: [id], onDelete: Restrict)
+  items                  PurchaseReturnItem[]
+
+  @@unique([id, organizationId])
+  @@unique([organizationId, idempotencyKey])
+  @@index([organizationId, purchaseBillId, returnDate])
+  @@index([organizationId, supplierId, returnDate])
+  @@map("purchase_returns")
+}
+
+model PurchaseReturnItem {
+  id                 String           @id @default(uuid()) @db.Uuid
+  organizationId     String           @map("organization_id") @db.Uuid
+  purchaseReturnId   String           @map("purchase_return_id") @db.Uuid
+  purchaseBillItemId String           @map("purchase_bill_item_id") @db.Uuid
+  variantId          String           @map("variant_id") @db.Uuid
+  quantity           Decimal          @db.Decimal(18, 3)
+  unitCost           Decimal          @map("unit_cost") @db.Decimal(14, 4)
+  taxableValue       Decimal          @map("taxable_value") @db.Decimal(14, 2)
+  cgstAmount         Decimal          @map("cgst_amount") @db.Decimal(14, 2)
+  sgstAmount         Decimal          @map("sgst_amount") @db.Decimal(14, 2)
+  igstAmount         Decimal          @map("igst_amount") @db.Decimal(14, 2)
+  cessAmount         Decimal          @map("cess_amount") @db.Decimal(14, 2)
+  lineTotal          Decimal          @map("line_total") @db.Decimal(14, 2)
+  createdAt          DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  purchaseReturn     PurchaseReturn   @relation(fields: [purchaseReturnId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  purchaseBillItem   PurchaseBillItem @relation(fields: [purchaseBillItemId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  variant            ProductVariant   @relation(fields: [variantId, organizationId], references: [id, organizationId], onDelete: Restrict)
+
+  @@unique([id, organizationId])
+  @@unique([organizationId, purchaseReturnId, purchaseBillItemId])
+  @@index([organizationId, purchaseBillItemId])
+  @@map("purchase_return_items")
 }
 
 model SupplierPayment {

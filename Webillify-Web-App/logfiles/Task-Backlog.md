@@ -1,8 +1,22 @@
 # Webillify task backlog
 
-Last prioritized: **2026-07-17 19:55:14 IST**
-Active assignee: **Unassigned — WBL-BE-007C ready; browser runtime published as `c80a77f`**
+Last prioritized: **2026-07-17 20:15:08 IST**
+Active assignee: **Unassigned — WBL-FE-016C ready after BE-007C publication**
 WIP limit: **One P0 task per engineer**
+
+## Just completed
+
+### WBL-BE-007C — Purchase cancellation and return compensation
+
+Status: **COMPLETE — 2026-07-17 20:15:08 IST**
+
+- Added one-way posted-to-cancelled transitions with mandatory actor, timestamp, reason and idempotency identity.
+- Added append-only purchase returns/items linked to original bill lines with bounded quantities and snapshot tax/cost values.
+- Created atomic reversal/return stock movements, payable reductions and explicit supplier-credit amounts.
+- Blocked unsafe cancellation when payments/returns exist and rolled back compensation when stock is unavailable.
+- Added database ownership, immutability and reconciliation triggers plus permission, retry and concurrency coverage.
+
+Result: clean seven-migration replay/seed, zero schema drift, lint/build, production audit 0, 3 unit and 57 integration/security tests pass.
 
 ## Just completed
 
@@ -203,7 +217,7 @@ Result: real catalogue/reference/stock APIs, atomic product creation, branch-sco
 
 ### WBL-BE-007 — Purchases and payables
 
-Status: **READY — accounting/GST fixtures remain an external production gate**
+Status: **COMPLETE — CORE API; accounting/GST fixtures remain an external production gate**
 
 ## Prioritized queue
 
@@ -221,7 +235,8 @@ Status: **READY — accounting/GST fixtures remain an external production gate**
 | `WBL-BE-006`     | P0       | Catalogue and immutable inventory ledger     | COMPLETE   | Codex              | BE-005          |
 | `WBL-BE-007A`    | P0       | Purchase/payables database foundation         | COMPLETE   | Codex              | BE-006          |
 | `WBL-BE-007B`    | P0       | Protected purchase posting/payment APIs       | COMPLETE    | Codex              | BE-007A         |
-| `WBL-BE-007C`    | P0       | Purchase cancellation/return compensation     | READY       | Backend/domain      | BE-007B         |
+| `WBL-BE-007C`    | P0       | Purchase cancellation/return compensation     | COMPLETE    | Codex               | BE-007B         |
+| `WBL-FE-016C`    | P0       | Purchase cancellation/return browser actions  | READY       | Frontend/full-stack | BE-007C         |
 | `WBL-FE-009`     | P1       | Shared loading/error/toast/confirm UX        | COMPLETE   | Codex              | FE-007          |
 | `WBL-FE-010`     | P1       | Customer list/detail/balance UI              | PLANNED    | Frontend           | Data/API        |
 | `WBL-FE-011`     | P1       | Product create/edit/import UI                | PLANNED    | Frontend           | Catalogue API   |

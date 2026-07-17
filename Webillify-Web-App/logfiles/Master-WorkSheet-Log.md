@@ -1,10 +1,10 @@
 # Webillify master worksheet
 
-Snapshot timestamp: **2026-07-17 19:55:14 IST**
-Project status: **ACTIVE — connected browser surface verified on localhost and LAN; transactional modules continue**
+Snapshot timestamp: **2026-07-17 20:15:08 IST**
+Project status: **ACTIVE — purchase compensation API verified; browser actions and POS persistence continue**
 Current release: **R1 — Frontend application foundation**  
 Current phase: **Phase 4 — Catalogue, purchases and inventory**
-Current task: **WBL-BE-007C — Purchase cancellation and return compensation (ready next)**
+Current task: **WBL-FE-016C — Purchase cancellation and return browser actions (ready next)**
 
 ## Project snapshot
 
@@ -19,13 +19,13 @@ Current task: **WBL-BE-007C — Purchase cancellation and return compensation (r
 | Authentication                  | COMPLETE — CORE API | Angular real login/session/tenant integration works against Argon2/JWT/rotating-session API in desktop/mobile Chrome                  |
 | PWA foundation                  | COMPLETE             | Manifest, icon, service worker registration and production `ngsw` output                                                               |
 | Customers                       | PLANNED              | Placeholder route only                                                                                                                 |
-| Purchases                       | IN PROGRESS — CORE UI/API | Browser draft/post/payment and protected APIs pass; cancellation and returns remain pending                                      |
+| Purchases                       | IN PROGRESS — CORE UI/API | Browser draft/post/payment plus protected cancellation/return APIs pass; compensation browser actions remain                     |
 | Reports                         | PLANNED              | Placeholder route only                                                                                                                 |
 | Settings / roles / subscription | PARTIAL — API DATA   | Core Business plan and separate Webillify AI lifecycle/credits render live; role editing pending                                      |
-| Backend and persistence         | IN PROGRESS          | Identity through purchase posting/payments pass entitlement, isolation, idempotency, concurrency and reconciliation tests              |
+| Backend and persistence         | IN PROGRESS          | Identity through purchase cancellation/returns pass entitlement, isolation, idempotency, concurrency and reconciliation tests          |
 | Webillify AI integration        | PARTIAL — PLAN UI/API | Separate plan/lifecycle/credits render live; extraction/questions/summaries remain pending                                            |
 | Data access and request state   | COMPLETE             | Typed models/repositories, mock/API modes, environment configuration and visible request errors                                        |
-| Automated tests                 | PARTIAL              | 19 frontend unit, 4 connected browser/accessibility journeys, 3 API unit and 52 backend integration/security tests pass                |
+| Automated tests                 | PARTIAL              | 19 frontend unit, 4 connected browser/accessibility journeys, 3 API unit and 57 backend integration/security tests pass                |
 | Production deployment           | PARTIAL              | Production build and GitHub CI definition exist; hosting/deployment environments remain pending                                        |
 
 ## Latest verified baseline
@@ -47,26 +47,27 @@ Current task: **WBL-BE-007C — Purchase cancellation and return compensation (r
 | 2026-07-17 19:22:18 IST | Purchase posting/payment gate  | PASS — 3 unit + 52 integration; concurrency, drift and audit 0           |
 | 2026-07-17 19:34:26 IST | Connected browser integration  | PASS — real auth/catalogue/stock; 19 unit + 4 desktop/mobile journeys     |
 | 2026-07-17 19:46:45 IST | Browser workflow full gate     | PASS — live dashboard/purchases/plans; web 19+4 and API 3+52             |
+| 2026-07-17 20:15:08 IST | Purchase compensation API gate | PASS — seven migrations, zero drift, API 3+57 and production audit 0     |
 
 ## Current goal
 
 Deliver a pilot-ready V1 web application for Indian small and medium retailers covering authenticated multi-tenant access, GST-ready POS sales, products and inventory, customers, purchases, expenses, reporting, subscriptions, and an optional separately billed Webillify AI add-on.
 
-The frontend foundation is verified as a responsive, accessible demo prototype. The immediate goal is a secure versioned NestJS API, PostgreSQL tenancy schema and real identity/session boundary.
+The connected frontend and secure API foundations are verified. The immediate goal is to expose the verified purchase compensation flows in the browser, then replace the remaining POS demo boundary with atomic sales persistence.
 
 ## Next task assignment
 
 | Field              | Value                                                                                  |
 | ------------------ | -------------------------------------------------------------------------------------- |
-| Task ID            | `WBL-BE-007C`                                                                           |
-| Title              | Purchase cancellation/returns using linked compensating stock and payable effects       |
+| Task ID            | `WBL-FE-016C`                                                                           |
+| Title              | Purchase cancellation and linked return actions in the connected browser workflow        |
 | Status             | READY                                                                                   |
 | Priority           | P0                                                                                     |
-| Suggested assignee | Backend engineer                                                                       |
-| Estimate           | 1–2 development sessions                                                               |
-| Dependencies       | Completed BE-006 catalogue/stock ledger and external accounting fixture review          |
-| Deliverable        | Tenant-scoped purchase workflow with immutable posting and stock/payable effects        |
-| Acceptance         | Idempotent posting, duplicate supplier reference, stock and payable reconciliation pass |
+| Suggested assignee | Frontend/full-stack engineer                                                            |
+| Estimate           | One development stage                                                                   |
+| Dependencies       | Completed BE-007C cancellation and return APIs                                           |
+| Deliverable        | Permission-aware cancel/full-return actions with reason capture and live refresh         |
+| Acceptance         | Desktop/mobile browser journeys prove success, disabled dependencies and visible errors  |
 
 See [Task-Backlog.md](Task-Backlog.md#recommended-next-task) for the complete assignment brief.
 
@@ -76,7 +77,7 @@ See [Task-Backlog.md](Task-Backlog.md#recommended-next-task) for the complete as
 - All five original worksheets are populated.
 - Completed claims are mapped to source files or command evidence.
 - Pending modules are task-ID based and assignable.
-- BE-001 through BE-006, SEC-001, BE-007A/B, connected FE-016A/B and SETUP-005 are complete and published. BE-007C is ready next.
+- BE-001 through BE-006, SEC-001, BE-007A/B, connected FE-016A/B and SETUP-005 are published. BE-007C is verified with publication pending; FE-016C is ready next.
 
 ## Category codes
 

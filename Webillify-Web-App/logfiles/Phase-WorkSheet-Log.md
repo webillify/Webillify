@@ -83,14 +83,14 @@ Exit gate: Authenticated frontend works with real APIs; isolation tests are rele
 
 ## Phase 4 — Catalogue, purchases and inventory
 
-Status: **IN PROGRESS — BE-006 catalogue/inventory core complete; BE-007 purchases next**
+Status: **IN PROGRESS — BE-007 purchase API core complete; compensation browser actions next**
 
 - [x] Product/category/unit/tax/barcode core APIs (CSV import remains queued)
-- [ ] Suppliers and purchase bills
+- [x] Suppliers, purchase bills, payments, cancellation and linked returns
 - [x] Immutable stock movement ledger and rebuildable balances
 - [ ] Opening stock, counts, adjustments and branch transfers
-- [ ] Weighted-average valuation and concurrency/idempotency tests
-- [ ] Products and purchases pages connected to APIs
+- [x] Weighted-average valuation and concurrency/idempotency tests
+- [x] Products and core purchase workflows connected to APIs
 
 Exit gate: Stock balances reconcile to movements and approved purchase/return fixtures.
 

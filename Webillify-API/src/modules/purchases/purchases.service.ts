@@ -7,11 +7,13 @@ import { Prisma, StockMovementType } from '@prisma/client';
 import type { TenantContext } from '../../core/authorization/authorization.types';
 import { PrismaService } from '../../database/prisma.service';
 import { CoreEntitlementService } from '../subscriptions/core-entitlement.service';
+import type { CancelPurchaseBillDto } from './dto/cancel-purchase-bill.dto';
 import {
   type CreatePurchaseBillDto,
   type CreatePurchaseBillItemDto,
   PurchaseTaxTreatment,
 } from './dto/create-purchase-bill.dto';
+import type { CreatePurchaseReturnDto } from './dto/create-purchase-return.dto';
 import type { CreateSupplierPaymentDto } from './dto/create-supplier-payment.dto';
 import type { CreateSupplierDto } from './dto/create-supplier.dto';
 
@@ -31,6 +33,9 @@ type DraftLine = {
   lineTotal: Prisma.Decimal;
   inputTaxEligible: boolean;
 };
+
+type ReturnMoneyField =
+  'taxableValue' | 'cgstAmount' | 'sgstAmount' | 'igstAmount' | 'cessAmount';
 
 @Injectable()
 export class PurchasesService {
@@ -92,6 +97,7 @@ export class PurchasesService {
       include: {
         supplier: true,
         items: { include: { variant: { include: { product: true } } } },
+        returns: { include: { items: true } },
         allocations: { include: { payment: true } },
       },
     });
@@ -383,6 +389,449 @@ export class PurchasesService {
     });
   }
 
+  async cancelBill(
+    tenant: TenantContext,
+    actorUserId: string,
+    correlationId: string,
+    idempotencyKey: string,
+    id: string,
+    input: CancelPurchaseBillDto,
+  ): Promise<object> {
+    await this.core.assertMutationAllowed(tenant.organizationId);
+    validateIdempotencyKey(idempotencyKey);
+    const reason = input.reason.trim();
+    return this.serializable(async (transaction) => {
+      await transaction.$queryRaw(
+        Prisma.sql`SELECT "id" FROM "purchase_bills" WHERE "id" = ${id}::uuid AND "organization_id" = ${tenant.organizationId}::uuid FOR UPDATE`,
+      );
+      const bill = await transaction.purchaseBill.findFirst({
+        where: {
+          id,
+          organizationId: tenant.organizationId,
+          branchId: { in: [...tenant.branchIds] },
+        },
+        include: {
+          items: { include: { variant: true } },
+          allocations: true,
+          returns: true,
+          supplier: true,
+        },
+      });
+      if (!bill) throw purchaseNotFound();
+      if (bill.status === 'CANCELLED') {
+        if (
+          bill.cancellationIdempotencyKey !== idempotencyKey ||
+          bill.cancellationReason !== reason
+        ) {
+          throw new ConflictException({
+            code: 'PURCHASE_ALREADY_CANCELLED',
+            message: 'This purchase bill was already cancelled.',
+          });
+        }
+        return { bill, movements: [], idempotent: true };
+      }
+      const keyOwner = await transaction.purchaseBill.findFirst({
+        where: {
+          organizationId: tenant.organizationId,
+          cancellationIdempotencyKey: idempotencyKey,
+        },
+      });
+      if (keyOwner && keyOwner.id !== bill.id) throw idempotencyConflict();
+      if (bill.status !== 'POSTED') {
+        throw new ConflictException({
+          code: 'PURCHASE_NOT_CANCELLABLE',
+          message: 'Only a posted purchase bill can be cancelled.',
+        });
+      }
+      if (
+        !bill.paidAmount.isZero() ||
+        bill.allocations.length > 0 ||
+        !bill.returnedAmount.isZero() ||
+        bill.returns.length > 0
+      ) {
+        throw new ConflictException({
+          code: 'PURCHASE_CANCELLATION_HAS_DEPENDENCIES',
+          message:
+            'A purchase bill with payments or returns cannot be cancelled safely.',
+        });
+      }
+
+      const receipts = await transaction.stockMovement.findMany({
+        where: {
+          organizationId: tenant.organizationId,
+          sourceType: 'PURCHASE_BILL',
+          sourceId: bill.id,
+          movementType: StockMovementType.PURCHASE_RECEIPT,
+        },
+      });
+      const receiptByVariant = new Map(
+        receipts.map((movement) => [movement.variantId, movement]),
+      );
+      const movements: object[] = [];
+      const inventoryLines = bill.items
+        .filter(({ variant }) => variant.trackInventory)
+        .sort((left, right) => left.variantId.localeCompare(right.variantId));
+      for (const item of inventoryLines) {
+        const receipt = receiptByVariant.get(item.variantId);
+        if (!receipt) {
+          throw new ConflictException({
+            code: 'PURCHASE_RECEIPT_NOT_FOUND',
+            message: 'The original stock receipt could not be reconciled.',
+          });
+        }
+        await transaction.$queryRaw(
+          Prisma.sql`SELECT "quantity" FROM "stock_balances" WHERE "organization_id" = ${tenant.organizationId}::uuid AND "warehouse_id" = ${bill.warehouseId}::uuid AND "variant_id" = ${item.variantId}::uuid FOR UPDATE`,
+        );
+        const balance = await transaction.stockBalance.findUniqueOrThrow({
+          where: {
+            organizationId_warehouseId_variantId: {
+              organizationId: tenant.organizationId,
+              warehouseId: bill.warehouseId,
+              variantId: item.variantId,
+            },
+          },
+        });
+        if (balance.quantity.lessThan(item.quantity))
+          throw insufficientPurchaseStock('cancel');
+        const movement = await transaction.stockMovement.create({
+          data: {
+            organizationId: tenant.organizationId,
+            companyId: bill.companyId,
+            branchId: bill.branchId,
+            warehouseId: bill.warehouseId,
+            variantId: item.variantId,
+            actorUserId,
+            movementType: StockMovementType.REVERSAL,
+            quantity: item.quantity.negated(),
+            unitCost: item.unitCost,
+            occurredAt: new Date(),
+            sourceType: 'PURCHASE_BILL_CANCELLATION',
+            sourceId: bill.id,
+            idempotencyKey,
+            reversalOfId: receipt.id,
+          },
+        });
+        await transaction.stockBalance.update({
+          where: {
+            organizationId_warehouseId_variantId: {
+              organizationId: tenant.organizationId,
+              warehouseId: bill.warehouseId,
+              variantId: item.variantId,
+            },
+          },
+          data: { quantity: balance.quantity.minus(item.quantity) },
+        });
+        movements.push(movement);
+      }
+      const cancelled = await transaction.purchaseBill.update({
+        where: { id: bill.id },
+        data: {
+          status: 'CANCELLED',
+          outstandingAmount: 0,
+          cancellationIdempotencyKey: idempotencyKey,
+          cancelledAt: new Date(),
+          cancelledByUserId: actorUserId,
+          cancellationReason: reason,
+        },
+        include: { supplier: true, items: true },
+      });
+      await transaction.auditLog.create({
+        data: {
+          organizationId: tenant.organizationId,
+          actorUserId,
+          action: 'PURCHASE_BILL_CANCELLED',
+          targetType: 'PURCHASE_BILL',
+          targetId: bill.id,
+          correlationId,
+          outcome: 'SUCCESS',
+          summary: { reason, stockMovements: movements.length },
+        },
+      });
+      return { bill: cancelled, movements, idempotent: false };
+    });
+  }
+
+  async createReturn(
+    tenant: TenantContext,
+    actorUserId: string,
+    correlationId: string,
+    idempotencyKey: string,
+    input: CreatePurchaseReturnDto,
+  ): Promise<object> {
+    await this.core.assertMutationAllowed(tenant.organizationId);
+    validateIdempotencyKey(idempotencyKey);
+    const uniqueItemIds = new Set(
+      input.items.map(({ purchaseBillItemId }) => purchaseBillItemId),
+    );
+    if (uniqueItemIds.size !== input.items.length) {
+      throw new ConflictException({
+        code: 'DUPLICATE_PURCHASE_RETURN_ITEM',
+        message: 'A source bill item may appear only once in a return.',
+      });
+    }
+    const returnDate = dateOnly(input.returnDate);
+    const reason = input.reason.trim();
+
+    return this.serializable(async (transaction) => {
+      const existing = await transaction.purchaseReturn.findUnique({
+        where: {
+          organizationId_idempotencyKey: {
+            organizationId: tenant.organizationId,
+            idempotencyKey,
+          },
+        },
+        include: { items: true },
+      });
+      if (existing) {
+        if (!tenant.branchIds.includes(existing.branchId))
+          throw purchaseNotFound();
+        if (!samePurchaseReturn(existing, input, reason, returnDate))
+          throw idempotencyConflict();
+        return { purchaseReturn: existing, movements: [], idempotent: true };
+      }
+
+      await transaction.$queryRaw(
+        Prisma.sql`SELECT "id" FROM "purchase_bills" WHERE "id" = ${input.purchaseBillId}::uuid AND "organization_id" = ${tenant.organizationId}::uuid FOR UPDATE`,
+      );
+      const bill = await transaction.purchaseBill.findFirst({
+        where: {
+          id: input.purchaseBillId,
+          organizationId: tenant.organizationId,
+          branchId: { in: [...tenant.branchIds] },
+        },
+        include: {
+          items: { include: { variant: true, returnItems: true } },
+          returns: true,
+        },
+      });
+      if (!bill) throw purchaseNotFound();
+      if (bill.status !== 'POSTED') {
+        throw new ConflictException({
+          code: 'PURCHASE_NOT_RETURNABLE',
+          message: 'Only a posted purchase bill can receive a return.',
+        });
+      }
+      if (returnDate < bill.invoiceDate) {
+        throw new ConflictException({
+          code: 'INVALID_PURCHASE_RETURN_DATE',
+          message: 'The return date cannot be earlier than the purchase date.',
+        });
+      }
+      const itemMap = new Map(bill.items.map((item) => [item.id, item]));
+      if ([...uniqueItemIds].some((itemId) => !itemMap.has(itemId)))
+        throw purchaseNotFound();
+
+      const requestedQuantities = new Map(
+        input.items.map((item) => [
+          item.purchaseBillItemId,
+          new Prisma.Decimal(item.quantity),
+        ]),
+      );
+      const returnLines = input.items
+        .map((requested) => {
+          const source = itemMap.get(requested.purchaseBillItemId)!;
+          const previousQuantity = sumDecimals(
+            source.returnItems.map(({ quantity }) => quantity),
+          );
+          const quantity = new Prisma.Decimal(requested.quantity);
+          if (previousQuantity.plus(quantity).greaterThan(source.quantity))
+            throw new ConflictException({
+              code: 'PURCHASE_RETURN_QUANTITY_EXCEEDED',
+              message:
+                'The return quantity exceeds the remaining source quantity.',
+            });
+          const finalQuantity = previousQuantity
+            .plus(quantity)
+            .equals(source.quantity);
+          const component = (field: ReturnMoneyField) =>
+            finalQuantity
+              ? source[field].minus(
+                  sumDecimals(source.returnItems.map((item) => item[field])),
+                )
+              : source[field]
+                  .mul(quantity)
+                  .div(source.quantity)
+                  .toDecimalPlaces(2, Prisma.Decimal.ROUND_HALF_UP);
+          const taxableValue = component('taxableValue');
+          const cgstAmount = component('cgstAmount');
+          const sgstAmount = component('sgstAmount');
+          const igstAmount = component('igstAmount');
+          const cessAmount = component('cessAmount');
+          return {
+            purchaseBillItemId: source.id,
+            variantId: source.variantId,
+            quantity,
+            unitCost: source.unitCost,
+            taxableValue,
+            cgstAmount,
+            sgstAmount,
+            igstAmount,
+            cessAmount,
+            lineTotal: taxableValue
+              .plus(cgstAmount)
+              .plus(sgstAmount)
+              .plus(igstAmount)
+              .plus(cessAmount),
+            trackInventory: source.variant.trackInventory,
+          };
+        })
+        .sort((left, right) => left.variantId.localeCompare(right.variantId));
+      const fullyReturned = bill.items.every((item) =>
+        sumDecimals(item.returnItems.map(({ quantity }) => quantity))
+          .plus(requestedQuantities.get(item.id) ?? 0)
+          .equals(item.quantity),
+      );
+      const priorRoundOff = sumDecimals(
+        bill.returns.map(({ roundOff }) => roundOff),
+      );
+      const roundOff = fullyReturned
+        ? bill.roundOff.minus(priorRoundOff)
+        : new Prisma.Decimal(0);
+      const totals = returnTotals(returnLines, roundOff);
+      if (
+        input.expectedTotal !== undefined &&
+        !totals.totalAmount.equals(money(input.expectedTotal))
+      ) {
+        throw new ConflictException({
+          code: 'PURCHASE_RETURN_TOTAL_MISMATCH',
+          message:
+            'The submitted return total does not match the server calculation.',
+        });
+      }
+      if (
+        bill.returnedAmount
+          .plus(totals.totalAmount)
+          .greaterThan(bill.totalAmount)
+      )
+        throw new ConflictException({
+          code: 'PURCHASE_RETURN_AMOUNT_EXCEEDED',
+          message: 'The return amount exceeds the remaining purchase value.',
+        });
+      const appliedToPayableAmount = bill.outstandingAmount.lessThan(
+        totals.totalAmount,
+      )
+        ? bill.outstandingAmount
+        : totals.totalAmount;
+      const supplierCreditAmount = totals.totalAmount.minus(
+        appliedToPayableAmount,
+      );
+      const purchaseReturn = await transaction.purchaseReturn.create({
+        data: {
+          organizationId: tenant.organizationId,
+          companyId: bill.companyId,
+          branchId: bill.branchId,
+          warehouseId: bill.warehouseId,
+          supplierId: bill.supplierId,
+          purchaseBillId: bill.id,
+          returnDate,
+          reason,
+          ...totals,
+          appliedToPayableAmount,
+          supplierCreditAmount,
+          idempotencyKey,
+          postedByUserId: actorUserId,
+        },
+      });
+      await transaction.purchaseReturnItem.createMany({
+        data: returnLines.map((line) => ({
+          organizationId: tenant.organizationId,
+          purchaseReturnId: purchaseReturn.id,
+          purchaseBillItemId: line.purchaseBillItemId,
+          variantId: line.variantId,
+          quantity: line.quantity,
+          unitCost: line.unitCost,
+          taxableValue: line.taxableValue,
+          cgstAmount: line.cgstAmount,
+          sgstAmount: line.sgstAmount,
+          igstAmount: line.igstAmount,
+          cessAmount: line.cessAmount,
+          lineTotal: line.lineTotal,
+        })),
+      });
+
+      const movements: object[] = [];
+      for (const line of returnLines.filter(
+        ({ trackInventory }) => trackInventory,
+      )) {
+        await transaction.$queryRaw(
+          Prisma.sql`SELECT "quantity" FROM "stock_balances" WHERE "organization_id" = ${tenant.organizationId}::uuid AND "warehouse_id" = ${bill.warehouseId}::uuid AND "variant_id" = ${line.variantId}::uuid FOR UPDATE`,
+        );
+        const balance = await transaction.stockBalance.findUniqueOrThrow({
+          where: {
+            organizationId_warehouseId_variantId: {
+              organizationId: tenant.organizationId,
+              warehouseId: bill.warehouseId,
+              variantId: line.variantId,
+            },
+          },
+        });
+        if (balance.quantity.lessThan(line.quantity))
+          throw insufficientPurchaseStock('return');
+        const movement = await transaction.stockMovement.create({
+          data: {
+            organizationId: tenant.organizationId,
+            companyId: bill.companyId,
+            branchId: bill.branchId,
+            warehouseId: bill.warehouseId,
+            variantId: line.variantId,
+            actorUserId,
+            movementType: StockMovementType.PURCHASE_RETURN,
+            quantity: line.quantity.negated(),
+            unitCost: line.unitCost,
+            occurredAt: new Date(),
+            sourceType: 'PURCHASE_RETURN',
+            sourceId: purchaseReturn.id,
+            idempotencyKey,
+          },
+        });
+        await transaction.stockBalance.update({
+          where: {
+            organizationId_warehouseId_variantId: {
+              organizationId: tenant.organizationId,
+              warehouseId: bill.warehouseId,
+              variantId: line.variantId,
+            },
+          },
+          data: { quantity: balance.quantity.minus(line.quantity) },
+        });
+        movements.push(movement);
+      }
+      await transaction.purchaseBill.update({
+        where: { id: bill.id },
+        data: {
+          returnedAmount: bill.returnedAmount.plus(totals.totalAmount),
+          outstandingAmount: bill.outstandingAmount.minus(
+            appliedToPayableAmount,
+          ),
+        },
+      });
+      await transaction.auditLog.create({
+        data: {
+          organizationId: tenant.organizationId,
+          actorUserId,
+          action: 'PURCHASE_RETURN_POSTED',
+          targetType: 'PURCHASE_RETURN',
+          targetId: purchaseReturn.id,
+          correlationId,
+          outcome: 'SUCCESS',
+          summary: {
+            purchaseBillId: bill.id,
+            reason,
+            totalAmount: totals.totalAmount.toString(),
+            appliedToPayableAmount: appliedToPayableAmount.toString(),
+            supplierCreditAmount: supplierCreditAmount.toString(),
+            stockMovements: movements.length,
+          },
+        },
+      });
+      const created = await transaction.purchaseReturn.findUniqueOrThrow({
+        where: { id: purchaseReturn.id },
+        include: { items: true },
+      });
+      return { purchaseReturn: created, movements, idempotent: false };
+    });
+  }
+
   async paySupplier(
     tenant: TenantContext,
     actorUserId: string,
@@ -655,6 +1104,76 @@ function samePayment(
   );
 }
 
+function samePurchaseReturn(
+  existing: {
+    purchaseBillId: string;
+    returnDate: Date;
+    reason: string;
+    items: Array<{ purchaseBillItemId: string; quantity: Prisma.Decimal }>;
+  },
+  input: CreatePurchaseReturnDto,
+  reason: string,
+  returnDate: Date,
+): boolean {
+  if (
+    existing.purchaseBillId !== input.purchaseBillId ||
+    existing.returnDate.getTime() !== returnDate.getTime() ||
+    existing.reason !== reason ||
+    existing.items.length !== input.items.length
+  ) {
+    return false;
+  }
+  const quantities = new Map(
+    existing.items.map((item) => [item.purchaseBillItemId, item.quantity]),
+  );
+  return input.items.every(
+    (item) =>
+      quantities
+        .get(item.purchaseBillItemId)
+        ?.equals(new Prisma.Decimal(item.quantity)) === true,
+  );
+}
+
+function sumDecimals(values: Array<Prisma.Decimal | number>): Prisma.Decimal {
+  return values.reduce<Prisma.Decimal>(
+    (total, value) => total.plus(value),
+    new Prisma.Decimal(0),
+  );
+}
+
+function returnTotals(
+  lines: Array<{
+    taxableValue: Prisma.Decimal;
+    cgstAmount: Prisma.Decimal;
+    sgstAmount: Prisma.Decimal;
+    igstAmount: Prisma.Decimal;
+    cessAmount: Prisma.Decimal;
+  }>,
+  roundOff: Prisma.Decimal,
+) {
+  const sum = (select: (line: (typeof lines)[number]) => Prisma.Decimal) =>
+    sumDecimals(lines.map(select));
+  const taxableValue = sum(({ taxableValue }) => taxableValue);
+  const cgstAmount = sum(({ cgstAmount }) => cgstAmount);
+  const sgstAmount = sum(({ sgstAmount }) => sgstAmount);
+  const igstAmount = sum(({ igstAmount }) => igstAmount);
+  const cessAmount = sum(({ cessAmount }) => cessAmount);
+  return {
+    taxableValue,
+    cgstAmount,
+    sgstAmount,
+    igstAmount,
+    cessAmount,
+    roundOff,
+    totalAmount: taxableValue
+      .plus(cgstAmount)
+      .plus(sgstAmount)
+      .plus(igstAmount)
+      .plus(cessAmount)
+      .plus(roundOff),
+  };
+}
+
 function money(value: number): Prisma.Decimal {
   return new Prisma.Decimal(value).toDecimalPlaces(
     2,
@@ -713,6 +1232,22 @@ function allocationConflict(): ConflictException {
     code: 'PAYMENT_ALLOCATION_EXCEEDS_BALANCE',
     message:
       'The payment allocation exceeds the available payment or bill balance.',
+  });
+}
+
+function idempotencyConflict(): ConflictException {
+  return new ConflictException({
+    code: 'IDEMPOTENCY_KEY_CONFLICT',
+    message: 'This idempotency key was already used for another request.',
+  });
+}
+
+function insufficientPurchaseStock(
+  action: 'cancel' | 'return',
+): ConflictException {
+  return new ConflictException({
+    code: 'INSUFFICIENT_STOCK_FOR_PURCHASE_COMPENSATION',
+    message: `The purchase cannot be ${action === 'cancel' ? 'cancelled' : 'returned'} because the received stock is no longer available.`,
   });
 }
 

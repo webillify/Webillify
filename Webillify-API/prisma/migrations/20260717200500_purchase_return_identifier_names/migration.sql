@@ -1,0 +1,9 @@
+ALTER TABLE "purchase_return_items"
+  RENAME CONSTRAINT "purchase_return_items_purchase_bill_item_id_organization_id_fke"
+  TO "purchase_return_items_purchase_bill_item_id_organization_i_fkey";
+
+ALTER INDEX "purchase_return_items_organization_id_purchase_return_id_purcha"
+  RENAME TO "purchase_return_items_organization_id_purchase_return_id_pu_key";
+
+ALTER INDEX "purchase_returns_organization_id_purchase_bill_id_return_date_i"
+  RENAME TO "purchase_returns_organization_id_purchase_bill_id_return_da_idx";

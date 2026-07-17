@@ -31,6 +31,6 @@ npm run build
 - `/api/v1/organizations`, `/api/v1/branches`, `/api/v1/roles`, `/api/v1/permissions`
 - `/api/v1/plans`, `/api/v1/subscription`, `/api/v1/usage`, `/api/v1/ai/plan`, `/api/v1/ai/usage`
 - `/api/v1/products`, reference data, stock balances, movements and adjustments
-- `/api/v1/suppliers`, `/api/v1/purchase-bills`, posting and `/api/v1/supplier-payments`
+- `/api/v1/suppliers`, `/api/v1/purchase-bills`, posting/cancellation, `/api/v1/purchase-returns` and `/api/v1/supplier-payments`
 
 Every response returns `X-Correlation-Id`. Errors use the stable envelope documented in `../Docs/API-SPEC.md`. Request DTOs are transformed, whitelisted, and reject unknown fields. Implemented mutations enforce tenancy, permissions, active core entitlement, idempotency and atomic transaction boundaries.

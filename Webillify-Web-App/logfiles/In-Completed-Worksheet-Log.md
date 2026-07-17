@@ -1,14 +1,14 @@
 # Webillify incomplete work worksheet
 
-Last updated: **2026-07-17 19:55:14 IST**
-In progress: **None — WBL-SETUP-005 verified and published as `c80a77f`**
-Ready next: **WBL-BE-007C purchase cancellation/returns, then BE-008 real POS sales posting**
+Last updated: **2026-07-17 20:15:08 IST**
+In progress: **None — WBL-BE-007C verified; publication pending**
+Ready next: **WBL-FE-016C purchase cancellation/return browser actions, then BE-008 real POS sales posting**
 
 ## Ready
 
 | Task ID      | Priority | Module/outcome                 | Assignee | Status      |
 | ------------ | -------- | ------------------------------ | -------- | ----------- |
-| `WBL-BE-007C` | P0      | Purchase cancellation/returns with compensating effects | Unassigned | READY |
+| `WBL-FE-016C` | P0      | Purchase cancellation/return browser actions | Unassigned | READY |
 | `WBL-BE-008`  | P0      | Real POS invoice/payment/return backend and browser completion | Unassigned | READY |
 
 ## Planned frontend
@@ -22,6 +22,7 @@ Ready next: **WBL-BE-007C purchase cancellation/returns, then BE-008 real POS sa
 | `WBL-FE-014` | P1       | Company/branch/users/roles/settings | Tenancy APIs        |
 | `WBL-FE-015` | P1       | Core subscription/usage screens     | Subscription APIs   |
 | `WBL-AI-001` | P2       | Separate AI plan and credit UI      | AI subscription API |
+| `WBL-FE-016C` | P0      | Purchase cancellation/return actions | BE-007C             |
 
 ## Planned backend, quality and operations
 
@@ -35,7 +36,7 @@ Ready next: **WBL-BE-007C purchase cancellation/returns, then BE-008 real POS sa
 | `WBL-BE-006`    | P0           | Catalogue and inventory ledger        | COMPLETE    |
 | `WBL-BE-007A`   | P0           | Purchases/payables database foundation | COMPLETE    |
 | `WBL-BE-007B`   | P0           | Purchase/payable API and posting effects | COMPLETE    |
-| `WBL-BE-007C`   | P0           | Purchase cancellation and return workflows | PLANNED   |
+| `WBL-BE-007C`   | P0           | Purchase cancellation and return workflows | COMPLETE  |
 | `WBL-BE-008`    | P0           | POS/invoice/payment/returns           | PLANNED     |
 | `WBL-BE-009`    | P1           | Reports/exports/closing               | PLANNED     |
 | `WBL-QA-002`    | P0           | Feature unit tests                    | COMPLETE    |

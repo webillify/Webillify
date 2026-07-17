@@ -41,6 +41,19 @@ interface SupplierPaymentBody {
   idempotent: boolean;
 }
 
+interface PurchaseReturnBody {
+  purchaseReturn: {
+    id: string;
+    purchaseBillId: string;
+    totalAmount: string;
+    appliedToPayableAmount: string;
+    supplierCreditAmount: string;
+    items: Array<{ purchaseBillItemId: string; quantity: string }>;
+  };
+  movements: Array<{ id: string; reversalOfId?: string }>;
+  idempotent: boolean;
+}
+
 describe('Protected purchases and payables APIs', () => {
   const prisma = new PrismaClient();
   const organizationId = '20000000-0000-4000-8000-000000000001';
@@ -96,6 +109,22 @@ describe('Protected purchases and payables APIs', () => {
     await tenantGet('/api/v1/suppliers', cashierToken, 403);
     await tenantPost('/api/v1/suppliers', cashierToken)
       .send({ code: `DENIED-${randomUUID()}`, name: 'Denied Supplier' })
+      .expect(403);
+    await tenantPost(
+      `/api/v1/purchase-bills/${randomUUID()}/cancel`,
+      cashierToken,
+    )
+      .set('Idempotency-Key', `denied-cancel-${randomUUID()}`)
+      .send({ reason: 'Cashier must not cancel purchases' })
+      .expect(403);
+    await tenantPost('/api/v1/purchase-returns', cashierToken)
+      .set('Idempotency-Key', `denied-return-${randomUUID()}`)
+      .send({
+        purchaseBillId: randomUUID(),
+        returnDate: '2026-07-17',
+        reason: 'Cashier must not post purchase returns',
+        items: [{ purchaseBillItemId: randomUUID(), quantity: 1 }],
+      })
       .expect(403);
   });
 
@@ -273,6 +302,266 @@ describe('Protected purchases and payables APIs', () => {
     );
   });
 
+  it('posts bounded purchase returns with stock and payable compensation exactly once', async () => {
+    const balanceBefore = await currentBalance();
+    const bill = await createPostedPurchase();
+    const key = `purchase-return-${randomUUID()}`;
+    const input = {
+      purchaseBillId: bill.id,
+      returnDate: '2026-07-18',
+      reason: 'One unit was damaged and returned to the supplier',
+      expectedTotal: 47.26,
+      items: [{ purchaseBillItemId: bill.items[0].id, quantity: 1 }],
+    };
+    const first = await createPurchaseReturn(key, input).expect(201);
+    expect(first.body as unknown as PurchaseReturnBody).toMatchObject({
+      idempotent: false,
+      purchaseReturn: {
+        purchaseBillId: bill.id,
+        totalAmount: '47.26',
+        appliedToPayableAmount: '47.26',
+        supplierCreditAmount: '0',
+      },
+    });
+    const replay = await createPurchaseReturn(key, input).expect(201);
+    expect(replay.body as unknown as PurchaseReturnBody).toMatchObject({
+      idempotent: true,
+      movements: [],
+    });
+    const ownerMembership =
+      await prisma.organizationMembership.findFirstOrThrow({
+        where: {
+          organizationId,
+          user: { email: 'owner@webillify.demo' },
+        },
+      });
+    await prisma.userBranchAccess.delete({
+      where: {
+        membershipId_branchId: {
+          membershipId: ownerMembership.id,
+          branchId,
+        },
+      },
+    });
+    try {
+      const hiddenReplay = await createPurchaseReturn(key, input).expect(404);
+      expect((hiddenReplay.body as unknown as ErrorBody).error.code).toBe(
+        'PURCHASE_RESOURCE_NOT_FOUND',
+      );
+    } finally {
+      await prisma.userBranchAccess.create({
+        data: {
+          membershipId: ownerMembership.id,
+          branchId,
+          organizationId,
+        },
+      });
+    }
+    const changed = await createPurchaseReturn(key, {
+      ...input,
+      expectedTotal: undefined,
+      items: [{ purchaseBillItemId: bill.items[0].id, quantity: 0.5 }],
+    }).expect(409);
+    expect((changed.body as unknown as ErrorBody).error.code).toBe(
+      'IDEMPOTENCY_KEY_CONFLICT',
+    );
+
+    const partialBill = await prisma.purchaseBill.findUniqueOrThrow({
+      where: { id: bill.id },
+    });
+    expect(partialBill.returnedAmount.toString()).toBe('47.26');
+    expect(partialBill.outstandingAmount.toString()).toBe('47.74');
+    expect((await currentBalance()).quantity.toNumber()).toBe(
+      balanceBefore.quantity.toNumber() + 1,
+    );
+
+    const concurrent = await Promise.all([
+      createPurchaseReturn(`return-final-${randomUUID()}`, {
+        ...input,
+        expectedTotal: undefined,
+      }),
+      createPurchaseReturn(`return-final-${randomUUID()}`, {
+        ...input,
+        expectedTotal: undefined,
+      }),
+    ]);
+    expect(concurrent.map(({ status }) => status).sort()).toEqual([201, 409]);
+    const rejected = concurrent.find(({ status }) => status === 409)!;
+    expect((rejected.body as unknown as ErrorBody).error.code).toBe(
+      'PURCHASE_RETURN_QUANTITY_EXCEEDED',
+    );
+    const returnedBill = await prisma.purchaseBill.findUniqueOrThrow({
+      where: { id: bill.id },
+    });
+    expect(returnedBill.returnedAmount.toString()).toBe('95');
+    expect(returnedBill.outstandingAmount.toString()).toBe('0');
+    expect((await currentBalance()).quantity.toString()).toBe(
+      balanceBefore.quantity.toString(),
+    );
+    const returnCount = await prisma.purchaseReturn.count({
+      where: { organizationId, purchaseBillId: bill.id },
+    });
+    expect(returnCount).toBe(2);
+    const movementCount = await prisma.stockMovement.count({
+      where: {
+        organizationId,
+        sourceType: 'PURCHASE_RETURN',
+        movementType: 'PURCHASE_RETURN',
+        sourceId: {
+          in: (
+            await prisma.purchaseReturn.findMany({
+              where: { organizationId, purchaseBillId: bill.id },
+              select: { id: true },
+            })
+          ).map(({ id }) => id),
+        },
+      },
+    });
+    expect(movementCount).toBe(2);
+    const returnRecord = (first.body as unknown as PurchaseReturnBody)
+      .purchaseReturn;
+    await expect(
+      prisma.purchaseReturn.update({
+        where: { id: returnRecord.id },
+        data: { reason: 'Illegal mutation of posted purchase return' },
+      }),
+    ).rejects.toThrow(/append-only/);
+  });
+
+  it('cancels an unallocated posted bill with linked reversal movements exactly once', async () => {
+    const balanceBefore = await currentBalance();
+    const bill = await createPostedPurchase();
+    const key = `purchase-cancel-${randomUUID()}`;
+    const input = { reason: 'Supplier bill was entered for the wrong branch' };
+    const first = await cancelPurchaseBill(bill.id, key, input).expect(201);
+    const body = first.body as unknown as PostedPurchaseBody;
+    expect(body).toMatchObject({
+      idempotent: false,
+      bill: {
+        id: bill.id,
+        status: 'CANCELLED',
+        outstandingAmount: '0',
+      },
+    });
+    expect(body.movements).toHaveLength(1);
+    const reversal = await prisma.stockMovement.findUniqueOrThrow({
+      where: { id: body.movements[0].id },
+    });
+    expect(reversal.movementType).toBe('REVERSAL');
+    expect(reversal.reversalOfId).not.toBeNull();
+    expect((await currentBalance()).quantity.toString()).toBe(
+      balanceBefore.quantity.toString(),
+    );
+    const replay = await cancelPurchaseBill(bill.id, key, input).expect(201);
+    expect(replay.body as unknown as PostedPurchaseBody).toMatchObject({
+      idempotent: true,
+      movements: [],
+    });
+    const changed = await cancelPurchaseBill(
+      bill.id,
+      `changed-${randomUUID()}`,
+      input,
+    ).expect(409);
+    expect((changed.body as unknown as ErrorBody).error.code).toBe(
+      'PURCHASE_ALREADY_CANCELLED',
+    );
+  });
+
+  it('blocks cancellation when payments or returns are already linked', async () => {
+    const response = await cancelPurchaseBill(
+      postedBillId,
+      `cancel-dependent-${randomUUID()}`,
+      { reason: 'Attempt to cancel a bill that already has payments' },
+    ).expect(409);
+    expect((response.body as unknown as ErrorBody).error.code).toBe(
+      'PURCHASE_CANCELLATION_HAS_DEPENDENCIES',
+    );
+  });
+
+  it('creates an explicit supplier credit when a return exceeds the remaining payable', async () => {
+    const balanceBefore = await currentBalance();
+    const bill = await prisma.purchaseBill.findUniqueOrThrow({
+      where: { id: postedBillId },
+      include: { items: true },
+    });
+    const response = await createPurchaseReturn(
+      `paid-purchase-return-${randomUUID()}`,
+      {
+        purchaseBillId: bill.id,
+        returnDate: '2026-07-18',
+        reason: 'All goods were rejected after the supplier payment',
+        expectedTotal: 95,
+        items: [{ purchaseBillItemId: bill.items[0].id, quantity: 2 }],
+      },
+    ).expect(201);
+    expect(response.body as unknown as PurchaseReturnBody).toMatchObject({
+      purchaseReturn: {
+        totalAmount: '95',
+        appliedToPayableAmount: '15',
+        supplierCreditAmount: '80',
+      },
+    });
+    const returnedBill = await prisma.purchaseBill.findUniqueOrThrow({
+      where: { id: bill.id },
+    });
+    expect(returnedBill.paidAmount.toString()).toBe('80');
+    expect(returnedBill.returnedAmount.toString()).toBe('95');
+    expect(returnedBill.outstandingAmount.toString()).toBe('0');
+    await restoreQuantity(balanceBefore.quantity.toNumber());
+  });
+
+  it('rolls back cancellation when available stock cannot fund the reversal', async () => {
+    const balanceBefore = await currentBalance();
+    const bill = await createPostedPurchase();
+    const balanceAfterPosting = await currentBalance();
+    await prisma.stockBalance.update({
+      where: {
+        organizationId_warehouseId_variantId: {
+          organizationId,
+          warehouseId,
+          variantId,
+        },
+      },
+      data: { quantity: 1 },
+    });
+    const key = `insufficient-cancel-${randomUUID()}`;
+    const failed = await cancelPurchaseBill(bill.id, key, {
+      reason: 'Cancellation must fail when received stock is unavailable',
+    }).expect(409);
+    expect((failed.body as unknown as ErrorBody).error.code).toBe(
+      'INSUFFICIENT_STOCK_FOR_PURCHASE_COMPENSATION',
+    );
+    expect(
+      await prisma.stockMovement.count({
+        where: {
+          organizationId,
+          sourceType: 'PURCHASE_BILL_CANCELLATION',
+          sourceId: bill.id,
+        },
+      }),
+    ).toBe(0);
+    expect(
+      (await prisma.purchaseBill.findUniqueOrThrow({ where: { id: bill.id } }))
+        .status,
+    ).toBe('POSTED');
+    await prisma.stockBalance.update({
+      where: {
+        organizationId_warehouseId_variantId: {
+          organizationId,
+          warehouseId,
+          variantId,
+        },
+      },
+      data: { quantity: balanceAfterPosting.quantity },
+    });
+    await cancelPurchaseBill(bill.id, `cleanup-cancel-${randomUUID()}`, {
+      reason: 'Clean up the verified cancellation rollback fixture',
+    }).expect(201);
+    expect((await currentBalance()).quantity.toString()).toBe(
+      balanceBefore.quantity.toString(),
+    );
+  });
+
   it('hides unassigned branches and other tenant contexts', async () => {
     const company = await prisma.company.findFirstOrThrow({
       where: { organizationId },
@@ -328,7 +617,7 @@ describe('Protected purchases and payables APIs', () => {
         where: { id: postedBillId },
         data: { paidAmount: 81, outstandingAmount: 14 },
       }),
-    ).rejects.toThrow(/reconcile to posted allocations/);
+    ).rejects.toThrow(/payment and return projections must reconcile/);
   });
 
   it('blocks purchase mutations while the core subscription is suspended', async () => {
@@ -385,6 +674,16 @@ describe('Protected purchases and payables APIs', () => {
       paidAt: '2026-07-17T12:00:00.000Z',
       allocations: [{ purchaseBillId: postedBillId, amount: allocationAmount }],
     };
+  }
+
+  async function createPostedPurchase(): Promise<PurchaseBillBody> {
+    const draft = await tenantPost('/api/v1/purchase-bills', ownerToken)
+      .send(purchaseInput(`COMPENSATION-${randomUUID()}`))
+      .expect(201);
+    const bill = draft.body as unknown as PurchaseBillBody;
+    const posted = await postBill(bill.id, `compensation-post-${randomUUID()}`);
+    expect(posted.status).toBe(201);
+    return (posted.body as unknown as PostedPurchaseBody).bill;
   }
 
   async function restoreQuantity(target: number): Promise<void> {
@@ -448,6 +747,18 @@ describe('Protected purchases and payables APIs', () => {
 
   function paySupplier(key: string, input: object) {
     return tenantPost('/api/v1/supplier-payments', ownerToken)
+      .set('Idempotency-Key', key)
+      .send(input);
+  }
+
+  function createPurchaseReturn(key: string, input: object) {
+    return tenantPost('/api/v1/purchase-returns', ownerToken)
+      .set('Idempotency-Key', key)
+      .send(input);
+  }
+
+  function cancelPurchaseBill(id: string, key: string, input: object) {
+    return tenantPost(`/api/v1/purchase-bills/${id}/cancel`, ownerToken)
       .set('Idempotency-Key', key)
       .send(input);
   }
