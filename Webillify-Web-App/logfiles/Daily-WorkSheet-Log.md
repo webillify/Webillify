@@ -7,7 +7,7 @@ Append-only history. Newest session first; corrections use a new timestamped ame
 Session: **17:31:00–17:56:26 IST**
 Task: **WBL-BE-008B**
 Assignee: **Codex**
-Status: **COMPLETE — publication pending**
+Status: **COMPLETE — published to GitHub `main`**
 
 | Timestamp (IST)     | Category | Activity                                                                                       | Result                    |
 | ------------------- | -------- | ---------------------------------------------------------------------------------------------- | ------------------------- |
@@ -20,6 +20,7 @@ Status: **COMPLETE — publication pending**
 | 2026-07-18 17:53:00 | TEST     | Clean nine-migration replay, seed, schema validation and drift comparison                       | PASS — zero drift         |
 | 2026-07-18 17:56:26 | TEST     | Lint/build, 3 unit, 69 integration/security and production dependency audit                     | PASS — 0 vulnerabilities |
 | 2026-07-18 17:56:26 | FRONTEND | Assigned FE-016D connected POS session/invoice browser workflow                                 | IN PROGRESS               |
+| 2026-07-18 18:01:50 | INFRA    | Pushed verified BE-008B atomic POS posting stage to GitHub `main`                               | `3aac4c2`                 |
 
 ---
 

@@ -1,6 +1,6 @@
 # Webillify master worksheet
 
-Snapshot timestamp: **2026-07-18 17:56:26 IST**
+Snapshot timestamp: **2026-07-18 18:01:50 IST**
 Project status: **ACTIVE — atomic POS posting API verified; connected browser workflow is next**
 Current release: **R1 — Frontend application foundation**  
 Current phase: **Phase 5 — POS, sales, returns and receivables**
@@ -80,7 +80,7 @@ See [Task-Backlog.md](Task-Backlog.md#recommended-next-task) for the complete as
 - All five original worksheets are populated.
 - Completed claims are mapped to source files or command evidence.
 - Pending modules are task-ID based and assignable.
-- BE-001 through BE-008B, SEC-001, connected FE-016A/B/C and SETUP-005 are verified. FE-016D is assigned next.
+- BE-001 through BE-008B, SEC-001, connected FE-016A/B/C and SETUP-005 are published. BE-008B is on `main` as `3aac4c2`; FE-016D is assigned next.
 
 ## Category codes
 
