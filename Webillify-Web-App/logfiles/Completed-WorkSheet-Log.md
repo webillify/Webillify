@@ -1,6 +1,6 @@
 # Webillify completed work worksheet
 
-Last updated: **2026-07-18 18:35:58 IST**
+Last updated: **2026-07-18 18:37:51 IST**
 
 | Task ID         | Completed (IST)     | Module/deliverable                                                            | Evidence                                       | Verification                                  |
 | --------------- | ------------------- | ----------------------------------------------------------------------------- | ---------------------------------------------- | --------------------------------------------- |
@@ -39,6 +39,6 @@ Last updated: **2026-07-18 18:35:58 IST**
 | `WBL-FE-016C`   | 2026-07-17 20:25:05 | Permission-aware purchase cancellation/full-return browser workflow                  | Purchase page, API repository and E2E journey   | 23 unit + 4 browser; API 3+57 PASS           |
 | `WBL-BE-008A`   | 2026-07-17 20:36:50 | Tenant POS/customer/invoice-series/invoice/item/payment/cash database foundation      | Prisma schema, migration, seed and DB E2E       | 3 unit + 62 integration; drift/audit PASS    |
 | `WBL-BE-008B`   | 2026-07-18 17:56:26 | Protected idempotent POS sessions and atomic GST invoice/payment/stock posting API    | `src/modules/sales/`, migration, E2E; `3aac4c2` | 3 unit + 69 integration; drift/audit PASS   |
-| `WBL-FE-016D`   | 2026-07-18 18:31:06 | Real register, GST checkout, invoice receipt, stock refresh and sales dashboard browser flow | POS/dashboard repositories, UI and E2E | Web 29+4; API 3+69; audits PASS |
+| `WBL-FE-016D`   | 2026-07-18 18:31:06 | Real register, GST checkout, invoice receipt, stock refresh and sales dashboard browser flow | POS/dashboard repositories, UI, E2E; `efa5fa4` | Web 29+4; API 3+69; audits PASS |
 
 `R0 — Frontend foundation` is complete and the implemented R1 surface now uses real identity, tenant, subscription, catalogue, stock, purchase and POS posting APIs. Sales returns, customers, reporting, administration and production deployment remain pending.

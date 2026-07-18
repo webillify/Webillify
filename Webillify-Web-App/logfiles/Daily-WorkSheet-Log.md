@@ -7,7 +7,7 @@ Append-only history. Newest session first; corrections use a new timestamped ame
 Session: **18:02:00–18:31:06 IST**
 Task: **WBL-FE-016D**
 Assignee: **Codex**
-Status: **COMPLETE — publication pending**
+Status: **COMPLETE — published to GitHub `main`**
 
 | Timestamp (IST)     | Category | Activity                                                                                  | Result                    |
 | ------------------- | -------- | ----------------------------------------------------------------------------------------- | ------------------------- |
@@ -21,6 +21,7 @@ Status: **COMPLETE — publication pending**
 | 2026-07-18 18:28:00 | TEST     | Post-browser API regression exposed fixed `100 → 98` inventory fixture assumption          | FAILED — FIXED            |
 | 2026-07-18 18:31:06 | TEST     | Format, prod/dev builds, web 28+4, API 3+69 and both production audits                     | PASS — 0 vulnerabilities |
 | 2026-07-18 18:34:30 | TEST     | Added concurrent first-register-open recovery and reran unit/build/browser gates           | PASS — web 29+4          |
+| 2026-07-18 18:37:51 | INFRA    | Pushed verified FE-016D connected POS browser stage to GitHub `main`                        | `efa5fa4`                |
 | 2026-07-18 18:31:06 | BACKEND  | Assigned BE-008C append-only sales compensation APIs                                       | IN PROGRESS               |
 
 ---

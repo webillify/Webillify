@@ -1,7 +1,7 @@
 # Webillify task backlog
 
-Last prioritized: **2026-07-18 18:31:06 IST**
-Active assignee: **Codex — WBL-BE-008C assigned; FE-016D verified for publication**
+Last prioritized: **2026-07-18 18:37:51 IST**
+Active assignee: **Codex — WBL-BE-008C assigned; FE-016D published as `efa5fa4`**
 WIP limit: **One P0 task per engineer**
 
 ## Just completed
