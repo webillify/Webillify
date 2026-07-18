@@ -1,8 +1,22 @@
 # Webillify task backlog
 
-Last prioritized: **2026-07-18 19:08:42 IST**
-Active assignee: **Codex — WBL-FE-016E assigned after verified BE-008C**
+Last prioritized: **2026-07-18 19:17:32 IST**
+Active assignee: **Codex — WBL-FE-010 assigned after verified FE-016E**
 WIP limit: **One P0 task per engineer**
+
+## Just completed
+
+### WBL-FE-016E — Connected sales history and compensation browser workflow
+
+Status: **COMPLETE — 2026-07-18 19:17:32 IST**
+
+- Added lazy, permission-protected sales history with returned/refunded/outstanding/cancelled projections.
+- Added invoice detail loading and bounded partial/full return quantity controls.
+- Added retry-stable return/cancellation requests with reason, refund method and active-register checks.
+- Refreshed invoice projections after compensation and exposed refund/return state accessibly on desktop/mobile.
+- Extended connected journeys to post a real sale and then return or cancel/refund it through the browser.
+
+Result: production/development builds, 35 unit tests, 4 connected mutation/accessibility journeys, API 3+71 regressions and both production audits pass at 0 vulnerabilities.
 
 ## Just completed
 
@@ -274,16 +288,16 @@ Result: three versioned core offers, independent AI plan/usage lifecycle, server
 
 ## Recommended next task
 
-### WBL-FE-016E — Sales history and compensation browser actions
+### WBL-FE-010 — Customers, balances and receipts
 
-Status: **IN PROGRESS — assigned 2026-07-18 19:08:42 IST**
+Status: **IN PROGRESS — assigned 2026-07-18 19:17:32 IST**
 
-- Add invoice history/detail with returned, refunded, outstanding and cancellation state.
-- Add permission-aware full/partial return and safe cancellation controls with reason/refund capture.
-- Refresh stock, dashboard, session cash and invoice projections after successful compensation.
-- Cover desktop/mobile mutations, replay-safe UI state and accessibility.
+- Add tenant-scoped customer list/detail APIs and browser workspace.
+- Expose receivable, credit limit, credit balance and linked invoice history.
+- Add append-only customer receipt allocation foundation with permission/idempotency controls.
+- Cover financial projections, cross-tenant boundaries and connected browser behavior.
 
-Acceptance: production/development builds, focused unit tests and connected browser/API regression pass with 0 production vulnerabilities.
+Acceptance: customer financial projections reconcile under API/browser tests with 0 production vulnerabilities.
 
 ## Historical recommended task
 
@@ -326,9 +340,9 @@ Status: **COMPLETE — CORE API; accounting/GST fixtures remain an external prod
 | `WBL-BE-008B`    | P0       | Protected atomic POS posting API               | COMPLETE    | Codex              | BE-008A         |
 | `WBL-FE-016D`    | P0       | Connected POS session/invoice browser workflow | COMPLETE    | Codex              | BE-008B         |
 | `WBL-BE-008C`    | P0       | Sales cancellation/return/credit compensation  | COMPLETE    | Codex              | BE-008B         |
-| `WBL-FE-016E`    | P0       | Sales history and compensation browser actions | IN PROGRESS | Codex              | BE-008C         |
+| `WBL-FE-016E`    | P0       | Sales history and compensation browser actions | COMPLETE    | Codex              | BE-008C         |
 | `WBL-FE-009`     | P1       | Shared loading/error/toast/confirm UX          | COMPLETE    | Codex              | FE-007          |
-| `WBL-FE-010`     | P1       | Customer list/detail/balance UI                | PLANNED     | Frontend           | Data/API        |
+| `WBL-FE-010`     | P1       | Customer list/detail/balance UI                | IN PROGRESS | Codex              | Sales API       |
 | `WBL-FE-011`     | P1       | Product create/edit/import UI                  | PLANNED     | Frontend           | Catalogue API   |
 | `WBL-FE-012`     | P1       | Purchase/supplier workflow UI                  | PLANNED     | Frontend           | Purchase API    |
 | `WBL-QA-003`     | P1       | Accessibility/responsive audit                 | COMPLETE    | Codex              | FE-008/009      |

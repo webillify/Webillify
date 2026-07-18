@@ -1,14 +1,14 @@
 # Webillify incomplete work worksheet
 
-Last updated: **2026-07-18 19:08:42 IST**
-In progress: **WBL-FE-016E — Codex — sales history and compensation browser actions**
-Ready next: **WBL-FE-010 customer balances and receipt workflow after FE-016E**
+Last updated: **2026-07-18 19:17:32 IST**
+In progress: **WBL-FE-010 — Codex — customer balances and receipt workflow**
+Ready next: **WBL-BE-009 reports, exports and POS closing after FE-010**
 
 ## Ready
 
-| Task ID       | Priority | Module/outcome                                 | Assignee | Status      |
-| ------------- | -------- | ---------------------------------------------- | -------- | ----------- |
-| `WBL-FE-016E` | P0       | Sales history and compensation browser actions | Codex    | IN PROGRESS |
+| Task ID      | Priority | Module/outcome                   | Assignee | Status      |
+| ------------ | -------- | -------------------------------- | -------- | ----------- |
+| `WBL-FE-010` | P1       | Customers, balances and receipts | Codex    | IN PROGRESS |
 
 ## Planned frontend
 
@@ -39,6 +39,7 @@ Ready next: **WBL-FE-010 customer balances and receipt workflow after FE-016E**
 | `WBL-BE-008B`   | P0           | Protected atomic POS posting API               | COMPLETE        |
 | `WBL-FE-016D`   | P0           | Connected POS session/invoice browser workflow | COMPLETE        |
 | `WBL-BE-008C`   | P0           | Sales cancellation/return/credit compensation  | COMPLETE        |
+| `WBL-FE-016E`   | P0           | Sales history and compensation browser actions | COMPLETE        |
 | `WBL-BE-008`    | P0           | POS/invoice/payment/returns                    | READY           |
 | `WBL-BE-009`    | P1           | Reports/exports/closing                        | PLANNED         |
 | `WBL-QA-002`    | P0           | Feature unit tests                             | COMPLETE        |

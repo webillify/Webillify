@@ -87,6 +87,32 @@ test('signs in and renders real workspace navigation and catalogue data', async 
     'Paid',
   );
 
+  await page.goto('/sales');
+  await expect(page.getByRole('heading', { name: 'Invoice history' })).toBeVisible();
+  const saleInvoice = page
+    .locator('.invoice-list article')
+    .filter({ hasText: invoiceNumber ?? '' });
+  await expect(saleInvoice).toContainText('₹63');
+  if (testInfo.project.name === 'desktop') {
+    await saleInvoice.getByRole('button', { name: 'Return items' }).click();
+    const salesDialog = page.getByRole('dialog', { name: new RegExp(invoiceNumber ?? '') });
+    await salesDialog.locator('input[type="number"]').fill('1');
+    await salesDialog.getByLabel('Reason').fill('Connected browser sales return verification');
+    await salesDialog.getByRole('button', { name: 'Post sales return' }).click();
+    await expect(saleInvoice).toContainText('₹63 returned');
+    await expect(saleInvoice).toContainText('Returned in full');
+  } else {
+    await saleInvoice.getByRole('button', { name: 'Cancel invoice' }).click();
+    const salesDialog = page.getByRole('dialog', { name: new RegExp(invoiceNumber ?? '') });
+    await salesDialog
+      .getByLabel('Reason')
+      .fill('Connected browser sales cancellation verification');
+    await salesDialog.getByRole('button', { name: 'Confirm cancellation' }).click();
+    await expect(saleInvoice).toContainText('CANCELLED');
+    await expect(saleInvoice).toContainText('Cancelled with linked refund');
+  }
+  await expectNoSeriousAccessibilityViolations(page);
+
   await page.goto('/purchases');
   await expect(page.getByRole('heading', { name: 'Purchase bills' })).toBeVisible();
   const seededBill = page.locator('.bill-list article').filter({ hasText: 'DEMO-INV-001' });

@@ -26,6 +26,7 @@ export class AppShell {
   private readonly allNavItems: readonly NavItem[] = [
     { label: 'Dashboard', route: '/dashboard', icon: 'dashboard', permission: 'dashboard.read' },
     { label: 'Point of sale', route: '/pos', icon: 'pos', permission: 'pos.create' },
+    { label: 'Sales', route: '/sales', icon: 'receipt', permission: 'pos.create' },
     { label: 'Products', route: '/products', icon: 'box', permission: 'products.read' },
     { label: 'Customers', route: '/customers', icon: 'users', permission: 'customers.read' },
     { label: 'Purchases', route: '/purchases', icon: 'cart', permission: 'purchases.read' },

@@ -13,6 +13,10 @@ import {
   CreatePurchaseDraftRequest,
   PurchaseCompensationRequest,
   SubscriptionOverview,
+  SalesCompensationRequest,
+  SalesInvoice,
+  SalesInvoiceDetail,
+  SalesWorkspace,
 } from '../domain/models';
 
 export abstract class DashboardRepository {
@@ -27,6 +31,13 @@ export abstract class PosRepository {
   abstract getWorkspace(): Observable<PosWorkspace>;
   abstract openSession(request: OpenPosSessionRequest): Observable<PosWorkspace>;
   abstract completeSale(request: CompleteSaleRequest): Observable<CompleteSaleResult>;
+}
+
+export abstract class SalesRepository {
+  abstract getWorkspace(): Observable<SalesWorkspace>;
+  abstract getInvoice(id: string): Observable<SalesInvoiceDetail>;
+  abstract cancelInvoice(request: SalesCompensationRequest): Observable<SalesInvoice>;
+  abstract createReturn(request: SalesCompensationRequest): Observable<SalesInvoice>;
 }
 
 export abstract class WorkspaceRepository {

@@ -2,6 +2,25 @@
 
 Append-only history. Newest session first; corrections use a new timestamped amendment.
 
+## 2026-07-18 — Connected sales compensation browser
+
+Session: **19:09:00–19:17:32 IST**
+Task: **WBL-FE-016E**
+Assignee: **Codex**
+Status: **COMPLETE — verified locally; publication pending**
+
+| Timestamp (IST)     | Category | Activity                                                                     | Result                   |
+| ------------------- | -------- | ---------------------------------------------------------------------------- | ------------------------ |
+| 2026-07-18 19:09:00 | FRONTEND | Added protected Sales route, navigation and reconciled invoice history       | COMPLETE                 |
+| 2026-07-18 19:11:00 | FRONTEND | Added invoice detail, partial/full quantities, refund method and reason form | COMPLETE                 |
+| 2026-07-18 19:13:00 | DATA     | Added typed sales repository and retry-stable return/cancel HTTP adapters    | COMPLETE                 |
+| 2026-07-18 19:15:00 | TEST     | Added page and adapter projection/payload/idempotency tests                  | PASS — web 35/35         |
+| 2026-07-18 19:16:00 | TEST     | Desktop return and mobile cancellation through real API with axe scan        | PASS — 4/4 journeys      |
+| 2026-07-18 19:17:32 | TEST     | Format, prod/dev builds, web 35+4, API 3+71 and both production audits       | PASS — 0 vulnerabilities |
+| 2026-07-18 19:17:32 | FRONTEND | Assigned FE-010 customer balances and receipt workflow                       | IN PROGRESS              |
+
+---
+
 ## 2026-07-18 — Sales compensation API
 
 Session: **18:53:00–19:08:42 IST**
@@ -19,6 +38,7 @@ Status: **COMPLETE — verified locally; publication pending**
 | 2026-07-18 19:06:00 | TEST     | Clean ten-migration replay/seed and schema comparison                       | PASS — zero drift        |
 | 2026-07-18 19:08:42 | TEST     | Lint/build, 3 unit, 71 integration/security and production audit            | PASS — 0 vulnerabilities |
 | 2026-07-18 19:08:42 | FRONTEND | Assigned FE-016E connected sales compensation browser workflow              | IN PROGRESS              |
+| 2026-07-18 19:09:10 | INFRA    | Published verified BE-008C stage to GitHub `main`                           | `4792f6b`                |
 
 ---
 

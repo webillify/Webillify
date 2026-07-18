@@ -24,6 +24,11 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/pos/pos').then((m) => m.PosPage),
       },
       {
+        path: 'sales',
+        canActivate: [requirePermission('pos.create')],
+        loadComponent: () => import('./pages/sales/sales').then((m) => m.SalesPage),
+      },
+      {
         path: 'products',
         canActivate: [requirePermission('products.read')],
         loadComponent: () => import('./pages/products/products').then((m) => m.ProductsPage),

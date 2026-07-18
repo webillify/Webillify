@@ -79,6 +79,48 @@ export interface CompleteSaleResult {
   readonly idempotent: boolean;
 }
 
+export type RefundMethod = 'CASH' | 'UPI' | 'CARD' | 'BANK' | 'OTHER';
+
+export interface SalesInvoice {
+  readonly id: string;
+  readonly invoiceNumber: string;
+  readonly invoiceDate: string;
+  readonly status: 'POSTED' | 'CANCELLED';
+  readonly customerName: string;
+  readonly totalAmount: number;
+  readonly paidAmount: number;
+  readonly returnedAmount: number;
+  readonly refundedAmount: number;
+  readonly outstandingAmount: number;
+}
+
+export interface SalesInvoiceItem {
+  readonly id: string;
+  readonly description: string;
+  readonly quantity: number;
+  readonly returnedQuantity: number;
+  readonly remainingQuantity: number;
+  readonly lineTotal: number;
+}
+
+export interface SalesInvoiceDetail extends SalesInvoice {
+  readonly items: readonly SalesInvoiceItem[];
+}
+
+export interface SalesWorkspace {
+  readonly invoices: readonly SalesInvoice[];
+  readonly openPosSessionId: string | null;
+  readonly registerCode: string | null;
+}
+
+export interface SalesCompensationRequest {
+  readonly invoice: SalesInvoiceDetail;
+  readonly reason: string;
+  readonly refundMethod: RefundMethod;
+  readonly idempotencyKey: string;
+  readonly quantities: Readonly<Record<string, number>>;
+}
+
 export interface OrganizationContext {
   readonly organizationId: string;
   readonly organizationName: string;

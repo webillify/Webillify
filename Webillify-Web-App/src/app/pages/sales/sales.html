@@ -1,0 +1,184 @@
+<section class="page-heading">
+  <div>
+    <span class="eyebrow">Sales & receivables</span>
+    <h1>Invoice history</h1>
+    <p>Review posted sales and record traceable returns, refunds and cancellations.</p>
+  </div>
+  <div class="sales-summary">
+    <small>Net sales after returns</small>
+    <strong>₹{{ netSales().toLocaleString('en-IN') }}</strong>
+    <span>{{ state().data?.registerCode ?? 'No open refund register' }}</span>
+  </div>
+</section>
+
+<app-data-state
+  [status]="state().status"
+  loadingMessage="Loading sales invoices…"
+  [errorMessage]="state().error"
+  emptyTitle="No sales invoices"
+  emptyMessage="Post a sale from Point of Sale to see it here."
+/>
+
+@if (state().data) {
+  <section class="panel sales-panel">
+    <header>
+      <div>
+        <span class="eyebrow">Immutable source invoices</span>
+        <h2>Recent invoices</h2>
+      </div>
+      <span>{{ invoices().length }} records</span>
+    </header>
+    <div class="invoice-list">
+      @for (invoice of invoices(); track invoice.id) {
+        <article>
+          <div class="invoice-main">
+            <span class="status" [class.status--credit]="invoice.status === 'CANCELLED'">
+              {{ invoice.status }}
+            </span>
+            <strong>{{ invoice.invoiceNumber }}</strong>
+            <small>{{ invoice.customerName }} · {{ invoice.invoiceDate | date: 'medium' }}</small>
+          </div>
+          <div class="invoice-money">
+            <strong>₹{{ invoice.totalAmount.toLocaleString('en-IN') }}</strong>
+            <small>₹{{ invoice.outstandingAmount.toLocaleString('en-IN') }} outstanding</small>
+            @if (invoice.returnedAmount > 0) {
+              <small>₹{{ invoice.returnedAmount.toLocaleString('en-IN') }} returned</small>
+            }
+            @if (invoice.refundedAmount > 0) {
+              <small>₹{{ invoice.refundedAmount.toLocaleString('en-IN') }} refunded</small>
+            }
+          </div>
+          <div class="invoice-actions">
+            @if (canCompensate(invoice)) {
+              <button
+                class="button button--secondary"
+                type="button"
+                [disabled]="busy()"
+                (click)="start(invoice, 'return')"
+              >
+                Return items
+              </button>
+              <button
+                class="button button--text-danger"
+                type="button"
+                [disabled]="busy()"
+                (click)="start(invoice, 'cancel')"
+              >
+                Cancel invoice
+              </button>
+            } @else if (invoice.status === 'CANCELLED') {
+              <span class="cancelled-label">Cancelled with linked refund</span>
+            } @else {
+              <span class="paid-label"><app-icon name="check" /> Returned in full</span>
+            }
+          </div>
+        </article>
+      } @empty {
+        <div class="empty-sales">No sales have been posted.</div>
+      }
+    </div>
+  </section>
+}
+
+@if (detail(); as invoice) {
+  <div class="compensation-backdrop" (click)="close()" aria-hidden="true"></div>
+  <form
+    class="compensation-dialog panel"
+    (ngSubmit)="submit()"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="sales-compensation-title"
+  >
+    <header>
+      <div>
+        <span class="eyebrow">Append-only compensation</span>
+        <h2 id="sales-compensation-title">
+          {{ action() === 'cancel' ? 'Cancel' : 'Return from' }} {{ invoice.invoiceNumber }}
+        </h2>
+      </div>
+      <button
+        class="icon-button"
+        type="button"
+        aria-label="Close compensation form"
+        (click)="close()"
+      >
+        <app-icon name="close" />
+      </button>
+    </header>
+    @if (action() === 'return') {
+      <fieldset>
+        <legend>Return quantities</legend>
+        @for (item of invoice.items; track item.id) {
+          @if (item.remainingQuantity > 0) {
+            <label class="return-line">
+              <span
+                ><strong>{{ item.description }}</strong
+                ><small>{{ item.remainingQuantity }} remaining of {{ item.quantity }}</small></span
+              >
+              <input
+                type="number"
+                min="0"
+                [max]="item.remainingQuantity"
+                step="0.001"
+                [ngModel]="quantities()[item.id] ?? 0"
+                (ngModelChange)="setQuantity(item.id, +$event)"
+                [name]="'quantity-' + item.id"
+              />
+            </label>
+          }
+        }
+      </fieldset>
+    } @else {
+      <p class="warning-copy">
+        Cancellation returns every remaining line, restores stock and refunds the paid portion. The
+        original invoice and tenders stay immutable.
+      </p>
+    }
+    <div class="dialog-fields">
+      <label
+        ><span>Refund method</span
+        ><select
+          [ngModel]="refundMethod()"
+          (ngModelChange)="refundMethod.set($event)"
+          name="refundMethod"
+        >
+          <option value="CASH">Cash</option>
+          <option value="UPI">UPI</option>
+          <option value="CARD">Card</option>
+          <option value="BANK">Bank</option>
+          <option value="OTHER">Other</option>
+        </select></label
+      >
+      <label
+        ><span>Reason</span
+        ><textarea
+          required
+          minlength="5"
+          maxlength="500"
+          rows="3"
+          [ngModel]="reason()"
+          (ngModelChange)="reason.set($event)"
+          name="reason"
+        ></textarea>
+      </label>
+    </div>
+    @if (!state().data?.openPosSessionId) {
+      <p class="register-warning">
+        <app-icon name="warning" /> Open a POS register before issuing a paid refund.
+      </p>
+    }
+    <footer>
+      <button class="button button--secondary" type="button" (click)="close()">Keep invoice</button>
+      <button
+        class="button button--primary"
+        [class.button--danger]="action() === 'cancel'"
+        type="submit"
+        [disabled]="busy() || reason().trim().length < 5 || !state().data?.openPosSessionId"
+      >
+        {{
+          busy() ? 'Working…' : action() === 'cancel' ? 'Confirm cancellation' : 'Post sales return'
+        }}
+      </button>
+    </footer>
+  </form>
+}

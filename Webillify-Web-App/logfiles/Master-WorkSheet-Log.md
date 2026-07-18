@@ -1,10 +1,10 @@
 # Webillify master worksheet
 
-Snapshot timestamp: **2026-07-18 19:08:42 IST**
-Project status: **ACTIVE — sales compensation API verified; connected browser actions are next**
+Snapshot timestamp: **2026-07-18 19:17:32 IST**
+Project status: **ACTIVE — connected sales compensation verified; customer balances are next**
 Current release: **R1 — Frontend application foundation**  
 Current phase: **Phase 5 — POS, sales, returns and receivables**
-Current task: **WBL-FE-016E — Sales history, return, refund and cancellation browser actions (assigned)**
+Current task: **WBL-FE-010 — Customer list, balances and receipt workflow (assigned)**
 
 ## Project snapshot
 
@@ -14,7 +14,7 @@ Current task: **WBL-FE-016E — Sales history, return, refund and cancellation b
 | Angular application scaffold    | COMPLETE               | Angular 22 standalone app, strict TypeScript, routing and lazy-loaded pages                                                            |
 | Responsive application shell    | COMPLETE               | Sidebar, top bar, branch picker, mobile navigation and placeholder routes                                                              |
 | Dashboard UI                    | COMPLETE — API DATA    | Live sales, invoice, stock and receivable metrics plus recent posted sales                                                             |
-| POS UI                          | COMPLETE — CORE UI/API | Real register opening, server GST totals, atomic checkout, receipt and refreshed stock                                                 |
+| POS UI                          | COMPLETE — CORE UI/API | Real register, GST checkout, receipt, sales history, partial returns, refunds and cancellation                                         |
 | Product catalogue UI            | PARTIAL — API DATA     | Searchable table renders real tenant product variants and branch stock; create/import remains pending                                  |
 | Authentication                  | COMPLETE — CORE API    | Angular real login/session/tenant integration works against Argon2/JWT/rotating-session API in desktop/mobile Chrome                   |
 | PWA foundation                  | COMPLETE               | Manifest, icon, service worker registration and production `ngsw` output                                                               |
@@ -25,7 +25,7 @@ Current task: **WBL-FE-016E — Sales history, return, refund and cancellation b
 | Backend and persistence         | IN PROGRESS            | Append-only sales returns/refunds, cancellation, stock restoration and receivable compensation pass full API regression                |
 | Webillify AI integration        | PARTIAL — PLAN UI/API  | Separate plan/lifecycle/credits render live; extraction/questions/summaries remain pending                                             |
 | Data access and request state   | COMPLETE               | Typed models/repositories, mock/API modes, environment configuration and visible request errors                                        |
-| Automated tests                 | PARTIAL                | 29 frontend unit, 4 connected mutation/accessibility journeys, 3 API unit and 71 backend integration/security tests pass               |
+| Automated tests                 | PARTIAL                | 35 frontend unit, 4 connected mutation/accessibility journeys, 3 API unit and 71 backend integration/security tests pass               |
 | Production deployment           | PARTIAL                | Production build exists; GitHub CI was manually disabled by user request; hosting environments remain pending                          |
 
 ## Latest verified baseline
@@ -53,26 +53,27 @@ Current task: **WBL-FE-016E — Sales history, return, refund and cancellation b
 | 2026-07-18 17:56:26 IST | Atomic POS posting API gate     | PASS — nine migrations, zero drift, API 3+69 and production audit 0     |
 | 2026-07-18 18:31:06 IST | Connected POS browser full gate | PASS — web 29+4 real mutations; API 3+69; production audits 0           |
 | 2026-07-18 19:08:42 IST | Sales compensation API gate     | PASS — ten migrations, zero drift, API 3+71; production audit 0         |
+| 2026-07-18 19:17:32 IST | Sales compensation browser gate | PASS — web 35+4 real mutations; API 3+71; production audits 0           |
 
 ## Current goal
 
 Deliver a pilot-ready V1 web application for Indian small and medium retailers covering authenticated multi-tenant access, GST-ready POS sales, products and inventory, customers, purchases, expenses, reporting, subscriptions, and an optional separately billed Webillify AI add-on.
 
-The connected frontend and secure API foundations now include auditable, append-only sales cancellation, returns, refunds and receivable compensation. The immediate goal is to expose those protected operations in the browser sales history workflow.
+The connected frontend and secure API foundations now include auditable sales history, partial/full returns, refunds and cancellation. The immediate goal is customer balance visibility and receipt allocation.
 
 ## Next task assignment
 
 | Field              | Value                                                                                |
 | ------------------ | ------------------------------------------------------------------------------------ |
-| Task ID            | `WBL-FE-016E`                                                                        |
-| Title              | Sales history and compensation browser actions                                       |
-| Status             | ASSIGNED AFTER BE-008C VERIFICATION                                                  |
+| Task ID            | `WBL-FE-010`                                                                         |
+| Title              | Customer list, balances and receipt workflow                                         |
+| Status             | ASSIGNED AFTER FE-016E VERIFICATION                                                  |
 | Priority           | P0                                                                                   |
 | Suggested assignee | Backend/full-stack engineer                                                          |
 | Estimate           | Multiple staged checkpoints                                                          |
-| Dependencies       | Verified BE-008C compensation APIs and FE-016D connected browser workflow            |
-| Deliverable        | Invoice history/detail with permission-aware return, refund and cancellation actions |
-| Acceptance         | Browser actions show reconciled invoice/stock/receivable/refund state and pass E2E   |
+| Dependencies       | Verified customer projection and sales compensation ledgers                          |
+| Deliverable        | Customer list/detail, receivable/credit visibility and receipt allocation foundation |
+| Acceptance         | Tenant/branch permissions and customer financial projections reconcile under tests   |
 
 See [Task-Backlog.md](Task-Backlog.md#recommended-next-task) for the complete assignment brief.
 
@@ -82,7 +83,7 @@ See [Task-Backlog.md](Task-Backlog.md#recommended-next-task) for the complete as
 - All five original worksheets are populated.
 - Completed claims are mapped to source files or command evidence.
 - Pending modules are task-ID based and assignable.
-- BE-001 through BE-008C, SEC-001, connected FE-016A/B/C/D and SETUP-005 are verified. FE-016E is assigned next.
+- BE-001 through BE-008C, SEC-001, connected FE-016A/B/C/D/E and SETUP-005 are verified. FE-010 is assigned next.
 
 ## Category codes
 

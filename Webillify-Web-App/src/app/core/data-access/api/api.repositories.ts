@@ -26,6 +26,10 @@ import {
   CreatePurchaseDraftRequest,
   PurchaseCompensationRequest,
   SubscriptionOverview,
+  SalesCompensationRequest,
+  SalesInvoice,
+  SalesInvoiceDetail,
+  SalesWorkspace,
 } from '../../domain/models';
 import {
   AuthRepository,
@@ -35,6 +39,7 @@ import {
   WorkspaceRepository,
   PurchaseRepository,
   SubscriptionRepository,
+  SalesRepository,
 } from '../repositories';
 import { APP_ENVIRONMENT } from '../provide-data-access';
 import { ApiSessionStore, StoredApiSession } from './api-session';
@@ -112,8 +117,23 @@ interface ApiSalesInvoice {
   readonly invoiceDate: string;
   readonly totalAmount: string;
   readonly paidAmount: string;
+  readonly returnedAmount: string;
+  readonly refundedAmount: string;
   readonly outstandingAmount: string;
+  readonly status: 'POSTED' | 'CANCELLED';
   readonly customer: { name: string } | null;
+  readonly items?: Array<{
+    readonly id: string;
+    readonly description: string;
+    readonly quantity: string;
+    readonly lineTotal: string;
+  }>;
+  readonly returns?: Array<{
+    readonly items: Array<{
+      readonly salesInvoiceItemId: string;
+      readonly quantity: string;
+    }>;
+  }>;
 }
 
 const KNOWN_PERMISSIONS: readonly Permission[] = [
@@ -443,6 +463,124 @@ export class ApiPosRepository implements PosRepository {
 }
 
 @Injectable()
+export class ApiSalesRepository implements SalesRepository {
+  private readonly http = inject(HttpClient);
+  private readonly environment = inject(APP_ENVIRONMENT);
+  private readonly session = inject(ApiSessionStore);
+
+  getWorkspace(): Observable<SalesWorkspace> {
+    const branchId = this.session.snapshot?.session.workspace?.branchId;
+    if (!branchId) return throwError(() => new Error('No active branch is selected.'));
+    return forkJoin({
+      invoices: this.http.get<ApiSalesInvoice[]>(`${this.environment.apiBaseUrl}/sales-invoices`),
+      sessions: this.http.get<ApiPosSession[]>(`${this.environment.apiBaseUrl}/pos-sessions`),
+    }).pipe(
+      map(({ invoices, sessions }) => {
+        const register = sessions.find(
+          (candidate) => candidate.branchId === branchId && candidate.status === 'OPEN',
+        );
+        return {
+          invoices: invoices.map(mapSalesInvoice),
+          openPosSessionId: register?.id ?? null,
+          registerCode: register?.registerCode ?? null,
+        };
+      }),
+      catchError((error: unknown) => throwError(() => apiError(error))),
+    );
+  }
+
+  getInvoice(id: string): Observable<SalesInvoiceDetail> {
+    return this.http
+      .get<ApiSalesInvoice>(`${this.environment.apiBaseUrl}/sales-invoices/${id}`)
+      .pipe(
+        map((invoice) => {
+          const returned = new Map<string, number>();
+          for (const salesReturn of invoice.returns ?? []) {
+            for (const item of salesReturn.items) {
+              returned.set(
+                item.salesInvoiceItemId,
+                (returned.get(item.salesInvoiceItemId) ?? 0) + Number(item.quantity),
+              );
+            }
+          }
+          return {
+            ...mapSalesInvoice(invoice),
+            items: (invoice.items ?? []).map((item) => {
+              const returnedQuantity = returned.get(item.id) ?? 0;
+              return {
+                id: item.id,
+                description: item.description,
+                quantity: Number(item.quantity),
+                returnedQuantity,
+                remainingQuantity: Number(item.quantity) - returnedQuantity,
+                lineTotal: Number(item.lineTotal),
+              };
+            }),
+          };
+        }),
+        catchError((error: unknown) => throwError(() => apiError(error))),
+      );
+  }
+
+  cancelInvoice(request: SalesCompensationRequest): Observable<SalesInvoice> {
+    return this.requireRegister().pipe(
+      switchMap((posSessionId) =>
+        this.http.post<{ invoice: ApiSalesInvoice }>(
+          `${this.environment.apiBaseUrl}/sales-invoices/${request.invoice.id}/cancel`,
+          {
+            reason: request.reason,
+            posSessionId,
+            refundMethod: request.refundMethod,
+          },
+          { headers: new HttpHeaders({ 'Idempotency-Key': request.idempotencyKey }) },
+        ),
+      ),
+      map(({ invoice }) => mapSalesInvoice(invoice)),
+      catchError((error: unknown) => throwError(() => apiError(error))),
+    );
+  }
+
+  createReturn(request: SalesCompensationRequest): Observable<SalesInvoice> {
+    const items = request.invoice.items
+      .map((item) => ({
+        salesInvoiceItemId: item.id,
+        quantity: request.quantities[item.id] ?? 0,
+      }))
+      .filter(({ quantity }) => quantity > 0);
+    if (!items.length)
+      return throwError(() => new Error('Select at least one quantity to return.'));
+    return this.requireRegister().pipe(
+      switchMap((posSessionId) =>
+        this.http.post<{ invoice: ApiSalesInvoice }>(
+          `${this.environment.apiBaseUrl}/sales-returns`,
+          {
+            salesInvoiceId: request.invoice.id,
+            returnDate: new Date().toISOString(),
+            reason: request.reason,
+            posSessionId,
+            refundMethod: request.refundMethod,
+            items,
+          },
+          { headers: new HttpHeaders({ 'Idempotency-Key': request.idempotencyKey }) },
+        ),
+      ),
+      map(({ invoice }) => mapSalesInvoice(invoice)),
+      catchError((error: unknown) => throwError(() => apiError(error))),
+    );
+  }
+
+  private requireRegister(): Observable<string> {
+    return this.getWorkspace().pipe(
+      switchMap((workspace) =>
+        workspace.openPosSessionId
+          ? of(workspace.openPosSessionId)
+          : throwError(() => new Error('Open a POS register before issuing a refund.')),
+      ),
+    );
+  }
+}
+
+@Injectable()
 export class ApiPurchaseRepository implements PurchaseRepository {
   private readonly http = inject(HttpClient);
   private readonly environment = inject(APP_ENVIRONMENT);
@@ -658,6 +796,21 @@ function mapBill(bill: ApiPurchaseBill): PurchaseBill {
     paidAmount: Number(bill.paidAmount),
     returnedAmount: Number(bill.returnedAmount ?? 0),
     outstandingAmount: Number(bill.outstandingAmount),
+  };
+}
+
+function mapSalesInvoice(invoice: ApiSalesInvoice): SalesInvoice {
+  return {
+    id: invoice.id,
+    invoiceNumber: invoice.displayNumber,
+    invoiceDate: invoice.invoiceDate,
+    status: invoice.status,
+    customerName: invoice.customer?.name ?? 'Walk-in customer',
+    totalAmount: Number(invoice.totalAmount),
+    paidAmount: Number(invoice.paidAmount),
+    returnedAmount: Number(invoice.returnedAmount ?? 0),
+    refundedAmount: Number(invoice.refundedAmount ?? 0),
+    outstandingAmount: Number(invoice.outstandingAmount),
   };
 }
 

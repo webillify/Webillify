@@ -1,6 +1,6 @@
 # Webillify completed work worksheet
 
-Last updated: **2026-07-18 19:08:42 IST**
+Last updated: **2026-07-18 19:17:32 IST**
 
 | Task ID         | Completed (IST)     | Module/deliverable                                                                           | Evidence                                        | Verification                                  |
 | --------------- | ------------------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------- | --------------------------------------------- |
@@ -41,5 +41,6 @@ Last updated: **2026-07-18 19:08:42 IST**
 | `WBL-BE-008B`   | 2026-07-18 17:56:26 | Protected idempotent POS sessions and atomic GST invoice/payment/stock posting API           | `src/modules/sales/`, migration, E2E; `3aac4c2` | 3 unit + 69 integration; drift/audit PASS     |
 | `WBL-FE-016D`   | 2026-07-18 18:31:06 | Real register, GST checkout, invoice receipt, stock refresh and sales dashboard browser flow | POS/dashboard repositories, UI, E2E; `efa5fa4`  | Web 29+4; API 3+69; audits PASS               |
 | `WBL-BE-008C`   | 2026-07-18 19:08:42 | Append-only sales returns/refunds, safe cancellation and stock/receivable compensation       | Sales schema, migration, protected APIs and E2E | 10 migrations; drift 0; API 3+71; audit 0     |
+| `WBL-FE-016E`   | 2026-07-18 19:17:32 | Connected sales history, partial/full returns, refunds and cancellation browser workflow     | Sales page, repository/HTTP tests and E2E       | Web 35+4; API 3+71; audits 0                  |
 
-`R0 — Frontend foundation` is complete and the implemented R1 surface now uses real identity, tenant, subscription, catalogue, stock, purchase, POS posting and sales compensation APIs. Sales compensation browser actions, customers, reporting, administration and production deployment remain pending.
+`R0 — Frontend foundation` is complete and the implemented R1 surface now uses real identity, tenant, subscription, catalogue, stock, purchase, POS and sales compensation APIs. Customers, reporting, administration and production deployment remain pending.

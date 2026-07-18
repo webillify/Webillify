@@ -1,0 +1,217 @@
+.sales-summary {
+  padding: 10px 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+.sales-summary small,
+.sales-summary strong,
+.sales-summary span {
+  display: block;
+}
+.sales-summary small,
+.sales-summary span {
+  color: var(--muted);
+  font-size: 10px;
+}
+.sales-summary strong {
+  margin: 3px 0;
+  font-size: 20px;
+}
+.sales-panel {
+  padding: 20px;
+}
+.sales-panel > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+}
+.sales-panel h2 {
+  margin-bottom: 16px;
+  font-size: 18px;
+}
+.sales-panel > header > span {
+  color: var(--muted);
+  font-size: 11px;
+}
+.invoice-list {
+  display: grid;
+  gap: 9px;
+}
+.invoice-list article {
+  padding: 13px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 155px 220px;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+}
+.invoice-main strong,
+.invoice-main small,
+.invoice-money strong,
+.invoice-money small {
+  display: block;
+}
+.invoice-main strong {
+  margin: 5px 0 3px;
+  font-size: 12px;
+}
+.invoice-main small,
+.invoice-money small {
+  color: var(--muted);
+  font-size: 9px;
+}
+.invoice-money {
+  text-align: right;
+}
+.invoice-money strong {
+  font-size: 13px;
+}
+.invoice-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+.button--text-danger {
+  padding: 8px 5px;
+  color: #a53d38;
+  border: 0;
+  background: transparent;
+}
+.cancelled-label {
+  color: #a53d38;
+  font-size: 10px;
+  font-weight: 800;
+}
+.paid-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--brand);
+  font-size: 10px;
+  font-weight: 800;
+}
+.paid-label .icon {
+  width: 14px;
+  height: 14px;
+}
+.empty-sales {
+  padding: 40px;
+  color: var(--muted);
+  text-align: center;
+}
+.compensation-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgb(16 28 25 / 42%);
+}
+.compensation-dialog {
+  position: fixed;
+  z-index: 41;
+  top: 50%;
+  left: 50%;
+  width: min(650px, calc(100vw - 28px));
+  max-height: calc(100vh - 32px);
+  padding: 20px;
+  overflow: auto;
+  transform: translate(-50%, -50%);
+}
+.compensation-dialog > header,
+.compensation-dialog footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+.compensation-dialog h2 {
+  margin-top: 4px;
+  font-size: 18px;
+}
+.compensation-dialog fieldset {
+  margin: 16px 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.compensation-dialog legend,
+.dialog-fields label > span {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+}
+.return-line {
+  padding: 8px 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+.return-line span,
+.return-line small {
+  display: block;
+}
+.return-line small {
+  color: var(--muted);
+  font-size: 9px;
+}
+.return-line input {
+  width: 110px;
+}
+.dialog-fields {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 12px;
+}
+.dialog-fields label > span {
+  display: block;
+  margin-bottom: 5px;
+}
+.dialog-fields select,
+.dialog-fields textarea,
+.return-line input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  font: inherit;
+}
+.dialog-fields textarea {
+  resize: vertical;
+}
+.warning-copy,
+.register-warning {
+  margin: 14px 0;
+  padding: 10px;
+  color: #8b4a2b;
+  border-radius: 8px;
+  background: #fff3e8;
+  font-size: 10px;
+}
+.register-warning {
+  display: flex;
+  gap: 6px;
+}
+.register-warning .icon {
+  width: 15px;
+  height: 15px;
+}
+.compensation-dialog footer {
+  margin-top: 16px;
+  justify-content: flex-end;
+}
+@media (max-width: 720px) {
+  .invoice-list article,
+  .dialog-fields {
+    grid-template-columns: 1fr;
+  }
+  .invoice-money {
+    text-align: left;
+  }
+  .invoice-actions {
+    justify-content: flex-start;
+  }
+}
