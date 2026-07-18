@@ -1,8 +1,22 @@
 # Webillify task backlog
 
-Last prioritized: **2026-07-18 18:37:51 IST**
-Active assignee: **Codex — WBL-BE-008C assigned; FE-016D published as `efa5fa4`**
+Last prioritized: **2026-07-18 19:08:42 IST**
+Active assignee: **Codex — WBL-FE-016E assigned after verified BE-008C**
 WIP limit: **One P0 task per engineer**
+
+## Just completed
+
+### WBL-BE-008C — Sales cancellation, returns and refund compensation
+
+Status: **COMPLETE — 2026-07-18 19:08:42 IST**
+
+- Added append-only sales return/item and refund ledgers linked to immutable source invoices and lines.
+- Added partial/full quantity limits, source-proportional GST snapshots and final residual/round-off reconciliation.
+- Compensated stock, customer receivables, paid tender refunds and POS cash refund projections atomically.
+- Added one-way cancellation through a full remaining return instead of mutating financial history.
+- Recovered concurrent first-register idempotency winners after a clean-database race exposed by the full gate.
+
+Result: clean ten-migration replay/seed, zero schema drift, lint/build, production audit 0, 3 unit and 71 integration/security tests pass.
 
 ## Just completed
 
@@ -260,6 +274,19 @@ Result: three versioned core offers, independent AI plan/usage lifecycle, server
 
 ## Recommended next task
 
+### WBL-FE-016E — Sales history and compensation browser actions
+
+Status: **IN PROGRESS — assigned 2026-07-18 19:08:42 IST**
+
+- Add invoice history/detail with returned, refunded, outstanding and cancellation state.
+- Add permission-aware full/partial return and safe cancellation controls with reason/refund capture.
+- Refresh stock, dashboard, session cash and invoice projections after successful compensation.
+- Cover desktop/mobile mutations, replay-safe UI state and accessibility.
+
+Acceptance: production/development builds, focused unit tests and connected browser/API regression pass with 0 production vulnerabilities.
+
+## Historical recommended task
+
 ### WBL-BE-006 — Catalogue and immutable inventory ledger
 
 Status: **COMPLETE — 2026-07-17 18:46:55 IST**
@@ -278,35 +305,36 @@ Status: **COMPLETE — CORE API; accounting/GST fixtures remain an external prod
 
 ## Prioritized queue
 
-| Task ID          | Priority | Task                                         | Status     | Suggested owner    | Depends on      |
-| ---------------- | -------- | -------------------------------------------- | ---------- | ------------------ | --------------- |
-| `WBL-FE-007`     | P0       | Typed data/state foundation                  | COMPLETE   | Codex              | Phase 1         |
-| `WBL-SETUP-002`  | P0       | Environments and API URL contract            | COMPLETE   | Codex              | None            |
-| `WBL-FE-008`     | P0       | Auth state, guards and permission primitives | COMPLETE   | Codex              | FE-007          |
-| `WBL-QA-002`     | P0       | Dashboard/POS/products unit tests            | COMPLETE   | Codex              | FE-007          |
-| `WBL-BE-001`     | P0       | NestJS scaffold and health endpoint          | COMPLETE   | Codex              | API spec        |
-| `WBL-BE-002`     | P0       | PostgreSQL tenancy schema/migrations         | COMPLETE   | Codex              | BE-001          |
-| `WBL-BE-004`     | P0       | Organization/branch/RBAC APIs                | COMPLETE   | Codex              | BE-002/003      |
-| `WBL-SEC-001`    | P0       | Tenant/branch authorization harness          | COMPLETE   | Codex              | BE-002/004      |
-| `WBL-BE-005`     | P0       | Core and separate AI entitlements            | COMPLETE   | Codex              | BE-004          |
-| `WBL-BE-006`     | P0       | Catalogue and immutable inventory ledger     | COMPLETE   | Codex              | BE-005          |
-| `WBL-BE-007A`    | P0       | Purchase/payables database foundation         | COMPLETE   | Codex              | BE-006          |
-| `WBL-BE-007B`    | P0       | Protected purchase posting/payment APIs       | COMPLETE    | Codex              | BE-007A         |
-| `WBL-BE-007C`    | P0       | Purchase cancellation/return compensation     | COMPLETE    | Codex               | BE-007B         |
-| `WBL-FE-016C`    | P0       | Purchase cancellation/return browser actions  | COMPLETE    | Codex               | BE-007C         |
-| `WBL-BE-008`     | P0       | POS invoice/payment/stock/return persistence  | READY       | Backend/full-stack  | BE-006/007      |
-| `WBL-BE-008A`    | P0       | POS invoice/payment/stock database foundation | COMPLETE    | Codex               | BE-006/007      |
-| `WBL-BE-008B`    | P0       | Protected atomic POS posting API              | COMPLETE    | Codex               | BE-008A         |
+| Task ID          | Priority | Task                                           | Status      | Suggested owner    | Depends on      |
+| ---------------- | -------- | ---------------------------------------------- | ----------- | ------------------ | --------------- |
+| `WBL-FE-007`     | P0       | Typed data/state foundation                    | COMPLETE    | Codex              | Phase 1         |
+| `WBL-SETUP-002`  | P0       | Environments and API URL contract              | COMPLETE    | Codex              | None            |
+| `WBL-FE-008`     | P0       | Auth state, guards and permission primitives   | COMPLETE    | Codex              | FE-007          |
+| `WBL-QA-002`     | P0       | Dashboard/POS/products unit tests              | COMPLETE    | Codex              | FE-007          |
+| `WBL-BE-001`     | P0       | NestJS scaffold and health endpoint            | COMPLETE    | Codex              | API spec        |
+| `WBL-BE-002`     | P0       | PostgreSQL tenancy schema/migrations           | COMPLETE    | Codex              | BE-001          |
+| `WBL-BE-004`     | P0       | Organization/branch/RBAC APIs                  | COMPLETE    | Codex              | BE-002/003      |
+| `WBL-SEC-001`    | P0       | Tenant/branch authorization harness            | COMPLETE    | Codex              | BE-002/004      |
+| `WBL-BE-005`     | P0       | Core and separate AI entitlements              | COMPLETE    | Codex              | BE-004          |
+| `WBL-BE-006`     | P0       | Catalogue and immutable inventory ledger       | COMPLETE    | Codex              | BE-005          |
+| `WBL-BE-007A`    | P0       | Purchase/payables database foundation          | COMPLETE    | Codex              | BE-006          |
+| `WBL-BE-007B`    | P0       | Protected purchase posting/payment APIs        | COMPLETE    | Codex              | BE-007A         |
+| `WBL-BE-007C`    | P0       | Purchase cancellation/return compensation      | COMPLETE    | Codex              | BE-007B         |
+| `WBL-FE-016C`    | P0       | Purchase cancellation/return browser actions   | COMPLETE    | Codex              | BE-007C         |
+| `WBL-BE-008`     | P0       | POS invoice/payment/stock/return persistence   | READY       | Backend/full-stack | BE-006/007      |
+| `WBL-BE-008A`    | P0       | POS invoice/payment/stock database foundation  | COMPLETE    | Codex              | BE-006/007      |
+| `WBL-BE-008B`    | P0       | Protected atomic POS posting API               | COMPLETE    | Codex              | BE-008A         |
 | `WBL-FE-016D`    | P0       | Connected POS session/invoice browser workflow | COMPLETE    | Codex              | BE-008B         |
-| `WBL-BE-008C`    | P0       | Sales cancellation/return/credit compensation  | IN PROGRESS | Codex              | BE-008B         |
-| `WBL-FE-009`     | P1       | Shared loading/error/toast/confirm UX        | COMPLETE   | Codex              | FE-007          |
-| `WBL-FE-010`     | P1       | Customer list/detail/balance UI              | PLANNED    | Frontend           | Data/API        |
-| `WBL-FE-011`     | P1       | Product create/edit/import UI                | PLANNED    | Frontend           | Catalogue API   |
-| `WBL-FE-012`     | P1       | Purchase/supplier workflow UI                | PLANNED    | Frontend           | Purchase API    |
-| `WBL-QA-003`     | P1       | Accessibility/responsive audit               | COMPLETE   | Codex              | FE-008/009      |
-| `WBL-INFRA-001`  | P1       | CI build/test/format pipeline                | CONFIGURED | Codex              | Initial push    |
-| `WBL-DOMAIN-001` | P0       | Accountant-approved transaction fixtures     | BLOCKED    | Accountant/product | External review |
-| `WBL-DOMAIN-002` | P0       | GST invoice fixture approval                 | BLOCKED    | GST practitioner   | External review |
+| `WBL-BE-008C`    | P0       | Sales cancellation/return/credit compensation  | COMPLETE    | Codex              | BE-008B         |
+| `WBL-FE-016E`    | P0       | Sales history and compensation browser actions | IN PROGRESS | Codex              | BE-008C         |
+| `WBL-FE-009`     | P1       | Shared loading/error/toast/confirm UX          | COMPLETE    | Codex              | FE-007          |
+| `WBL-FE-010`     | P1       | Customer list/detail/balance UI                | PLANNED     | Frontend           | Data/API        |
+| `WBL-FE-011`     | P1       | Product create/edit/import UI                  | PLANNED     | Frontend           | Catalogue API   |
+| `WBL-FE-012`     | P1       | Purchase/supplier workflow UI                  | PLANNED     | Frontend           | Purchase API    |
+| `WBL-QA-003`     | P1       | Accessibility/responsive audit                 | COMPLETE    | Codex              | FE-008/009      |
+| `WBL-INFRA-001`  | P1       | CI build/test/format pipeline                  | CONFIGURED  | Codex              | Initial push    |
+| `WBL-DOMAIN-001` | P0       | Accountant-approved transaction fixtures       | BLOCKED     | Accountant/product | External review |
+| `WBL-DOMAIN-002` | P0       | GST invoice fixture approval                   | BLOCKED     | GST practitioner   | External review |
 
 ## Assignment protocol
 

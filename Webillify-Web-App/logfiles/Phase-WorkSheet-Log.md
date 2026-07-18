@@ -96,14 +96,14 @@ Exit gate: Stock balances reconcile to movements and approved purchase/return fi
 
 ## Phase 5 — POS, sales, returns and receivables
 
-Status: **IN PROGRESS — atomic posting and connected browser complete; compensation next**
+Status: **IN PROGRESS — atomic posting and compensation APIs complete; compensation browser workflow next**
 
 - [x] POS sessions and cash movement persistence/constraints
 - [x] Server-calculated atomic invoice posting
 - [x] Cash/card/UPI/bank split-payment persistence/constraints and posting API
 - [x] Connected register, GST checkout, receipt and live dashboard browser workflow
 - [ ] Customer balances, receipts and allocations
-- [ ] Sales return, credit note and cancellation/reversal
+- [x] Sales return, refund/credit compensation and cancellation/reversal APIs
 - [ ] PDF/thermal invoice; financial-year series persistence complete
 - [ ] Offline recoverable cart only; final posting remains online in V1
 

@@ -141,6 +141,8 @@ model User {
   postedSalesInvoices    SalesInvoice[]           @relation("SalesInvoicePostedBy")
   cancelledSalesInvoices SalesInvoice[]           @relation("SalesInvoiceCancelledBy")
   salesPayments          SalesPayment[]           @relation("SalesPaymentActor")
+  postedSalesReturns     SalesReturn[]            @relation("SalesReturnPostedBy")
+  salesRefunds           SalesRefund[]            @relation("SalesRefundActor")
   cashMovements          CashMovement[]           @relation("CashMovementActor")
 
   @@map("users")
@@ -181,6 +183,8 @@ model Organization {
   posSessions      PosSession[]
   salesInvoices    SalesInvoice[]
   salesPayments    SalesPayment[]
+  salesReturns     SalesReturn[]
+  salesRefunds     SalesRefund[]
   cashMovements    CashMovement[]
 
   @@map("organizations")
@@ -227,6 +231,8 @@ model Company {
   posSessions       PosSession[]
   salesInvoices     SalesInvoice[]
   salesPayments     SalesPayment[]
+  salesReturns      SalesReturn[]
+  salesRefunds      SalesRefund[]
   cashMovements     CashMovement[]
 
   @@unique([organizationId, normalizedCode])
@@ -256,6 +262,8 @@ model Branch {
   posSessions      PosSession[]
   salesInvoices    SalesInvoice[]
   salesPayments    SalesPayment[]
+  salesReturns     SalesReturn[]
+  salesRefunds     SalesRefund[]
   cashMovements    CashMovement[]
 
   @@unique([organizationId, normalizedCode])
@@ -558,6 +566,7 @@ model ProductVariant {
   purchaseItems       PurchaseBillItem[]
   purchaseReturnItems PurchaseReturnItem[]
   salesInvoiceItems   SalesInvoiceItem[]
+  salesReturnItems    SalesReturnItem[]
 
   @@unique([organizationId, sku])
   @@unique([id, organizationId])
@@ -601,6 +610,7 @@ model Warehouse {
   purchaseReturns PurchaseReturn[]
   posSessions     PosSession[]
   salesInvoices   SalesInvoice[]
+  salesReturns    SalesReturn[]
 
   @@unique([organizationId, normalizedCode])
   @@unique([id, organizationId])
@@ -845,6 +855,8 @@ model Customer {
   updatedAt         DateTime       @updatedAt @map("updated_at") @db.Timestamptz(3)
   organization      Organization   @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   salesInvoices     SalesInvoice[]
+  salesReturns      SalesReturn[]
+  salesRefunds      SalesRefund[]
 
   @@unique([organizationId, normalizedCode])
   @@unique([id, organizationId])
@@ -906,6 +918,7 @@ model PosSession {
   invoices              SalesInvoice[]
   payments              SalesPayment[]
   cashMovements         CashMovement[]
+  refunds               SalesRefund[]
 
   @@unique([id, organizationId])
   @@unique([organizationId, openingIdempotencyKey])
@@ -941,6 +954,8 @@ model SalesInvoice {
   roundOff                   Decimal            @default(0) @map("round_off") @db.Decimal(5, 2)
   totalAmount                Decimal            @map("total_amount") @db.Decimal(14, 2)
   paidAmount                 Decimal            @default(0) @map("paid_amount") @db.Decimal(14, 2)
+  returnedAmount             Decimal            @default(0) @map("returned_amount") @db.Decimal(14, 2)
+  refundedAmount             Decimal            @default(0) @map("refunded_amount") @db.Decimal(14, 2)
   outstandingAmount          Decimal            @default(0) @map("outstanding_amount") @db.Decimal(14, 2)
   costAmount                 Decimal            @default(0) @map("cost_amount") @db.Decimal(14, 2)
   idempotencyKey             String             @map("idempotency_key") @db.VarChar(120)
@@ -964,6 +979,8 @@ model SalesInvoice {
   cancelledBy                User?              @relation("SalesInvoiceCancelledBy", fields: [cancelledByUserId], references: [id], onDelete: Restrict)
   items                      SalesInvoiceItem[]
   payments                   SalesPayment[]
+  returns                    SalesReturn[]
+  refunds                    SalesRefund[]
 
   @@unique([id, organizationId])
   @@unique([organizationId, idempotencyKey])
@@ -976,33 +993,132 @@ model SalesInvoice {
 }
 
 model SalesInvoiceItem {
-  id             String         @id @default(uuid()) @db.Uuid
-  organizationId String         @map("organization_id") @db.Uuid
-  salesInvoiceId String         @map("sales_invoice_id") @db.Uuid
-  variantId      String         @map("variant_id") @db.Uuid
-  description    String         @db.VarChar(240)
-  hsnSac         String?        @map("hsn_sac") @db.VarChar(12)
-  quantity       Decimal        @db.Decimal(18, 3)
-  unitPrice      Decimal        @map("unit_price") @db.Decimal(14, 4)
-  grossAmount    Decimal        @map("gross_amount") @db.Decimal(14, 2)
-  discountAmount Decimal        @default(0) @map("discount_amount") @db.Decimal(14, 2)
-  taxableValue   Decimal        @map("taxable_value") @db.Decimal(14, 2)
-  taxRate        Decimal        @map("tax_rate") @db.Decimal(5, 2)
-  cgstAmount     Decimal        @default(0) @map("cgst_amount") @db.Decimal(14, 2)
-  sgstAmount     Decimal        @default(0) @map("sgst_amount") @db.Decimal(14, 2)
-  igstAmount     Decimal        @default(0) @map("igst_amount") @db.Decimal(14, 2)
-  cessAmount     Decimal        @default(0) @map("cess_amount") @db.Decimal(14, 2)
-  lineTotal      Decimal        @map("line_total") @db.Decimal(14, 2)
-  unitCost       Decimal        @map("unit_cost") @db.Decimal(14, 4)
-  costAmount     Decimal        @map("cost_amount") @db.Decimal(14, 2)
-  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
-  salesInvoice   SalesInvoice   @relation(fields: [salesInvoiceId, organizationId], references: [id, organizationId], onDelete: Restrict)
-  variant        ProductVariant @relation(fields: [variantId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  id             String            @id @default(uuid()) @db.Uuid
+  organizationId String            @map("organization_id") @db.Uuid
+  salesInvoiceId String            @map("sales_invoice_id") @db.Uuid
+  variantId      String            @map("variant_id") @db.Uuid
+  description    String            @db.VarChar(240)
+  hsnSac         String?           @map("hsn_sac") @db.VarChar(12)
+  quantity       Decimal           @db.Decimal(18, 3)
+  unitPrice      Decimal           @map("unit_price") @db.Decimal(14, 4)
+  grossAmount    Decimal           @map("gross_amount") @db.Decimal(14, 2)
+  discountAmount Decimal           @default(0) @map("discount_amount") @db.Decimal(14, 2)
+  taxableValue   Decimal           @map("taxable_value") @db.Decimal(14, 2)
+  taxRate        Decimal           @map("tax_rate") @db.Decimal(5, 2)
+  cgstAmount     Decimal           @default(0) @map("cgst_amount") @db.Decimal(14, 2)
+  sgstAmount     Decimal           @default(0) @map("sgst_amount") @db.Decimal(14, 2)
+  igstAmount     Decimal           @default(0) @map("igst_amount") @db.Decimal(14, 2)
+  cessAmount     Decimal           @default(0) @map("cess_amount") @db.Decimal(14, 2)
+  lineTotal      Decimal           @map("line_total") @db.Decimal(14, 2)
+  unitCost       Decimal           @map("unit_cost") @db.Decimal(14, 4)
+  costAmount     Decimal           @map("cost_amount") @db.Decimal(14, 2)
+  createdAt      DateTime          @default(now()) @map("created_at") @db.Timestamptz(3)
+  salesInvoice   SalesInvoice      @relation(fields: [salesInvoiceId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  variant        ProductVariant    @relation(fields: [variantId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  returnItems    SalesReturnItem[]
 
   @@unique([id, organizationId])
   @@index([organizationId, salesInvoiceId])
   @@index([organizationId, variantId])
   @@map("sales_invoice_items")
+}
+
+model SalesReturn {
+  id                        String            @id @default(uuid()) @db.Uuid
+  organizationId            String            @map("organization_id") @db.Uuid
+  companyId                 String            @map("company_id") @db.Uuid
+  branchId                  String            @map("branch_id") @db.Uuid
+  warehouseId               String            @map("warehouse_id") @db.Uuid
+  salesInvoiceId            String            @map("sales_invoice_id") @db.Uuid
+  customerId                String?           @map("customer_id") @db.Uuid
+  returnDate                DateTime          @map("return_date") @db.Timestamptz(3)
+  reason                    String            @db.VarChar(500)
+  taxableValue              Decimal           @map("taxable_value") @db.Decimal(14, 2)
+  cgstAmount                Decimal           @map("cgst_amount") @db.Decimal(14, 2)
+  sgstAmount                Decimal           @map("sgst_amount") @db.Decimal(14, 2)
+  igstAmount                Decimal           @map("igst_amount") @db.Decimal(14, 2)
+  cessAmount                Decimal           @map("cess_amount") @db.Decimal(14, 2)
+  roundOff                  Decimal           @default(0) @map("round_off") @db.Decimal(5, 2)
+  totalAmount               Decimal           @map("total_amount") @db.Decimal(14, 2)
+  appliedToReceivableAmount Decimal           @map("applied_to_receivable_amount") @db.Decimal(14, 2)
+  refundAmount              Decimal           @map("refund_amount") @db.Decimal(14, 2)
+  idempotencyKey            String            @map("idempotency_key") @db.VarChar(120)
+  postedAt                  DateTime          @default(now()) @map("posted_at") @db.Timestamptz(3)
+  postedByUserId            String            @map("posted_by_user_id") @db.Uuid
+  createdAt                 DateTime          @default(now()) @map("created_at") @db.Timestamptz(3)
+  organization              Organization      @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  company                   Company           @relation(fields: [companyId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  branch                    Branch            @relation(fields: [branchId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  warehouse                 Warehouse         @relation(fields: [warehouseId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  salesInvoice              SalesInvoice      @relation(fields: [salesInvoiceId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  customer                  Customer?         @relation(fields: [customerId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  postedBy                  User              @relation("SalesReturnPostedBy", fields: [postedByUserId], references: [id], onDelete: Restrict)
+  items                     SalesReturnItem[]
+  refund                    SalesRefund?
+
+  @@unique([id, organizationId])
+  @@unique([organizationId, idempotencyKey])
+  @@index([organizationId, salesInvoiceId, returnDate])
+  @@index([organizationId, customerId, returnDate])
+  @@map("sales_returns")
+}
+
+model SalesReturnItem {
+  id                 String           @id @default(uuid()) @db.Uuid
+  organizationId     String           @map("organization_id") @db.Uuid
+  salesReturnId      String           @map("sales_return_id") @db.Uuid
+  salesInvoiceItemId String           @map("sales_invoice_item_id") @db.Uuid
+  variantId          String           @map("variant_id") @db.Uuid
+  quantity           Decimal          @db.Decimal(18, 3)
+  unitCost           Decimal          @map("unit_cost") @db.Decimal(14, 4)
+  taxableValue       Decimal          @map("taxable_value") @db.Decimal(14, 2)
+  cgstAmount         Decimal          @map("cgst_amount") @db.Decimal(14, 2)
+  sgstAmount         Decimal          @map("sgst_amount") @db.Decimal(14, 2)
+  igstAmount         Decimal          @map("igst_amount") @db.Decimal(14, 2)
+  cessAmount         Decimal          @map("cess_amount") @db.Decimal(14, 2)
+  lineTotal          Decimal          @map("line_total") @db.Decimal(14, 2)
+  createdAt          DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  salesReturn        SalesReturn      @relation(fields: [salesReturnId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  salesInvoiceItem   SalesInvoiceItem @relation(fields: [salesInvoiceItemId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  variant            ProductVariant   @relation(fields: [variantId, organizationId], references: [id, organizationId], onDelete: Restrict)
+
+  @@unique([id, organizationId])
+  @@unique([organizationId, salesReturnId, salesInvoiceItemId])
+  @@index([organizationId, salesInvoiceItemId])
+  @@map("sales_return_items")
+}
+
+model SalesRefund {
+  id             String        @id @default(uuid()) @db.Uuid
+  organizationId String        @map("organization_id") @db.Uuid
+  companyId      String        @map("company_id") @db.Uuid
+  branchId       String        @map("branch_id") @db.Uuid
+  posSessionId   String        @map("pos_session_id") @db.Uuid
+  salesInvoiceId String        @map("sales_invoice_id") @db.Uuid
+  salesReturnId  String        @map("sales_return_id") @db.Uuid
+  customerId     String?       @map("customer_id") @db.Uuid
+  actorUserId    String        @map("actor_user_id") @db.Uuid
+  method         PaymentMethod
+  amount         Decimal       @db.Decimal(14, 2)
+  reference      String?       @db.VarChar(120)
+  idempotencyKey String        @map("idempotency_key") @db.VarChar(120)
+  refundedAt     DateTime      @map("refunded_at") @db.Timestamptz(3)
+  createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  company        Company       @relation(fields: [companyId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  branch         Branch        @relation(fields: [branchId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  posSession     PosSession    @relation(fields: [posSessionId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  salesInvoice   SalesInvoice  @relation(fields: [salesInvoiceId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  salesReturn    SalesReturn   @relation(fields: [salesReturnId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  customer       Customer?     @relation(fields: [customerId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  actor          User          @relation("SalesRefundActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@unique([id, organizationId])
+  @@unique([salesReturnId, organizationId])
+  @@unique([organizationId, idempotencyKey])
+  @@index([organizationId, salesInvoiceId, refundedAt])
+  @@index([organizationId, posSessionId, refundedAt])
+  @@map("sales_refunds")
 }
 
 model SalesPayment {

@@ -28,9 +28,24 @@ interface InvoiceBody {
     sgstAmount: string;
     totalAmount: string;
     paidAmount: string;
+    returnedAmount: string;
+    refundedAmount: string;
     outstandingAmount: string;
+    status: string;
     items: Array<{ id: string }>;
     payments: Array<{ id: string }>;
+  };
+  movements: Array<{ id: string }>;
+  idempotent: boolean;
+}
+
+interface ReturnBody {
+  invoice: InvoiceBody['invoice'];
+  salesReturn: {
+    id: string;
+    totalAmount: string;
+    appliedToReceivableAmount: string;
+    refundAmount: string;
   };
   movements: Array<{ id: string }>;
   idempotent: boolean;
@@ -315,6 +330,122 @@ describe('Protected POS sessions and sales invoice APIs', () => {
     await tenantGet(`/api/v1/sales-invoices/${randomUUID()}`, ownerToken, 404);
   });
 
+  it('posts an idempotent return with receivable compensation, refund, and stock restoration', async () => {
+    const balanceBefore = await currentBalance();
+    const customerBefore = await prisma.customer.findUniqueOrThrow({
+      where: { id: customerId },
+    });
+    const posted = await postInvoice(`sales-return-source-${randomUUID()}`, {
+      ...invoiceInput(),
+      customerId,
+      payments: [{ method: 'UPI', amount: 20, reference: 'UPI-SALE' }],
+    });
+    expect(posted.status).toBe(201);
+    const source = posted.body as unknown as InvoiceBody;
+    const key = `sales-return-${randomUUID()}`;
+    const input = {
+      salesInvoiceId: source.invoice.id,
+      returnDate: new Date().toISOString(),
+      reason: 'Customer returned the complete order.',
+      posSessionId,
+      refundMethod: 'UPI',
+      refundReference: 'UPI-REFUND',
+      expectedTotal: 63,
+      items: [{ salesInvoiceItemId: source.invoice.items[0].id, quantity: 1 }],
+    };
+    const first = await createReturn(key, input);
+    expect(first.status).toBe(201);
+    const body = first.body as unknown as ReturnBody;
+    expect(body).toMatchObject({
+      idempotent: false,
+      invoice: {
+        returnedAmount: '63',
+        refundedAmount: '20',
+        outstandingAmount: '0',
+      },
+      salesReturn: {
+        totalAmount: '63',
+        appliedToReceivableAmount: '43',
+        refundAmount: '20',
+      },
+    });
+    expect(body.movements).toHaveLength(1);
+    expect((await currentBalance()).quantity.toString()).toBe(
+      balanceBefore.quantity.toString(),
+    );
+    expect(
+      (
+        await prisma.customer.findUniqueOrThrow({ where: { id: customerId } })
+      ).receivableBalance.toString(),
+    ).toBe(customerBefore.receivableBalance.toString());
+    expect(
+      await prisma.salesRefund.count({
+        where: { salesInvoiceId: source.invoice.id, amount: 20 },
+      }),
+    ).toBe(1);
+
+    const replay = await createReturn(key, input);
+    expect(replay.status).toBe(201);
+    expect((replay.body as unknown as ReturnBody).idempotent).toBe(true);
+    const excessive = await createReturn(`sales-return-${randomUUID()}`, input);
+    expect(excessive.status).toBe(409);
+    expect((excessive.body as unknown as ErrorBody).error.code).toBe(
+      'SALES_RETURN_QUANTITY_EXCEEDED',
+    );
+  });
+
+  it('cancels a paid invoice once, refunds cash, and restores stock', async () => {
+    const balanceBefore = await currentBalance();
+    const sessionBefore = await prisma.posSession.findUniqueOrThrow({
+      where: { id: posSessionId },
+    });
+    const posted = await postInvoice(`sales-cancel-source-${randomUUID()}`, {
+      ...invoiceInput(),
+    });
+    expect(posted.status).toBe(201);
+    const source = posted.body as unknown as InvoiceBody;
+    const key = `sales-cancel-${randomUUID()}`;
+    const input = {
+      reason: 'Customer order was posted by mistake.',
+      posSessionId,
+      refundMethod: 'CASH',
+    };
+    const first = await cancelInvoice(source.invoice.id, key, input);
+    expect(first.status).toBe(201);
+    const body = first.body as unknown as ReturnBody;
+    expect(body).toMatchObject({
+      idempotent: false,
+      invoice: {
+        status: 'CANCELLED',
+        returnedAmount: '63',
+        refundedAmount: '63',
+        outstandingAmount: '0',
+      },
+      salesReturn: { totalAmount: '63', refundAmount: '63' },
+    });
+    expect((await currentBalance()).quantity.toString()).toBe(
+      balanceBefore.quantity.toString(),
+    );
+    const sessionAfter = await prisma.posSession.findUniqueOrThrow({
+      where: { id: posSessionId },
+    });
+    expect(
+      sessionAfter.refundAmount.minus(sessionBefore.refundAmount).toString(),
+    ).toBe('63');
+    const replay = await cancelInvoice(source.invoice.id, key, input);
+    expect(replay.status).toBe(201);
+    expect((replay.body as unknown as ReturnBody).idempotent).toBe(true);
+    const secondKey = await cancelInvoice(
+      source.invoice.id,
+      `sales-cancel-${randomUUID()}`,
+      input,
+    );
+    expect(secondKey.status).toBe(409);
+    expect((secondKey.body as unknown as ErrorBody).error.code).toBe(
+      'SALES_INVOICE_ALREADY_CANCELLED',
+    );
+  });
+
   it('blocks POS mutations while the core subscription is suspended', async () => {
     await prisma.subscription.update({
       where: { organizationId },
@@ -437,6 +568,21 @@ describe('Protected POS sessions and sales invoice APIs', () => {
 
   function postInvoice(key: string, input: object) {
     return tenantPost('/api/v1/sales-invoices/post', cashierToken)
+      .set('Idempotency-Key', key)
+      .send(input);
+  }
+
+  function createReturn(key: string, input: object) {
+    return tenantPost('/api/v1/sales-returns', cashierToken)
+      .set('Idempotency-Key', key)
+      .send(input);
+  }
+
+  function cancelInvoice(invoiceId: string, key: string, input: object) {
+    return tenantPost(
+      `/api/v1/sales-invoices/${invoiceId}/cancel`,
+      cashierToken,
+    )
       .set('Idempotency-Key', key)
       .send(input);
   }

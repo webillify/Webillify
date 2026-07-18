@@ -15,6 +15,8 @@ import type { TenantContext } from '../../core/authorization/authorization.types
 import { PrismaService } from '../../database/prisma.service';
 import { CoreEntitlementService } from '../subscriptions/core-entitlement.service';
 import type { OpenPosSessionDto } from './dto/open-pos-session.dto';
+import type { CancelSalesInvoiceDto } from './dto/cancel-sales-invoice.dto';
+import type { CreateSalesReturnDto } from './dto/create-sales-return.dto';
 import type {
   PostSalesInvoiceDto,
   PostSalesInvoiceItemDto,
@@ -38,6 +40,25 @@ type SalesLine = {
   unitCost: Prisma.Decimal;
   costAmount: Prisma.Decimal;
   trackInventory: boolean;
+};
+
+type ReturnMoneyField =
+  | 'taxableValue'
+  | 'cgstAmount'
+  | 'sgstAmount'
+  | 'igstAmount'
+  | 'cessAmount'
+  | 'lineTotal';
+
+type ReturnCompensationInput = {
+  returnDate: Date;
+  reason: string;
+  posSessionId?: string;
+  refundMethod?: PaymentMethod;
+  refundReference?: string;
+  expectedTotal?: number;
+  quantities: Map<string, Prisma.Decimal>;
+  cancel: boolean;
 };
 
 @Injectable()
@@ -143,6 +164,24 @@ export class SalesService {
       });
     } catch (error) {
       if (isUniqueConflict(error)) {
+        const winner = await this.prisma.posSession.findUnique({
+          where: {
+            organizationId_openingIdempotencyKey: {
+              organizationId: tenant.organizationId,
+              openingIdempotencyKey: idempotencyKey,
+            },
+          },
+        });
+        if (
+          winner &&
+          tenant.branchIds.includes(winner.branchId) &&
+          winner.branchId === input.branchId &&
+          winner.warehouseId === input.warehouseId &&
+          winner.registerCode === registerCode &&
+          winner.openingCash.equals(openingCash)
+        ) {
+          return { session: winner, idempotent: true };
+        }
         throw new ConflictException({
           code: 'POS_SESSION_ALREADY_OPEN',
           message: 'This register already has an open POS session.',
@@ -158,7 +197,7 @@ export class SalesService {
         organizationId: tenant.organizationId,
         branchId: { in: [...tenant.branchIds] },
       },
-      include: { customer: true, payments: true },
+      include: { customer: true, payments: true, returns: true, refunds: true },
       orderBy: { invoiceDate: 'desc' },
       take: 200,
     });
@@ -175,6 +214,8 @@ export class SalesService {
         customer: true,
         items: { include: { variant: { include: { product: true } } } },
         payments: true,
+        returns: { include: { items: true, refund: true } },
+        refunds: true,
         posSession: true,
       },
     });
@@ -518,6 +559,443 @@ export class SalesService {
     });
   }
 
+  async createReturn(
+    tenant: TenantContext,
+    actorUserId: string,
+    correlationId: string,
+    idempotencyKey: string,
+    input: CreateSalesReturnDto,
+  ): Promise<object> {
+    await this.core.assertMutationAllowed(tenant.organizationId);
+    validateIdempotencyKey(idempotencyKey);
+    if (
+      new Set(input.items.map((item) => item.salesInvoiceItemId)).size !==
+      input.items.length
+    ) {
+      throw new ConflictException({
+        code: 'DUPLICATE_SALES_RETURN_ITEM',
+        message: 'An invoice line may appear only once in a sales return.',
+      });
+    }
+    return this.serializable(async (transaction) => {
+      const existing = await transaction.salesReturn.findUnique({
+        where: {
+          organizationId_idempotencyKey: {
+            organizationId: tenant.organizationId,
+            idempotencyKey,
+          },
+        },
+        include: { items: true, refund: true },
+      });
+      if (existing) {
+        if (
+          !tenant.branchIds.includes(existing.branchId) ||
+          !sameSalesReturn(existing, input)
+        )
+          throw idempotencyConflict();
+        return { salesReturn: existing, movements: [], idempotent: true };
+      }
+      const invoice = await this.lockInvoice(
+        transaction,
+        tenant,
+        input.salesInvoiceId,
+      );
+      const requested = new Map(
+        input.items.map((item) => [
+          item.salesInvoiceItemId,
+          new Prisma.Decimal(item.quantity),
+        ]),
+      );
+      const selected = invoice.items.filter((item) => requested.has(item.id));
+      if (selected.length !== requested.size) throw salesNotFound();
+      return this.recordReturn(
+        transaction,
+        tenant,
+        actorUserId,
+        correlationId,
+        idempotencyKey,
+        invoice,
+        {
+          returnDate: new Date(input.returnDate),
+          reason: input.reason.trim(),
+          posSessionId: input.posSessionId,
+          refundMethod: input.refundMethod,
+          refundReference: input.refundReference,
+          expectedTotal: input.expectedTotal,
+          quantities: requested,
+          cancel: false,
+        },
+      );
+    });
+  }
+
+  async cancelInvoice(
+    tenant: TenantContext,
+    actorUserId: string,
+    correlationId: string,
+    invoiceId: string,
+    idempotencyKey: string,
+    input: CancelSalesInvoiceDto,
+  ): Promise<object> {
+    await this.core.assertMutationAllowed(tenant.organizationId);
+    validateIdempotencyKey(idempotencyKey);
+    return this.serializable(async (transaction) => {
+      const invoice = await this.lockInvoice(
+        transaction,
+        tenant,
+        invoiceId,
+        true,
+      );
+      if (invoice.status === 'CANCELLED') {
+        const refund = invoice.refunds[0];
+        if (
+          invoice.cancellationIdempotencyKey !== idempotencyKey ||
+          invoice.cancellationReason !== input.reason.trim() ||
+          (refund &&
+            (refund.posSessionId !== input.posSessionId ||
+              refund.method !== input.refundMethod ||
+              (refund.reference ?? undefined) !==
+                input.refundReference?.trim()))
+        ) {
+          throw new ConflictException({
+            code: 'SALES_INVOICE_ALREADY_CANCELLED',
+            message: 'This invoice has already been cancelled.',
+          });
+        }
+        return { invoice, movements: [], idempotent: true };
+      }
+      const returnedByItem = returnedQuantities(invoice.returns);
+      const quantities = new Map(
+        invoice.items
+          .map(
+            (item) =>
+              [
+                item.id,
+                item.quantity.minus(returnedByItem.get(item.id) ?? 0),
+              ] as const,
+          )
+          .filter(([, quantity]) => quantity.greaterThan(0)),
+      );
+      if (quantities.size === 0) {
+        throw new ConflictException({
+          code: 'SALES_INVOICE_ALREADY_FULLY_RETURNED',
+          message: 'A fully returned invoice cannot be cancelled again.',
+        });
+      }
+      return this.recordReturn(
+        transaction,
+        tenant,
+        actorUserId,
+        correlationId,
+        idempotencyKey,
+        invoice,
+        {
+          returnDate: new Date(),
+          reason: input.reason.trim(),
+          posSessionId: input.posSessionId,
+          refundMethod: input.refundMethod,
+          refundReference: input.refundReference,
+          quantities,
+          cancel: true,
+        },
+      );
+    });
+  }
+
+  private async lockInvoice(
+    transaction: Prisma.TransactionClient,
+    tenant: TenantContext,
+    invoiceId: string,
+    allowCancelled = false,
+  ) {
+    await transaction.$queryRaw(
+      Prisma.sql`SELECT "id" FROM "sales_invoices" WHERE "id" = ${invoiceId}::uuid AND "organization_id" = ${tenant.organizationId}::uuid FOR UPDATE`,
+    );
+    const invoice = await transaction.salesInvoice.findFirst({
+      where: {
+        id: invoiceId,
+        organizationId: tenant.organizationId,
+        branchId: { in: [...tenant.branchIds] },
+        ...(allowCancelled ? {} : { status: 'POSTED' }),
+      },
+      include: {
+        items: { include: { variant: true } },
+        returns: { include: { items: true, refund: true } },
+        refunds: true,
+      },
+    });
+    if (!invoice) throw salesNotFound();
+    return invoice;
+  }
+
+  private async recordReturn(
+    transaction: Prisma.TransactionClient,
+    tenant: TenantContext,
+    actorUserId: string,
+    correlationId: string,
+    idempotencyKey: string,
+    invoice: Awaited<ReturnType<SalesService['lockInvoice']>>,
+    input: ReturnCompensationInput,
+  ): Promise<object> {
+    const priorByItem = returnedAmounts(invoice.returns);
+    if (input.returnDate.getTime() < invoice.invoiceDate.getTime()) {
+      throw new ConflictException({
+        code: 'SALES_RETURN_DATE_INVALID',
+        message: 'A sales return cannot predate its source invoice.',
+      });
+    }
+    const returnedByItem = returnedQuantities(invoice.returns);
+    const lines = invoice.items
+      .filter((item) => input.quantities.has(item.id))
+      .map((item) => {
+        const quantity = input.quantities.get(item.id)!;
+        const alreadyReturned =
+          returnedByItem.get(item.id) ?? new Prisma.Decimal(0);
+        const remaining = item.quantity.minus(alreadyReturned);
+        if (quantity.lessThanOrEqualTo(0) || quantity.greaterThan(remaining)) {
+          throw new ConflictException({
+            code: 'SALES_RETURN_QUANTITY_EXCEEDED',
+            message: 'Return quantity exceeds the unreturned invoice quantity.',
+          });
+        }
+        const prior = priorByItem.get(item.id);
+        const finalQuantity = quantity.equals(remaining);
+        const value = (field: ReturnMoneyField) =>
+          finalQuantity
+            ? item[field].minus(prior?.[field] ?? 0)
+            : item[field]
+                .mul(quantity)
+                .div(item.quantity)
+                .toDecimalPlaces(2, Prisma.Decimal.ROUND_HALF_UP);
+        return {
+          item,
+          quantity,
+          taxableValue: value('taxableValue'),
+          cgstAmount: value('cgstAmount'),
+          sgstAmount: value('sgstAmount'),
+          igstAmount: value('igstAmount'),
+          cessAmount: value('cessAmount'),
+          lineTotal: value('lineTotal'),
+        };
+      });
+    if (!lines.length) throw salesNotFound();
+    const allQuantitiesReturned = invoice.items.every((item) => {
+      const prior = returnedByItem.get(item.id) ?? new Prisma.Decimal(0);
+      const current = input.quantities.get(item.id) ?? new Prisma.Decimal(0);
+      return prior.plus(current).equals(item.quantity);
+    });
+    const lineTotal = sumDecimals(lines.map((line) => line.lineTotal));
+    const remainingInvoiceTotal = invoice.totalAmount.minus(
+      invoice.returnedAmount,
+    );
+    const roundOff = allQuantitiesReturned
+      ? remainingInvoiceTotal.minus(lineTotal)
+      : new Prisma.Decimal(0);
+    const totalAmount = lineTotal.plus(roundOff);
+    if (
+      input.expectedTotal !== undefined &&
+      !totalAmount.equals(money(input.expectedTotal))
+    ) {
+      throw new ConflictException({
+        code: 'SALES_RETURN_TOTAL_MISMATCH',
+        message:
+          'The submitted return total does not match the server calculation.',
+      });
+    }
+    const appliedToReceivableAmount = Prisma.Decimal.min(
+      invoice.outstandingAmount,
+      totalAmount,
+    );
+    const refundAmount = totalAmount.minus(appliedToReceivableAmount);
+    let session: { id: string; refundAmount: Prisma.Decimal } | null = null;
+    if (refundAmount.greaterThan(0)) {
+      if (!input.posSessionId || !input.refundMethod) {
+        throw new ConflictException({
+          code: 'SALES_REFUND_DETAILS_REQUIRED',
+          message:
+            'An open POS session and refund method are required for this return.',
+        });
+      }
+      await transaction.$queryRaw(
+        Prisma.sql`SELECT "id" FROM "pos_sessions" WHERE "id" = ${input.posSessionId}::uuid AND "organization_id" = ${tenant.organizationId}::uuid FOR UPDATE`,
+      );
+      session = await transaction.posSession.findFirst({
+        where: {
+          id: input.posSessionId,
+          organizationId: tenant.organizationId,
+          companyId: invoice.companyId,
+          branchId: invoice.branchId,
+          status: 'OPEN',
+        },
+      });
+      if (!session) throw salesNotFound();
+    }
+    const salesReturn = await transaction.salesReturn.create({
+      data: {
+        organizationId: tenant.organizationId,
+        companyId: invoice.companyId,
+        branchId: invoice.branchId,
+        warehouseId: invoice.warehouseId,
+        salesInvoiceId: invoice.id,
+        customerId: invoice.customerId,
+        returnDate: input.returnDate,
+        reason: input.reason,
+        taxableValue: sumDecimals(lines.map((line) => line.taxableValue)),
+        cgstAmount: sumDecimals(lines.map((line) => line.cgstAmount)),
+        sgstAmount: sumDecimals(lines.map((line) => line.sgstAmount)),
+        igstAmount: sumDecimals(lines.map((line) => line.igstAmount)),
+        cessAmount: sumDecimals(lines.map((line) => line.cessAmount)),
+        roundOff,
+        totalAmount,
+        appliedToReceivableAmount,
+        refundAmount,
+        idempotencyKey,
+        postedByUserId: actorUserId,
+      },
+    });
+    await transaction.salesReturnItem.createMany({
+      data: lines.map((line) => ({
+        organizationId: tenant.organizationId,
+        salesReturnId: salesReturn.id,
+        salesInvoiceItemId: line.item.id,
+        variantId: line.item.variantId,
+        quantity: line.quantity,
+        unitCost: line.item.unitCost,
+        taxableValue: line.taxableValue,
+        cgstAmount: line.cgstAmount,
+        sgstAmount: line.sgstAmount,
+        igstAmount: line.igstAmount,
+        cessAmount: line.cessAmount,
+        lineTotal: line.lineTotal,
+      })),
+    });
+    const movements: object[] = [];
+    for (const line of lines.filter(
+      ({ item }) => item.variant.trackInventory,
+    )) {
+      await transaction.$queryRaw(
+        Prisma.sql`SELECT "quantity" FROM "stock_balances" WHERE "organization_id" = ${tenant.organizationId}::uuid AND "warehouse_id" = ${invoice.warehouseId}::uuid AND "variant_id" = ${line.item.variantId}::uuid FOR UPDATE`,
+      );
+      const movement = await transaction.stockMovement.create({
+        data: {
+          organizationId: tenant.organizationId,
+          companyId: invoice.companyId,
+          branchId: invoice.branchId,
+          warehouseId: invoice.warehouseId,
+          variantId: line.item.variantId,
+          actorUserId,
+          movementType: StockMovementType.SALES_RETURN,
+          quantity: line.quantity,
+          unitCost: line.item.unitCost,
+          occurredAt: input.returnDate,
+          sourceType: 'SALES_RETURN',
+          sourceId: salesReturn.id,
+          idempotencyKey,
+        },
+      });
+      await transaction.stockBalance.update({
+        where: {
+          organizationId_warehouseId_variantId: {
+            organizationId: tenant.organizationId,
+            warehouseId: invoice.warehouseId,
+            variantId: line.item.variantId,
+          },
+        },
+        data: { quantity: { increment: line.quantity } },
+      });
+      movements.push(movement);
+    }
+    if (refundAmount.greaterThan(0) && session && input.refundMethod) {
+      await transaction.salesRefund.create({
+        data: {
+          organizationId: tenant.organizationId,
+          companyId: invoice.companyId,
+          branchId: invoice.branchId,
+          posSessionId: session.id,
+          salesInvoiceId: invoice.id,
+          salesReturnId: salesReturn.id,
+          customerId: invoice.customerId,
+          actorUserId,
+          method: input.refundMethod,
+          amount: refundAmount,
+          reference: input.refundReference?.trim(),
+          idempotencyKey,
+          refundedAt: input.returnDate,
+        },
+      });
+      if (input.refundMethod === PaymentMethod.CASH) {
+        await transaction.posSession.update({
+          where: { id: session.id },
+          data: { refundAmount: { increment: refundAmount } },
+        });
+      }
+    }
+    if (invoice.customerId && appliedToReceivableAmount.greaterThan(0)) {
+      await transaction.customer.update({
+        where: { id: invoice.customerId },
+        data: { receivableBalance: { decrement: appliedToReceivableAmount } },
+      });
+    }
+    const nextReturned = invoice.returnedAmount.plus(totalAmount);
+    const nextRefunded = invoice.refundedAmount.plus(refundAmount);
+    const nextOutstanding = input.cancel
+      ? new Prisma.Decimal(0)
+      : Prisma.Decimal.max(
+          invoice.totalAmount.minus(invoice.paidAmount).minus(nextReturned),
+          0,
+        );
+    const updatedInvoice = await transaction.salesInvoice.update({
+      where: { id: invoice.id },
+      data: {
+        returnedAmount: nextReturned,
+        refundedAmount: nextRefunded,
+        outstandingAmount: nextOutstanding,
+        ...(input.cancel
+          ? {
+              status: 'CANCELLED',
+              cancellationIdempotencyKey: idempotencyKey,
+              cancelledAt: new Date(),
+              cancelledByUserId: actorUserId,
+              cancellationReason: input.reason,
+            }
+          : {}),
+      },
+      include: {
+        items: true,
+        payments: true,
+        returns: { include: { items: true, refund: true } },
+        refunds: true,
+      },
+    });
+    await transaction.auditLog.create({
+      data: {
+        organizationId: tenant.organizationId,
+        actorUserId,
+        action: input.cancel
+          ? 'SALES_INVOICE_CANCELLED'
+          : 'SALES_RETURN_POSTED',
+        targetType: input.cancel ? 'SALES_INVOICE' : 'SALES_RETURN',
+        targetId: input.cancel ? invoice.id : salesReturn.id,
+        correlationId,
+        outcome: 'SUCCESS',
+        summary: {
+          invoiceId: invoice.id,
+          returnId: salesReturn.id,
+          totalAmount: totalAmount.toString(),
+          appliedToReceivableAmount: appliedToReceivableAmount.toString(),
+          refundAmount: refundAmount.toString(),
+          stockMovements: movements.length,
+        },
+      },
+    });
+    return {
+      invoice: updatedInvoice,
+      salesReturn,
+      movements,
+      idempotent: false,
+    };
+  }
+
   private async serializable<T>(
     operation: (transaction: Prisma.TransactionClient) => Promise<T>,
   ): Promise<T> {
@@ -672,6 +1150,100 @@ function hashRequest(input: PostSalesInvoiceDto): string {
     ),
   };
   return createHash('sha256').update(JSON.stringify(normalized)).digest('hex');
+}
+
+function returnedQuantities(
+  returns: Array<{
+    items: Array<{ salesInvoiceItemId: string; quantity: Prisma.Decimal }>;
+  }>,
+): Map<string, Prisma.Decimal> {
+  const totals = new Map<string, Prisma.Decimal>();
+  for (const salesReturn of returns) {
+    for (const item of salesReturn.items) {
+      totals.set(
+        item.salesInvoiceItemId,
+        (totals.get(item.salesInvoiceItemId) ?? new Prisma.Decimal(0)).plus(
+          item.quantity,
+        ),
+      );
+    }
+  }
+  return totals;
+}
+
+function returnedAmounts(
+  returns: Array<{
+    items: Array<
+      { salesInvoiceItemId: string } & Record<ReturnMoneyField, Prisma.Decimal>
+    >;
+  }>,
+): Map<string, Record<ReturnMoneyField, Prisma.Decimal>> {
+  const fields: ReturnMoneyField[] = [
+    'taxableValue',
+    'cgstAmount',
+    'sgstAmount',
+    'igstAmount',
+    'cessAmount',
+    'lineTotal',
+  ];
+  const totals = new Map<string, Record<ReturnMoneyField, Prisma.Decimal>>();
+  for (const salesReturn of returns) {
+    for (const item of salesReturn.items) {
+      const current =
+        totals.get(item.salesInvoiceItemId) ??
+        (Object.fromEntries(
+          fields.map((field) => [field, new Prisma.Decimal(0)]),
+        ) as Record<ReturnMoneyField, Prisma.Decimal>);
+      for (const field of fields)
+        current[field] = current[field].plus(item[field]);
+      totals.set(item.salesInvoiceItemId, current);
+    }
+  }
+  return totals;
+}
+
+function sameSalesReturn(
+  existing: {
+    salesInvoiceId: string;
+    returnDate: Date;
+    reason: string;
+    items: Array<{ salesInvoiceItemId: string; quantity: Prisma.Decimal }>;
+    refund: {
+      posSessionId: string;
+      method: PaymentMethod;
+      reference: string | null;
+    } | null;
+  },
+  input: CreateSalesReturnDto,
+): boolean {
+  if (
+    existing.salesInvoiceId !== input.salesInvoiceId ||
+    existing.returnDate.getTime() !== new Date(input.returnDate).getTime() ||
+    existing.reason !== input.reason.trim() ||
+    existing.items.length !== input.items.length
+  ) {
+    return false;
+  }
+  const requested = new Map(
+    input.items.map((item) => [
+      item.salesInvoiceItemId,
+      new Prisma.Decimal(item.quantity),
+    ]),
+  );
+  if (
+    existing.items.some(
+      (item) => !requested.get(item.salesInvoiceItemId)?.equals(item.quantity),
+    )
+  ) {
+    return false;
+  }
+  return (
+    !existing.refund ||
+    (existing.refund.posSessionId === input.posSessionId &&
+      existing.refund.method === input.refundMethod &&
+      (existing.refund.reference ?? undefined) ===
+        input.refundReference?.trim())
+  );
 }
 
 function financialYearFor(date: Date, firstMonth: number): string {

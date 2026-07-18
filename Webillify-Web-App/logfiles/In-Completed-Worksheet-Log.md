@@ -1,14 +1,14 @@
 # Webillify incomplete work worksheet
 
-Last updated: **2026-07-18 18:31:06 IST**
-In progress: **WBL-BE-008C — Codex — sales cancellation/return/credit-note compensation**
-Ready next: **WBL-FE-016E sales history and compensation browser actions after BE-008C**
+Last updated: **2026-07-18 19:08:42 IST**
+In progress: **WBL-FE-016E — Codex — sales history and compensation browser actions**
+Ready next: **WBL-FE-010 customer balances and receipt workflow after FE-016E**
 
 ## Ready
 
-| Task ID      | Priority | Module/outcome                 | Assignee | Status      |
-| ------------ | -------- | ------------------------------ | -------- | ----------- |
-| `WBL-BE-008C` | P0      | Sales cancellation/return/credit-note compensation | Codex | IN PROGRESS |
+| Task ID       | Priority | Module/outcome                                 | Assignee | Status      |
+| ------------- | -------- | ---------------------------------------------- | -------- | ----------- |
+| `WBL-FE-016E` | P0       | Sales history and compensation browser actions | Codex    | IN PROGRESS |
 
 ## Planned frontend
 
@@ -24,30 +24,31 @@ Ready next: **WBL-FE-016E sales history and compensation browser actions after B
 
 ## Planned backend, quality and operations
 
-| Task ID         | Priority     | Module                                | Status      |
-| --------------- | ------------ | ------------------------------------- | ----------- |
-| `WBL-BE-001`    | P0           | NestJS API foundation                 | COMPLETE    |
-| `WBL-BE-002`    | P0           | PostgreSQL tenancy schema             | COMPLETE    |
-| `WBL-BE-003`    | P0           | Identity and sessions                 | COMPLETE — CORE |
-| `WBL-BE-004`    | P0           | Organization/branch/RBAC              | COMPLETE    |
-| `WBL-BE-005`    | P0           | Core and AI subscription entitlements | COMPLETE    |
-| `WBL-BE-006`    | P0           | Catalogue and inventory ledger        | COMPLETE    |
-| `WBL-BE-007A`   | P0           | Purchases/payables database foundation | COMPLETE    |
-| `WBL-BE-007B`   | P0           | Purchase/payable API and posting effects | COMPLETE    |
-| `WBL-BE-007C`   | P0           | Purchase cancellation and return workflows | COMPLETE  |
-| `WBL-BE-008A`   | P0           | POS persistence database foundation          | COMPLETE  |
-| `WBL-BE-008B`   | P0           | Protected atomic POS posting API             | COMPLETE  |
-| `WBL-FE-016D`   | P0           | Connected POS session/invoice browser workflow | COMPLETE |
-| `WBL-BE-008`    | P0           | POS/invoice/payment/returns           | READY       |
-| `WBL-BE-009`    | P1           | Reports/exports/closing               | PLANNED     |
-| `WBL-QA-002`    | P0           | Feature unit tests                    | COMPLETE    |
-| `WBL-QA-003`    | P1           | Accessibility/responsive audit        | COMPLETE    |
-| `WBL-QA-004`    | P0 pre-pilot | Critical-flow E2E                     | PLANNED     |
-| `WBL-SEC-001`   | P0           | Tenant/branch authorization tests     | COMPLETE    |
-| `WBL-INFRA-001` | P1           | CI pipeline                           | CONFIGURED  |
-| `WBL-INFRA-002` | P1           | Environments/secrets/deployment       | PLANNED     |
-| `WBL-INFRA-003` | P1           | Monitoring/incident runbook           | PLANNED     |
-| `WBL-INFRA-004` | P0 pre-pilot | Backup/restore rehearsal              | PLANNED     |
+| Task ID         | Priority     | Module                                         | Status          |
+| --------------- | ------------ | ---------------------------------------------- | --------------- |
+| `WBL-BE-001`    | P0           | NestJS API foundation                          | COMPLETE        |
+| `WBL-BE-002`    | P0           | PostgreSQL tenancy schema                      | COMPLETE        |
+| `WBL-BE-003`    | P0           | Identity and sessions                          | COMPLETE — CORE |
+| `WBL-BE-004`    | P0           | Organization/branch/RBAC                       | COMPLETE        |
+| `WBL-BE-005`    | P0           | Core and AI subscription entitlements          | COMPLETE        |
+| `WBL-BE-006`    | P0           | Catalogue and inventory ledger                 | COMPLETE        |
+| `WBL-BE-007A`   | P0           | Purchases/payables database foundation         | COMPLETE        |
+| `WBL-BE-007B`   | P0           | Purchase/payable API and posting effects       | COMPLETE        |
+| `WBL-BE-007C`   | P0           | Purchase cancellation and return workflows     | COMPLETE        |
+| `WBL-BE-008A`   | P0           | POS persistence database foundation            | COMPLETE        |
+| `WBL-BE-008B`   | P0           | Protected atomic POS posting API               | COMPLETE        |
+| `WBL-FE-016D`   | P0           | Connected POS session/invoice browser workflow | COMPLETE        |
+| `WBL-BE-008C`   | P0           | Sales cancellation/return/credit compensation  | COMPLETE        |
+| `WBL-BE-008`    | P0           | POS/invoice/payment/returns                    | READY           |
+| `WBL-BE-009`    | P1           | Reports/exports/closing                        | PLANNED         |
+| `WBL-QA-002`    | P0           | Feature unit tests                             | COMPLETE        |
+| `WBL-QA-003`    | P1           | Accessibility/responsive audit                 | COMPLETE        |
+| `WBL-QA-004`    | P0 pre-pilot | Critical-flow E2E                              | PLANNED         |
+| `WBL-SEC-001`   | P0           | Tenant/branch authorization tests              | COMPLETE        |
+| `WBL-INFRA-001` | P1           | CI pipeline                                    | CONFIGURED      |
+| `WBL-INFRA-002` | P1           | Environments/secrets/deployment                | PLANNED         |
+| `WBL-INFRA-003` | P1           | Monitoring/incident runbook                    | PLANNED         |
+| `WBL-INFRA-004` | P0 pre-pilot | Backup/restore rehearsal                       | PLANNED         |
 
 ## Externally blocked validation
 

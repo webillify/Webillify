@@ -1,58 +1,58 @@
 # Webillify module status
 
-Reconciled: **2026-07-18 18:52:50 IST**
+Reconciled: **2026-07-18 19:08:42 IST**
 Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence passed. `DEMO` is not production-ready.
 
 ## Frontend modules
 
-| Module ID     | Module            | Status          | Scope/evidence                                                   | Next work                             |
-| ------------- | ----------------- | --------------- | ---------------------------------------------------------------- | ------------------------------------- |
-| `WBL-MOD-001` | App scaffold      | COMPLETE        | Angular 22 strict standalone app; `package.json`, `angular.json` | Environments and CI                   |
-| `WBL-MOD-002` | Routing           | COMPLETE        | Lazy routes with protected, guest and permission guards          | Real server authorization             |
-| `WBL-MOD-003` | Application shell | COMPLETE        | Responsive shell in `src/app/layout/`                            | Real organization/branch state        |
-| `WBL-MOD-004` | Sign-in           | COMPLETE — API | Real login/access token/refresh cookie, workspace hydration and sign-out | Password reset later            |
-| `WBL-MOD-005` | Dashboard         | COMPLETE — API  | Live sales/invoices/stock/receivable metrics and activity         | Period filtering and reports          |
-| `WBL-MOD-006` | POS               | COMPLETE — CORE UI/API | Register, GST cart, atomic tender, receipt and stock refresh | Returns, refunds and offline cart     |
-| `WBL-MOD-007` | Products          | PARTIAL — API   | Real tenant catalogue and stock projection render in browser     | CRUD, import and API pagination       |
-| `WBL-MOD-008` | Customers         | PLANNED         | Placeholder route only                                           | List/detail/balance/receipt           |
-| `WBL-MOD-009` | Purchases         | COMPLETE — CORE UI/API | Live draft/post/payment/cancel/full-return flows with permission and reason controls | Partial-line editor later |
-| `WBL-MOD-010` | Reports           | PLANNED         | Placeholder route only                                           | Sales/tax/stock/closing reports       |
-| `WBL-MOD-011` | Settings          | PLANNED         | Placeholder route only                                           | Company/branch/users/subscriptions    |
-| `WBL-MOD-012` | Shared icons      | COMPLETE        | Typed reusable `shared/icon.ts`                                  | Accessibility review                  |
-| `WBL-MOD-013` | Data access/state | COMPLETE — API | Real auth/workspace/product/stock adapters plus explicit mock mode | Extend per new backend module        |
-| `WBL-MOD-014` | PWA baseline      | COMPLETE        | Manifest, icon, service worker and `ngsw` output                 | Browser install/offline QA            |
-| `WBL-MOD-015` | Webillify AI UI   | PARTIAL — PLAN API | Separate ₹799 plan, lifecycle and live credits displayed       | AI capability workflows               |
-| `WBL-MOD-016` | Shared feedback   | COMPLETE        | Data state, toast and confirmation primitives                    | Accessibility audit                   |
+| Module ID     | Module            | Status                 | Scope/evidence                                                                       | Next work                          |
+| ------------- | ----------------- | ---------------------- | ------------------------------------------------------------------------------------ | ---------------------------------- |
+| `WBL-MOD-001` | App scaffold      | COMPLETE               | Angular 22 strict standalone app; `package.json`, `angular.json`                     | Environments and CI                |
+| `WBL-MOD-002` | Routing           | COMPLETE               | Lazy routes with protected, guest and permission guards                              | Real server authorization          |
+| `WBL-MOD-003` | Application shell | COMPLETE               | Responsive shell in `src/app/layout/`                                                | Real organization/branch state     |
+| `WBL-MOD-004` | Sign-in           | COMPLETE — API         | Real login/access token/refresh cookie, workspace hydration and sign-out             | Password reset later               |
+| `WBL-MOD-005` | Dashboard         | COMPLETE — API         | Live sales/invoices/stock/receivable metrics and activity                            | Period filtering and reports       |
+| `WBL-MOD-006` | POS               | COMPLETE — CORE UI/API | Register, GST cart, atomic tender, receipt and stock refresh                         | Returns, refunds and offline cart  |
+| `WBL-MOD-007` | Products          | PARTIAL — API          | Real tenant catalogue and stock projection render in browser                         | CRUD, import and API pagination    |
+| `WBL-MOD-008` | Customers         | PLANNED                | Placeholder route only                                                               | List/detail/balance/receipt        |
+| `WBL-MOD-009` | Purchases         | COMPLETE — CORE UI/API | Live draft/post/payment/cancel/full-return flows with permission and reason controls | Partial-line editor later          |
+| `WBL-MOD-010` | Reports           | PLANNED                | Placeholder route only                                                               | Sales/tax/stock/closing reports    |
+| `WBL-MOD-011` | Settings          | PLANNED                | Placeholder route only                                                               | Company/branch/users/subscriptions |
+| `WBL-MOD-012` | Shared icons      | COMPLETE               | Typed reusable `shared/icon.ts`                                                      | Accessibility review               |
+| `WBL-MOD-013` | Data access/state | COMPLETE — API         | Real auth/workspace/product/stock adapters plus explicit mock mode                   | Extend per new backend module      |
+| `WBL-MOD-014` | PWA baseline      | COMPLETE               | Manifest, icon, service worker and `ngsw` output                                     | Browser install/offline QA         |
+| `WBL-MOD-015` | Webillify AI UI   | PARTIAL — PLAN API     | Separate ₹799 plan, lifecycle and live credits displayed                             | AI capability workflows            |
+| `WBL-MOD-016` | Shared feedback   | COMPLETE               | Data state, toast and confirmation primitives                                        | Accessibility audit                |
 
 ## Backend/platform modules
 
-| Module ID     | Module             | Status      | Required scope                                        |
-| ------------- | ------------------ | ----------- | ----------------------------------------------------- |
-| `WBL-MOD-101` | API foundation     | COMPLETE    | NestJS, validation, errors, health and OpenAPI        |
-| `WBL-MOD-102` | Identity/sessions  | COMPLETE — CORE | Login/JWT/rotation/reuse/logout/me; reset queued  |
-| `WBL-MOD-103` | Tenancy/RBAC       | COMPLETE    | Tenant resolution, branch scope and permissions; 15 API E2E pass |
-| `WBL-MOD-104` | Core subscriptions | COMPLETE    | Versioned plan/usage APIs and active-mutation enforcement tested |
-| `WBL-MOD-105` | AI subscription    | COMPLETE — CORE | Independent plan/lifecycle/credits; atomic consume/refund and concurrency tested |
-| `WBL-MOD-106` | Catalogue          | COMPLETE    | Protected product/reference APIs, atomic identifiers and tenant isolation pass |
-| `WBL-MOD-107` | Inventory          | COMPLETE — CORE | Branch-scoped balances/movements and concurrent idempotent adjustments pass |
+| Module ID     | Module             | Status              | Required scope                                                                                                    |
+| ------------- | ------------------ | ------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `WBL-MOD-101` | API foundation     | COMPLETE            | NestJS, validation, errors, health and OpenAPI                                                                    |
+| `WBL-MOD-102` | Identity/sessions  | COMPLETE — CORE     | Login/JWT/rotation/reuse/logout/me; reset queued                                                                  |
+| `WBL-MOD-103` | Tenancy/RBAC       | COMPLETE            | Tenant resolution, branch scope and permissions; 15 API E2E pass                                                  |
+| `WBL-MOD-104` | Core subscriptions | COMPLETE            | Versioned plan/usage APIs and active-mutation enforcement tested                                                  |
+| `WBL-MOD-105` | AI subscription    | COMPLETE — CORE     | Independent plan/lifecycle/credits; atomic consume/refund and concurrency tested                                  |
+| `WBL-MOD-106` | Catalogue          | COMPLETE            | Protected product/reference APIs, atomic identifiers and tenant isolation pass                                    |
+| `WBL-MOD-107` | Inventory          | COMPLETE — CORE     | Branch-scoped balances/movements and concurrent idempotent adjustments pass                                       |
 | `WBL-MOD-108` | Purchases/payables | COMPLETE — CORE API | Supplier/draft/post/payment plus idempotent cancellation/returns and reconciled stock/payable/credit effects pass |
-| `WBL-MOD-109` | Sales/receivables  | COMPLETE — CORE API | Protected sessions and atomic server-calculated invoice/tender/stock/receivable posting pass |
-| `WBL-MOD-110` | Reports/exports    | NOT STARTED | Reconciled reports and scoped exports                 |
-| `WBL-MOD-111` | Audit/files/worker | NOT STARTED | Audit trail, secure files and outbox jobs             |
-| `WBL-MOD-112` | AI capabilities    | NOT STARTED | Extraction, questions, summaries and drafts           |
+| `WBL-MOD-109` | Sales/receivables  | COMPLETE — CORE API | Posting plus append-only returns/refunds/cancellation and stock/receivable compensation pass                      |
+| `WBL-MOD-110` | Reports/exports    | NOT STARTED         | Reconciled reports and scoped exports                                                                             |
+| `WBL-MOD-111` | Audit/files/worker | NOT STARTED         | Audit trail, secure files and outbox jobs                                                                         |
+| `WBL-MOD-112` | AI capabilities    | NOT STARTED         | Extraction, questions, summaries and drafts                                                                       |
 
 ## Quality and operations
 
-| Module           | Status      | Evidence/gap                                  |
-| ---------------- | ----------- | --------------------------------------------- |
-| Unit tests       | COMPLETE    | 29 tests/11 files cover current frontend scope |
-| E2E tests        | PARTIAL     | 4 connected desktop/mobile mutation journeys and 69 API integration tests pass |
-| Accessibility QA | COMPLETE    | Axe plus keyboard/responsive audit passes     |
-| CI/CD            | DISABLED — USER REQUEST | `Webillify CI` manually disabled on GitHub; local verified gates continue |
-| Deployment       | NOT STARTED | Bundle exists; no hosting definition          |
-| Monitoring       | NOT STARTED | No error/uptime configuration                 |
-| Backup/recovery  | NOT STARTED | Awaits backend/database                       |
-| Development logs | COMPLETE    | Active worksheets populated and cross-linked  |
+| Module           | Status                  | Evidence/gap                                                                   |
+| ---------------- | ----------------------- | ------------------------------------------------------------------------------ |
+| Unit tests       | COMPLETE                | 29 tests/11 files cover current frontend scope                                 |
+| E2E tests        | PARTIAL                 | 4 connected desktop/mobile mutation journeys and 71 API integration tests pass |
+| Accessibility QA | COMPLETE                | Axe plus keyboard/responsive audit passes                                      |
+| CI/CD            | DISABLED — USER REQUEST | `Webillify CI` manually disabled on GitHub; local verified gates continue      |
+| Deployment       | NOT STARTED             | Bundle exists; no hosting definition                                           |
+| Monitoring       | NOT STARTED             | No error/uptime configuration                                                  |
+| Backup/recovery  | NOT STARTED             | Awaits backend/database                                                        |
+| Development logs | COMPLETE                | Active worksheets populated and cross-linked                                   |
 
 ## Verified baseline
 
@@ -75,4 +75,5 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 2026-07-17 20:36:50 IST  POS persistence database gate  PASS (8 migrations; drift 0; API 3+62; audit 0)
 2026-07-18 17:56:26 IST  Atomic POS posting API gate     PASS (9 migrations; drift 0; API 3+69; audit 0)
 2026-07-18 18:31:06 IST  Connected POS browser full gate PASS (web 29+4; API 3+69; production audits 0)
+2026-07-18 19:08:42 IST  Sales compensation API gate      PASS (10 migrations; drift 0; API 3+71; audit 0)
 ```

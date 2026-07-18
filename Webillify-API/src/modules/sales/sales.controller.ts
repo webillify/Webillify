@@ -18,6 +18,8 @@ import type { CorrelatedRequest } from '../../core/http/correlation-id.middlewar
 import { AccessTokenGuard } from '../auth/access-token.guard';
 import { OpenPosSessionDto } from './dto/open-pos-session.dto';
 import { PostSalesInvoiceDto } from './dto/post-sales-invoice.dto';
+import { CancelSalesInvoiceDto } from './dto/cancel-sales-invoice.dto';
+import { CreateSalesReturnDto } from './dto/create-sales-return.dto';
 import { SalesService } from './sales.service';
 
 @ApiTags('sales')
@@ -68,6 +70,38 @@ export class SalesController {
     @Body() input: PostSalesInvoiceDto,
   ): Promise<object> {
     return this.sales.postInvoice(
+      request.tenant,
+      request.identity.userId,
+      request.correlationId,
+      idempotencyKey,
+      input,
+    );
+  }
+
+  @Post('sales-invoices/:id/cancel')
+  cancelInvoice(
+    @Req() request: TenantRequest & CorrelatedRequest,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Headers('idempotency-key') idempotencyKey: string,
+    @Body() input: CancelSalesInvoiceDto,
+  ): Promise<object> {
+    return this.sales.cancelInvoice(
+      request.tenant,
+      request.identity.userId,
+      request.correlationId,
+      id,
+      idempotencyKey,
+      input,
+    );
+  }
+
+  @Post('sales-returns')
+  createReturn(
+    @Req() request: TenantRequest & CorrelatedRequest,
+    @Headers('idempotency-key') idempotencyKey: string,
+    @Body() input: CreateSalesReturnDto,
+  ): Promise<object> {
+    return this.sales.createReturn(
       request.tenant,
       request.identity.userId,
       request.correlationId,
