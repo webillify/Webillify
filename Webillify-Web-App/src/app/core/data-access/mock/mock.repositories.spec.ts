@@ -13,7 +13,17 @@ describe('mock data repositories', () => {
     const repository = new MockPosRepository();
 
     await expect(
-      firstValueFrom(repository.completeSale({ items: [], paymentMethod: 'Cash', total: 0 })),
+      firstValueFrom(
+        repository.completeSale({
+          posSessionId: 'session-demo',
+          idempotencyKey: 'sale-demo',
+          taxTreatment: 'INTRASTATE',
+          placeOfSupplyStateCode: '33',
+          items: [],
+          paymentMethod: 'Cash',
+          total: 0,
+        }),
+      ),
     ).rejects.toThrow('A sale requires at least one item');
   });
 });

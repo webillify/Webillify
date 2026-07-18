@@ -16,7 +16,10 @@ import {
   CompleteSaleRequest,
   CompleteSaleResult,
   DashboardSnapshot,
+  OpenPosSessionRequest,
   OrganizationContext,
+  PosSession,
+  PosWorkspace,
   Product,
   PurchaseBill,
   PurchaseWorkspace,
@@ -56,6 +59,8 @@ interface ApiProduct {
   readonly name: string;
   readonly category: { name: string } | null;
   readonly baseUnit: { symbol: string };
+  readonly defaultTaxRate: { rate: string } | null;
+  readonly priceTaxMode: 'INCLUSIVE' | 'EXCLUSIVE';
   readonly variants: Array<{ id: string; sku: string; name: string | null; salePrice: string }>;
 }
 
@@ -88,6 +93,27 @@ interface ApiPurchaseBill {
   readonly returns?: Array<{
     items: Array<{ purchaseBillItemId: string; quantity: string }>;
   }>;
+}
+
+interface ApiPosSession {
+  readonly id: string;
+  readonly branchId: string;
+  readonly warehouseId: string;
+  readonly registerCode: string;
+  readonly status: 'OPEN' | 'CLOSED';
+  readonly openingCash: string;
+  readonly cashSalesAmount: string;
+  readonly openedAt: string;
+}
+
+interface ApiSalesInvoice {
+  readonly id: string;
+  readonly displayNumber: string;
+  readonly invoiceDate: string;
+  readonly totalAmount: string;
+  readonly paidAmount: string;
+  readonly outstandingAmount: string;
+  readonly customer: { name: string } | null;
 }
 
 const KNOWN_PERMISSIONS: readonly Permission[] = [
@@ -232,6 +258,8 @@ export class ApiProductRepository implements ProductRepository {
             unit: product.baseUnit.symbol,
             color: palette((product.id.charCodeAt(0) + index) % 6),
             initials: initials(product.name),
+            taxRate: Number(product.defaultTaxRate?.rate ?? 0),
+            priceTaxMode: product.priceTaxMode,
           })),
         );
       }),
@@ -262,9 +290,10 @@ export class ApiDashboardRepository implements DashboardRepository {
       products: this.http.get<ApiProduct[]>(`${this.environment.apiBaseUrl}/products`),
       balances: this.http.get<ApiStockBalance[]>(`${this.environment.apiBaseUrl}/stock-balances`),
       bills: this.http.get<ApiPurchaseBill[]>(`${this.environment.apiBaseUrl}/purchase-bills`),
+      invoices: this.http.get<ApiSalesInvoice[]>(`${this.environment.apiBaseUrl}/sales-invoices`),
     }).pipe(
-      map(({ products, balances, bills }) => {
-        const values = bills.slice(0, 12).map((bill) => Number(bill.totalAmount));
+      map(({ products, balances, bills, invoices }) => {
+        const values = invoices.slice(0, 12).map((invoice) => Number(invoice.totalAmount));
         const maximum = Math.max(...values, 1);
         const productNames = new Map(
           products.flatMap((product) =>
@@ -272,15 +301,16 @@ export class ApiDashboardRepository implements DashboardRepository {
           ),
         );
         return {
-          recentSales: bills.slice(0, 6).map((bill) => ({
-            invoice: bill.supplierInvoiceReference,
-            customer: bill.supplier.name,
-            time: new Date(bill.invoiceDate).toLocaleDateString('en-IN', {
+          recentSales: invoices.slice(0, 6).map((invoice) => ({
+            invoice: invoice.displayNumber,
+            customer: invoice.customer?.name ?? 'Walk-in customer',
+            time: new Date(invoice.invoiceDate).toLocaleDateString('en-IN', {
               day: '2-digit',
               month: 'short',
             }),
-            amount: Number(bill.totalAmount),
-            status: Number(bill.outstandingAmount) === 0 ? ('Paid' as const) : ('Credit' as const),
+            amount: Number(invoice.totalAmount),
+            status:
+              Number(invoice.outstandingAmount) === 0 ? ('Paid' as const) : ('Credit' as const),
           })),
           salesBars: values.length
             ? values.map((value) => Math.max(8, Math.round((value / maximum) * 100)))
@@ -294,6 +324,12 @@ export class ApiDashboardRepository implements DashboardRepository {
               0,
             ),
             purchaseTotal: bills.reduce((total, bill) => total + Number(bill.totalAmount), 0),
+            salesInvoiceCount: invoices.length,
+            salesTotal: invoices.reduce((total, invoice) => total + Number(invoice.totalAmount), 0),
+            outstandingReceivables: invoices.reduce(
+              (total, invoice) => total + Number(invoice.outstandingAmount),
+              0,
+            ),
           },
           stockAlerts: balances
             .filter((balance) => Number(balance.quantity) < 8)
@@ -311,10 +347,98 @@ export class ApiDashboardRepository implements DashboardRepository {
 
 @Injectable()
 export class ApiPosRepository implements PosRepository {
-  completeSale(_request: CompleteSaleRequest): Observable<CompleteSaleResult> {
-    return throwError(
-      () => new Error('Sales posting is not implemented in the current backend stage yet.'),
+  private readonly http = inject(HttpClient);
+  private readonly environment = inject(APP_ENVIRONMENT);
+  private readonly sessionStore = inject(ApiSessionStore);
+
+  getWorkspace(): Observable<PosWorkspace> {
+    const branchId = this.sessionStore.snapshot?.session.workspace?.branchId;
+    if (!branchId) return throwError(() => new Error('No active branch is selected.'));
+    return forkJoin({
+      sessions: this.http.get<ApiPosSession[]>(`${this.environment.apiBaseUrl}/pos-sessions`),
+      balances: this.http.get<ApiStockBalance[]>(`${this.environment.apiBaseUrl}/stock-balances`),
+    }).pipe(
+      map(({ sessions, balances }) => {
+        const branchBalances = balances.filter(({ warehouse }) => warehouse.branchId === branchId);
+        const apiSession = sessions.find(
+          (session) =>
+            session.branchId === branchId &&
+            session.registerCode === 'WEB-POS' &&
+            session.status === 'OPEN',
+        );
+        const sessionWarehouse = apiSession
+          ? branchBalances.find(({ warehouse }) => warehouse.id === apiSession.warehouseId)
+              ?.warehouse
+          : undefined;
+        const warehouse = sessionWarehouse ?? branchBalances[0]?.warehouse;
+        return {
+          session: apiSession ? mapPosSession(apiSession) : null,
+          warehouse: warehouse ? { id: warehouse.id, name: warehouse.name } : null,
+        };
+      }),
+      catchError((error: unknown) => throwError(() => apiError(error))),
     );
+  }
+
+  openSession(request: OpenPosSessionRequest): Observable<PosWorkspace> {
+    const branchId = this.sessionStore.snapshot?.session.workspace?.branchId;
+    if (!branchId) return throwError(() => new Error('No active branch is selected.'));
+    return this.http
+      .post<{ session: ApiPosSession }>(
+        `${this.environment.apiBaseUrl}/pos-sessions/open`,
+        {
+          branchId,
+          warehouseId: request.warehouseId,
+          registerCode: 'WEB-POS',
+          openingCash: request.openingCash,
+        },
+        { headers: new HttpHeaders({ 'Idempotency-Key': crypto.randomUUID() }) },
+      )
+      .pipe(
+        switchMap(() => this.getWorkspace()),
+        catchError((error: unknown) => {
+          if (error instanceof HttpErrorResponse && error.status === 409) {
+            return this.getWorkspace().pipe(
+              switchMap((workspace) =>
+                workspace.session ? of(workspace) : throwError(() => apiError(error)),
+              ),
+            );
+          }
+          return throwError(() => apiError(error));
+        }),
+      );
+  }
+
+  completeSale(request: CompleteSaleRequest): Observable<CompleteSaleResult> {
+    if (request.paymentMethod === 'Credit') {
+      return throwError(() => new Error('Select a customer before recording a credit sale.'));
+    }
+    const method = request.paymentMethod.toUpperCase();
+    return this.http
+      .post<{ invoice: ApiSalesInvoice; idempotent: boolean }>(
+        `${this.environment.apiBaseUrl}/sales-invoices/post`,
+        {
+          posSessionId: request.posSessionId,
+          taxTreatment: request.taxTreatment,
+          placeOfSupplyStateCode: request.placeOfSupplyStateCode,
+          expectedTotal: request.total,
+          items: request.items.map((item) => ({
+            variantId: item.product.id,
+            quantity: item.quantity,
+          })),
+          payments: [{ method, amount: request.total }],
+        },
+        { headers: new HttpHeaders({ 'Idempotency-Key': request.idempotencyKey }) },
+      )
+      .pipe(
+        map(({ invoice, idempotent }) => ({
+          invoiceNumber: invoice.displayNumber,
+          paymentMethod: request.paymentMethod,
+          totalAmount: Number(invoice.totalAmount),
+          idempotent,
+        })),
+        catchError((error: unknown) => throwError(() => apiError(error))),
+      );
   }
 }
 
@@ -534,6 +658,17 @@ function mapBill(bill: ApiPurchaseBill): PurchaseBill {
     paidAmount: Number(bill.paidAmount),
     returnedAmount: Number(bill.returnedAmount ?? 0),
     outstandingAmount: Number(bill.outstandingAmount),
+  };
+}
+
+function mapPosSession(session: ApiPosSession): PosSession {
+  return {
+    id: session.id,
+    registerCode: session.registerCode,
+    status: session.status,
+    openingCash: Number(session.openingCash),
+    cashSalesAmount: Number(session.cashSalesAmount),
+    openedAt: session.openedAt,
   };
 }
 

@@ -1,6 +1,6 @@
 # Webillify module status
 
-Reconciled: **2026-07-18 17:56:26 IST**
+Reconciled: **2026-07-18 18:35:58 IST**
 Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence passed. `DEMO` is not production-ready.
 
 ## Frontend modules
@@ -11,8 +11,8 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 | `WBL-MOD-002` | Routing           | COMPLETE        | Lazy routes with protected, guest and permission guards          | Real server authorization             |
 | `WBL-MOD-003` | Application shell | COMPLETE        | Responsive shell in `src/app/layout/`                            | Real organization/branch state        |
 | `WBL-MOD-004` | Sign-in           | COMPLETE — API | Real login/access token/refresh cookie, workspace hydration and sign-out | Password reset later            |
-| `WBL-MOD-005` | Dashboard         | COMPLETE — API  | Live catalogue, stock, purchase and payable projections          | Add sales metrics with BE-008         |
-| `WBL-MOD-006` | POS               | PARTIAL — API   | Live products/stock and cart; protected posting API ready        | Connect session/checkout/receipt UI   |
+| `WBL-MOD-005` | Dashboard         | COMPLETE — API  | Live sales/invoices/stock/receivable metrics and activity         | Period filtering and reports          |
+| `WBL-MOD-006` | POS               | COMPLETE — CORE UI/API | Register, GST cart, atomic tender, receipt and stock refresh | Returns, refunds and offline cart     |
 | `WBL-MOD-007` | Products          | PARTIAL — API   | Real tenant catalogue and stock projection render in browser     | CRUD, import and API pagination       |
 | `WBL-MOD-008` | Customers         | PLANNED         | Placeholder route only                                           | List/detail/balance/receipt           |
 | `WBL-MOD-009` | Purchases         | COMPLETE — CORE UI/API | Live draft/post/payment/cancel/full-return flows with permission and reason controls | Partial-line editor later |
@@ -45,7 +45,7 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 
 | Module           | Status      | Evidence/gap                                  |
 | ---------------- | ----------- | --------------------------------------------- |
-| Unit tests       | COMPLETE    | 23 tests/10 files cover current frontend scope |
+| Unit tests       | COMPLETE    | 29 tests/11 files cover current frontend scope |
 | E2E tests        | PARTIAL     | 4 connected desktop/mobile mutation journeys and 69 API integration tests pass |
 | Accessibility QA | COMPLETE    | Axe plus keyboard/responsive audit passes     |
 | CI/CD            | CONFIGURED  | GitHub Actions definition; first run pending  |
@@ -74,4 +74,5 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 2026-07-17 20:25:05 IST  Purchase compensation browser PASS (23 unit + 4 browser; API 3+57; audits 0)
 2026-07-17 20:36:50 IST  POS persistence database gate  PASS (8 migrations; drift 0; API 3+62; audit 0)
 2026-07-18 17:56:26 IST  Atomic POS posting API gate     PASS (9 migrations; drift 0; API 3+69; audit 0)
+2026-07-18 18:31:06 IST  Connected POS browser full gate PASS (web 29+4; API 3+69; production audits 0)
 ```

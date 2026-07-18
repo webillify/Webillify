@@ -30,6 +30,9 @@ export class DashboardPage {
         purchaseBillCount: 0,
         outstandingPayables: 0,
         purchaseTotal: 0,
+        salesInvoiceCount: 0,
+        salesTotal: 0,
+        outstandingReceivables: 0,
       },
   );
   readonly stockAlerts = computed(() => this.state().data?.stockAlerts ?? []);

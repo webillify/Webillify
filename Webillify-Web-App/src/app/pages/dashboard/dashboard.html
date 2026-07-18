@@ -33,36 +33,36 @@
       <span class="metric-icon"><app-icon name="rupee" /></span
       ><span class="metric-badge">Live projection</span>
     </div>
-    <span class="metric-card__label">Stock on hand</span>
-    <strong>{{ metrics().stockUnits.toLocaleString('en-IN') }}</strong>
-    <small>Across the assigned branch warehouse</small>
+    <span class="metric-card__label">Recorded sales</span>
+    <strong>₹{{ (metrics().salesTotal ?? 0).toLocaleString('en-IN') }}</strong>
+    <small>Server-posted invoices for this branch</small>
   </article>
   <article class="metric-card">
     <div class="metric-card__top">
       <span class="metric-icon metric-icon--blue"><app-icon name="receipt" /></span
       ><span class="metric-badge">Catalogue</span>
     </div>
-    <span class="metric-card__label">Product variants</span>
-    <strong>{{ metrics().productCount }}</strong>
-    <small>Active variants available to this tenant</small>
+    <span class="metric-card__label">Sales invoices</span>
+    <strong>{{ metrics().salesInvoiceCount ?? 0 }}</strong>
+    <small>Immutable numbered invoices</small>
   </article>
   <article class="metric-card">
     <div class="metric-card__top">
       <span class="metric-icon metric-icon--amber"><app-icon name="warning" /></span
-      ><span class="metric-badge">Purchasing</span>
+      ><span class="metric-badge">Inventory</span>
     </div>
-    <span class="metric-card__label">Purchase bills</span>
-    <strong>{{ metrics().purchaseBillCount }}</strong>
-    <small>Draft and posted supplier documents</small>
+    <span class="metric-card__label">Stock on hand</span>
+    <strong>{{ metrics().stockUnits.toLocaleString('en-IN') }}</strong>
+    <small>Across the assigned branch warehouse</small>
   </article>
   <article class="metric-card">
     <div class="metric-card__top">
       <span class="metric-icon metric-icon--purple"><app-icon name="users" /></span
-      ><span class="metric-badge">Payables</span>
+      ><span class="metric-badge">Receivables</span>
     </div>
-    <span class="metric-card__label">Supplier outstanding</span>
-    <strong>₹{{ metrics().outstandingPayables.toLocaleString('en-IN') }}</strong>
-    <small>Allocation-reconciled outstanding amount</small>
+    <span class="metric-card__label">Customer outstanding</span>
+    <strong>₹{{ (metrics().outstandingReceivables ?? 0).toLocaleString('en-IN') }}</strong>
+    <small>Invoice-reconciled outstanding amount</small>
   </article>
 </section>
 
@@ -70,8 +70,8 @@
   <article class="panel sales-chart-panel">
     <header class="panel__header">
       <div>
-        <h2>Purchase value overview</h2>
-        <p>Latest supplier bill totals</p>
+        <h2>Sales value overview</h2>
+        <p>Latest posted invoice totals</p>
       </div>
       <div class="segmented-control">
         @for (item of ['Today', 'Week', 'Month']; track item) {
@@ -82,10 +82,10 @@
       </div>
     </header>
     <div class="chart-summary">
-      <strong>₹{{ metrics().purchaseTotal.toLocaleString('en-IN') }}</strong
-      ><small>recorded purchase value</small>
+      <strong>₹{{ (metrics().salesTotal ?? 0).toLocaleString('en-IN') }}</strong
+      ><small>recorded sales value</small>
     </div>
-    <div class="bar-chart" role="img" aria-label="Relative values of recent purchase bills">
+    <div class="bar-chart" role="img" aria-label="Relative values of recent sales invoices">
       <div class="chart-lines"><span></span><span></span><span></span><span></span></div>
       @for (bar of bars(); track $index) {
         <div class="bar-column">
@@ -135,20 +135,20 @@
   <article class="panel recent-panel">
     <header class="panel__header">
       <div>
-        <h2>Recent purchase activity</h2>
-        <p>Latest supplier documents from this branch</p>
+        <h2>Recent sales activity</h2>
+        <p>Latest customer invoices from this branch</p>
       </div>
       <a routerLink="/reports">View all <app-icon name="arrow" /></a>
     </header>
     <div class="table-wrap">
       <table>
         <caption class="visually-hidden">
-          Recent purchase bills for the current branch
+          Recent sales invoices for the current branch
         </caption>
         <thead>
           <tr>
-            <th>Reference</th>
-            <th>Supplier</th>
+            <th>Invoice</th>
+            <th>Customer</th>
             <th>Date</th>
             <th>Status</th>
             <th>Amount</th>

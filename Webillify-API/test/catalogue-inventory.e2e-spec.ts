@@ -113,6 +113,7 @@ describe('Tenant catalogue and immutable inventory APIs', () => {
   });
 
   it('posts an adjustment once, detects changed retries, and restores balance', async () => {
+    const before = await currentBalance();
     const key = `adjustment-${randomUUID()}`;
     const sourceId = randomUUID();
     const output = adjustment('ADJUSTMENT_OUT', 2, sourceId);
@@ -120,7 +121,7 @@ describe('Tenant catalogue and immutable inventory APIs', () => {
       const posted = await adjustmentPost(key, output).expect(201);
       expect(posted.body).toMatchObject({
         idempotent: false,
-        balance: { quantity: '98' },
+        balance: { quantity: String(before.quantity.toNumber() - 2) },
       });
       const replay = await adjustmentPost(key, output).expect(201);
       expect(replay.body).toMatchObject({ idempotent: true });
@@ -132,7 +133,7 @@ describe('Tenant catalogue and immutable inventory APIs', () => {
         'IDEMPOTENCY_KEY_CONFLICT',
       );
     } finally {
-      await restoreSeedBalance();
+      await restoreBalance(before.quantity.toNumber());
     }
   });
 
@@ -158,8 +159,13 @@ describe('Tenant catalogue and immutable inventory APIs', () => {
   });
 
   it('serializes concurrent issues so only one can consume available stock', async () => {
+    const before = await currentBalance();
+    const issueQuantity = Math.floor(before.quantity.toNumber() / 2) + 1;
     const requests = [randomUUID(), randomUUID()].map((id) =>
-      adjustmentPost(`concurrent-${id}`, adjustment('ADJUSTMENT_OUT', 60, id)),
+      adjustmentPost(
+        `concurrent-${id}`,
+        adjustment('ADJUSTMENT_OUT', issueQuantity, id),
+      ),
     );
     try {
       const responses = await Promise.all(requests);
@@ -169,7 +175,7 @@ describe('Tenant catalogue and immutable inventory APIs', () => {
         'INSUFFICIENT_STOCK',
       );
     } finally {
-      await restoreSeedBalance();
+      await restoreBalance(before.quantity.toNumber());
     }
   });
 
@@ -179,8 +185,9 @@ describe('Tenant catalogue and immutable inventory APIs', () => {
       where: { organizationId, warehouseId, variantId },
       _sum: { quantity: true },
     });
-    expect(balance.quantity.toString()).toBe('100');
-    expect(movements._sum.quantity?.toString()).toBe('100');
+    expect(balance.quantity.toString()).toBe(
+      movements._sum.quantity?.toString(),
+    );
   });
 
   it('blocks catalogue and stock mutations when the core plan is suspended', async () => {
@@ -238,14 +245,14 @@ describe('Tenant catalogue and immutable inventory APIs', () => {
     };
   }
 
-  async function restoreSeedBalance(): Promise<void> {
+  async function restoreBalance(target: number): Promise<void> {
     const balance = await currentBalance();
     const quantity = balance.quantity.toNumber();
-    if (quantity === 100) return;
-    const movementType = quantity < 100 ? 'ADJUSTMENT_IN' : 'ADJUSTMENT_OUT';
+    if (quantity === target) return;
+    const movementType = quantity < target ? 'ADJUSTMENT_IN' : 'ADJUSTMENT_OUT';
     await adjustmentPost(
       `restore-${randomUUID()}`,
-      adjustment(movementType, Math.abs(100 - quantity), randomUUID()),
+      adjustment(movementType, Math.abs(target - quantity), randomUUID()),
     ).expect(201);
   }
 

@@ -3,6 +3,8 @@ import { AuthSession, SignInCredentials } from '../domain/auth.models';
 import {
   CompleteSaleRequest,
   CompleteSaleResult,
+  OpenPosSessionRequest,
+  PosWorkspace,
   DashboardSnapshot,
   OrganizationContext,
   Product,
@@ -22,6 +24,8 @@ export abstract class ProductRepository {
 }
 
 export abstract class PosRepository {
+  abstract getWorkspace(): Observable<PosWorkspace>;
+  abstract openSession(request: OpenPosSessionRequest): Observable<PosWorkspace>;
   abstract completeSale(request: CompleteSaleRequest): Observable<CompleteSaleResult>;
 }
 

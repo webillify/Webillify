@@ -1,10 +1,10 @@
 # Webillify master worksheet
 
-Snapshot timestamp: **2026-07-18 18:01:50 IST**
-Project status: **ACTIVE — atomic POS posting API verified; connected browser workflow is next**
+Snapshot timestamp: **2026-07-18 18:35:58 IST**
+Project status: **ACTIVE — connected atomic POS checkout verified; sales compensation is next**
 Current release: **R1 — Frontend application foundation**  
 Current phase: **Phase 5 — POS, sales, returns and receivables**
-Current task: **WBL-FE-016D — Connected POS session and invoice posting browser workflow (assigned)**
+Current task: **WBL-BE-008C — Sales cancellation, returns and credit-note compensation (assigned)**
 
 ## Project snapshot
 
@@ -13,8 +13,8 @@ Current task: **WBL-FE-016D — Connected POS session and invoice posting browse
 | Product specifications          | COMPLETE             | Parent `Docs/` contains populated V1 product, accounting, GST, API, database, security, pricing, AI, roadmap, and pilot specifications |
 | Angular application scaffold    | COMPLETE             | Angular 22 standalone app, strict TypeScript, routing and lazy-loaded pages                                                            |
 | Responsive application shell    | COMPLETE             | Sidebar, top bar, branch picker, mobile navigation and placeholder routes                                                              |
-| Dashboard UI                    | COMPLETE — API DATA  | Live product, stock, purchase and payable metrics with no hard-coded financial figures                                                |
-| POS UI                          | PARTIAL — API DATA   | Live product/stock search with local cart; session and invoice posting browser adapter is next                                        |
+| Dashboard UI                    | COMPLETE — API DATA  | Live sales, invoice, stock and receivable metrics plus recent posted sales                                                             |
+| POS UI                          | COMPLETE — CORE UI/API | Real register opening, server GST totals, atomic checkout, receipt and refreshed stock                                               |
 | Product catalogue UI            | PARTIAL — API DATA  | Searchable table renders real tenant product variants and branch stock; create/import remains pending                                |
 | Authentication                  | COMPLETE — CORE API | Angular real login/session/tenant integration works against Argon2/JWT/rotating-session API in desktop/mobile Chrome                  |
 | PWA foundation                  | COMPLETE             | Manifest, icon, service worker registration and production `ngsw` output                                                               |
@@ -25,7 +25,7 @@ Current task: **WBL-FE-016D — Connected POS session and invoice posting browse
 | Backend and persistence         | IN PROGRESS          | Protected POS sessions and atomic GST invoice/payment/stock/receivable posting now pass full API regression                            |
 | Webillify AI integration        | PARTIAL — PLAN UI/API | Separate plan/lifecycle/credits render live; extraction/questions/summaries remain pending                                            |
 | Data access and request state   | COMPLETE             | Typed models/repositories, mock/API modes, environment configuration and visible request errors                                        |
-| Automated tests                 | PARTIAL              | 23 frontend unit, 4 connected mutation/accessibility journeys, 3 API unit and 69 backend integration/security tests pass                |
+| Automated tests                 | PARTIAL              | 29 frontend unit, 4 connected mutation/accessibility journeys, 3 API unit and 69 backend integration/security tests pass                |
 | Production deployment           | PARTIAL              | Production build and GitHub CI definition exist; hosting/deployment environments remain pending                                        |
 
 ## Latest verified baseline
@@ -51,26 +51,27 @@ Current task: **WBL-FE-016D — Connected POS session and invoice posting browse
 | 2026-07-17 20:25:05 IST | Compensation browser full gate | PASS — web 23+4 real mutations; API 3+57; production audits 0            |
 | 2026-07-17 20:36:50 IST | POS persistence database gate  | PASS — eight migrations, zero drift, API 3+62 and production audit 0     |
 | 2026-07-18 17:56:26 IST | Atomic POS posting API gate     | PASS — nine migrations, zero drift, API 3+69 and production audit 0      |
+| 2026-07-18 18:31:06 IST | Connected POS browser full gate | PASS — web 29+4 real mutations; API 3+69; production audits 0            |
 
 ## Current goal
 
 Deliver a pilot-ready V1 web application for Indian small and medium retailers covering authenticated multi-tenant access, GST-ready POS sales, products and inventory, customers, purchases, expenses, reporting, subscriptions, and an optional separately billed Webillify AI add-on.
 
-The connected frontend and secure API foundations are verified through purchases and atomic online POS posting. The immediate goal is to connect the POS browser to session opening and server-calculated invoice posting, then add compensating sales returns/cancellation.
+The connected frontend and secure API foundations are verified through purchases and atomic online POS posting. The immediate goal is to add auditable compensating sales cancellation, returns, refunds and credit notes without mutating posted invoices.
 
 ## Next task assignment
 
 | Field              | Value                                                                                  |
 | ------------------ | -------------------------------------------------------------------------------------- |
-| Task ID            | `WBL-FE-016D`                                                                            |
-| Title              | Connected POS session and invoice posting browser workflow                               |
-| Status             | ASSIGNED AFTER BE-008B VERIFICATION                                                       |
+| Task ID            | `WBL-BE-008C`                                                                            |
+| Title              | Sales cancellation, returns and credit-note compensation                                 |
+| Status             | ASSIGNED AFTER FE-016D VERIFICATION                                                       |
 | Priority           | P0                                                                                     |
 | Suggested assignee | Backend/full-stack engineer                                                             |
 | Estimate           | Multiple staged checkpoints                                                             |
-| Dependencies       | Verified BE-008B protected session/invoice posting API                                    |
-| Deliverable        | Real session opening, checkout, payment and receipt workflow in the Angular POS page      |
-| Acceptance         | Desktop/mobile real-mutation tests, retry safety, error states, unit/build/audit gates pass |
+| Dependencies       | Verified BE-008B posting API and FE-016D connected browser workflow                       |
+| Deliverable        | Append-only sales returns/credit notes plus safe cancellation/refund compensation APIs    |
+| Acceptance         | Stock, receivable, tender/refund and tax projections reconcile under retries/concurrency  |
 
 See [Task-Backlog.md](Task-Backlog.md#recommended-next-task) for the complete assignment brief.
 
@@ -80,7 +81,7 @@ See [Task-Backlog.md](Task-Backlog.md#recommended-next-task) for the complete as
 - All five original worksheets are populated.
 - Completed claims are mapped to source files or command evidence.
 - Pending modules are task-ID based and assignable.
-- BE-001 through BE-008B, SEC-001, connected FE-016A/B/C and SETUP-005 are published. BE-008B is on `main` as `3aac4c2`; FE-016D is assigned next.
+- BE-001 through BE-008B, SEC-001, connected FE-016A/B/C and SETUP-005 are published. FE-016D is verified for publication; BE-008C is assigned next.
 
 ## Category codes
 

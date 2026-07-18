@@ -8,6 +8,8 @@ export interface Product {
   readonly unit: string;
   readonly color: string;
   readonly initials: string;
+  readonly taxRate?: number;
+  readonly priceTaxMode?: 'INCLUSIVE' | 'EXCLUSIVE';
 }
 
 export interface RecentSale {
@@ -27,6 +29,9 @@ export interface DashboardSnapshot {
     readonly purchaseBillCount: number;
     readonly outstandingPayables: number;
     readonly purchaseTotal: number;
+    readonly salesInvoiceCount?: number;
+    readonly salesTotal?: number;
+    readonly outstandingReceivables?: number;
   };
   readonly stockAlerts?: ReadonlyArray<{ readonly name: string; readonly stock: number }>;
 }
@@ -38,7 +43,30 @@ export interface CartItem {
 
 export type PaymentMethod = 'Cash' | 'UPI' | 'Card' | 'Credit';
 
+export interface PosSession {
+  readonly id: string;
+  readonly registerCode: string;
+  readonly status: 'OPEN' | 'CLOSED';
+  readonly openingCash: number;
+  readonly cashSalesAmount: number;
+  readonly openedAt: string;
+}
+
+export interface PosWorkspace {
+  readonly session: PosSession | null;
+  readonly warehouse: { readonly id: string; readonly name: string } | null;
+}
+
+export interface OpenPosSessionRequest {
+  readonly warehouseId: string;
+  readonly openingCash: number;
+}
+
 export interface CompleteSaleRequest {
+  readonly posSessionId: string;
+  readonly idempotencyKey: string;
+  readonly taxTreatment: 'INTRASTATE' | 'INTERSTATE';
+  readonly placeOfSupplyStateCode: string;
   readonly items: readonly CartItem[];
   readonly paymentMethod: PaymentMethod;
   readonly total: number;
@@ -47,6 +75,8 @@ export interface CompleteSaleRequest {
 export interface CompleteSaleResult {
   readonly invoiceNumber: string;
   readonly paymentMethod: PaymentMethod;
+  readonly totalAmount: number;
+  readonly idempotent: boolean;
 }
 
 export interface OrganizationContext {

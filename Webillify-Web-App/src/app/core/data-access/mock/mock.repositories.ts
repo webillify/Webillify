@@ -5,7 +5,9 @@ import {
   CompleteSaleRequest,
   CompleteSaleResult,
   DashboardSnapshot,
+  OpenPosSessionRequest,
   OrganizationContext,
+  PosWorkspace,
   Product,
 } from '../../domain/models';
 import {
@@ -37,13 +39,48 @@ export class MockProductRepository implements ProductRepository {
 @Injectable()
 export class MockPosRepository implements PosRepository {
   private nextInvoice = 249;
+  private workspace: PosWorkspace = {
+    session: {
+      id: 'pos-session-demo',
+      registerCode: 'DEMO-POS',
+      status: 'OPEN',
+      openingCash: 0,
+      cashSalesAmount: 0,
+      openedAt: new Date().toISOString(),
+    },
+    warehouse: { id: 'warehouse-demo', name: 'Demo warehouse' },
+  };
+
+  getWorkspace(): Observable<PosWorkspace> {
+    return of(this.workspace);
+  }
+
+  openSession(request: OpenPosSessionRequest): Observable<PosWorkspace> {
+    this.workspace = {
+      ...this.workspace,
+      session: {
+        id: 'pos-session-demo',
+        registerCode: 'DEMO-POS',
+        status: 'OPEN',
+        openingCash: request.openingCash,
+        cashSalesAmount: 0,
+        openedAt: new Date().toISOString(),
+      },
+    };
+    return of(this.workspace);
+  }
 
   completeSale(request: CompleteSaleRequest): Observable<CompleteSaleResult> {
     if (request.items.length === 0 || request.total <= 0) {
       return throwError(() => new Error('A sale requires at least one item and a positive total.'));
     }
     const invoiceNumber = `WBL-${String(this.nextInvoice++).padStart(4, '0')}`;
-    return of({ invoiceNumber, paymentMethod: request.paymentMethod });
+    return of({
+      invoiceNumber,
+      paymentMethod: request.paymentMethod,
+      totalAmount: request.total,
+      idempotent: false,
+    });
   }
 }
 

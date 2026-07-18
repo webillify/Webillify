@@ -4,9 +4,53 @@
     <h1>New sale</h1>
   </div>
   <div class="pos-session">
-    <span><i></i> Register open</span><strong>Session #018</strong>
+    @if (workspaceState().status === 'loading') {
+      <span>Checking register…</span>
+    } @else if (workspace()?.session; as session) {
+      <span><i></i> Register open</span><strong>{{ session.registerCode }}</strong>
+      <small>{{ workspace()?.warehouse?.name }}</small>
+    } @else {
+      <label>
+        <span>Opening cash</span>
+        <input
+          type="number"
+          min="0"
+          step="0.01"
+          [ngModel]="openingCash()"
+          (ngModelChange)="openingCash.set(+$event)"
+        />
+      </label>
+      <button
+        class="button button--primary"
+        type="button"
+        [disabled]="openingState().status === 'loading' || !workspace()?.warehouse"
+        (click)="openRegister()"
+      >
+        {{ openingState().status === 'loading' ? 'Opening…' : 'Open register' }}
+      </button>
+    }
   </div>
 </section>
+
+@if (workspaceState().status === 'error') {
+  <app-data-state
+    status="error"
+    [errorMessage]="workspaceState().error"
+    emptyTitle="Register unavailable"
+  />
+}
+
+@if (lastSale(); as sale) {
+  <section class="pos-receipt" role="status" aria-live="polite">
+    <span><app-icon name="receipt" /></span>
+    <div>
+      <small>Last invoice posted</small>
+      <strong>{{ sale.invoiceNumber }}</strong>
+      <p>{{ sale.paymentMethod }} · ₹{{ sale.totalAmount.toLocaleString('en-IN') }}</p>
+    </div>
+    <b>Stock and payment recorded</b>
+  </section>
+}
 
 <div class="pos-layout">
   <section class="pos-catalogue">
@@ -19,7 +63,7 @@
       /><kbd>F2</kbd></label
     >
     <div class="category-tabs">
-      @for (category of categories; track category) {
+      @for (category of categories(); track category) {
         <button
           type="button"
           [class.is-active]="selectedCategory() === category"
@@ -52,7 +96,9 @@
             ><strong>{{ product.name }}</strong
             ><small>{{ product.unit }} · {{ product.sku }}</small
             ><span
-              ><b>₹{{ product.price.toLocaleString('en-IN') }}</b
+              ><b
+                >₹{{ product.price.toLocaleString('en-IN') }}
+                {{ product.priceTaxMode === 'EXCLUSIVE' ? '+ GST' : '' }}</b
               ><em [class.is-low]="product.stock < 8">{{
                 product.stock ? product.stock + ' in stock' : 'Out of stock'
               }}</em></span
@@ -121,7 +167,7 @@
         ><strong>₹{{ subtotal().toLocaleString('en-IN', { maximumFractionDigits: 2 }) }}</strong>
       </p>
       <p>
-        <span>GST included</span
+        <span>GST</span
         ><strong>₹{{ tax().toLocaleString('en-IN', { maximumFractionDigits: 2 }) }}</strong>
       </p>
       <p>
@@ -134,8 +180,8 @@
     <button
       class="charge-button"
       type="button"
-      [disabled]="cart().length === 0"
-      (click)="paymentOpen.set(true)"
+      [disabled]="cart().length === 0 || !workspace()?.session"
+      (click)="openPayment()"
     >
       <span>Charge ₹{{ total().toLocaleString('en-IN') }}</span
       ><small>F8</small>
@@ -170,7 +216,32 @@
       </header>
       <div class="amount-due">
         <span>Amount due</span><strong>₹{{ total().toLocaleString('en-IN') }}</strong
-        ><small>GST included · {{ itemCount() }} items</small>
+        ><small>Server-checked GST · {{ itemCount() }} items</small>
+      </div>
+      <div class="tax-context">
+        <label>
+          <span>GST treatment</span>
+          <select
+            [ngModel]="taxTreatment()"
+            (ngModelChange)="taxTreatment.set($event)"
+            [disabled]="saleState().status !== 'idle'"
+          >
+            <option value="INTRASTATE">Intrastate (CGST + SGST)</option>
+            <option value="INTERSTATE">Interstate (IGST)</option>
+          </select>
+        </label>
+        <label>
+          <span>Place of supply state code</span>
+          <input
+            type="text"
+            inputmode="numeric"
+            maxlength="2"
+            pattern="[0-9]{2}"
+            [ngModel]="placeOfSupplyStateCode()"
+            (ngModelChange)="placeOfSupplyStateCode.set($event)"
+            [disabled]="saleState().status !== 'idle'"
+          />
+        </label>
       </div>
       <div class="payment-methods">
         @for (method of paymentMethods; track method) {
@@ -186,8 +257,13 @@
           </button>
         }
       </div>
+      @if (saleState().status === 'error') {
+        <p class="checkout-error" role="alert">
+          {{ saleState().error }} Your retry will use the same request identity.
+        </p>
+      }
       <p class="modal-note">
-        Demo only: completing this sale clears the local cart; it does not create a real invoice.
+        Invoice, payment, stock and receivable effects are posted atomically by the Webillify API.
       </p>
     </section>
   </div>

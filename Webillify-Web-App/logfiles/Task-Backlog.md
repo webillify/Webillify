@@ -1,8 +1,22 @@
 # Webillify task backlog
 
-Last prioritized: **2026-07-18 18:01:50 IST**
-Active assignee: **Codex — WBL-FE-016D assigned; BE-008B published as `3aac4c2`**
+Last prioritized: **2026-07-18 18:31:06 IST**
+Active assignee: **Codex — WBL-BE-008C assigned; FE-016D verified for publication**
 WIP limit: **One P0 task per engineer**
+
+## Just completed
+
+### WBL-FE-016D — Connected POS session and invoice posting browser workflow
+
+Status: **COMPLETE — 2026-07-18 18:31:06 IST**
+
+- Added live branch register discovery/opening with opening cash and active warehouse context.
+- Mapped catalogue tax metadata into line-rounded inclusive/exclusive GST totals that match server calculation.
+- Posted cash, UPI or card checkout with a retry-stable request identity and visible API error/retry state.
+- Added posted invoice receipt, stock/session refresh and real invoice totals/recent activity on the dashboard.
+- Reworked inventory regression assertions to remain ledger-relative after legitimate browser sales.
+
+Result: production/development builds, 29 unit tests, 4 connected desktop/mobile mutation/accessibility journeys, API 3+69 regressions and both production dependency audits pass at 0 vulnerabilities.
 
 ## Just completed
 
@@ -283,7 +297,8 @@ Status: **COMPLETE — CORE API; accounting/GST fixtures remain an external prod
 | `WBL-BE-008`     | P0       | POS invoice/payment/stock/return persistence  | READY       | Backend/full-stack  | BE-006/007      |
 | `WBL-BE-008A`    | P0       | POS invoice/payment/stock database foundation | COMPLETE    | Codex               | BE-006/007      |
 | `WBL-BE-008B`    | P0       | Protected atomic POS posting API              | COMPLETE    | Codex               | BE-008A         |
-| `WBL-FE-016D`    | P0       | Connected POS session/invoice browser workflow | IN PROGRESS | Codex              | BE-008B         |
+| `WBL-FE-016D`    | P0       | Connected POS session/invoice browser workflow | COMPLETE    | Codex              | BE-008B         |
+| `WBL-BE-008C`    | P0       | Sales cancellation/return/credit compensation  | IN PROGRESS | Codex              | BE-008B         |
 | `WBL-FE-009`     | P1       | Shared loading/error/toast/confirm UX        | COMPLETE   | Codex              | FE-007          |
 | `WBL-FE-010`     | P1       | Customer list/detail/balance UI              | PLANNED    | Frontend           | Data/API        |
 | `WBL-FE-011`     | P1       | Product create/edit/import UI                | PLANNED    | Frontend           | Catalogue API   |

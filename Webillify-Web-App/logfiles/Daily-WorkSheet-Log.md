@@ -2,6 +2,29 @@
 
 Append-only history. Newest session first; corrections use a new timestamped amendment.
 
+## 2026-07-18 — Connected POS browser workflow
+
+Session: **18:02:00–18:31:06 IST**
+Task: **WBL-FE-016D**
+Assignee: **Codex**
+Status: **COMPLETE — publication pending**
+
+| Timestamp (IST)     | Category | Activity                                                                                  | Result                    |
+| ------------------- | -------- | ----------------------------------------------------------------------------------------- | ------------------------- |
+| 2026-07-18 18:02:00 | FRONTEND | Replaced the remaining POS demo boundary with real session and invoice repository methods | COMPLETE                  |
+| 2026-07-18 18:08:00 | DOMAIN   | Added server-aligned inclusive/exclusive GST totals and explicit supply/tax treatment      | COMPLETE                  |
+| 2026-07-18 18:12:00 | FRONTEND | Added register opening, retry-stable checkout, posted receipt and stock/session refresh    | COMPLETE                  |
+| 2026-07-18 18:16:00 | FRONTEND | Switched dashboard projections and recent activity from purchase proxies to sales invoices | COMPLETE                  |
+| 2026-07-18 18:20:49 | TEST     | Added page and HTTP-adapter register/GST/payload/idempotency tests                          | PASS — 28/28              |
+| 2026-07-18 18:24:00 | TEST     | Concurrent desktop/mobile stock assertion assumed exactly one sale                         | FAILED — FIXED            |
+| 2026-07-18 18:26:00 | TEST     | Four real login/POS/purchase/dashboard/accessibility browser journeys                      | PASS                      |
+| 2026-07-18 18:28:00 | TEST     | Post-browser API regression exposed fixed `100 → 98` inventory fixture assumption          | FAILED — FIXED            |
+| 2026-07-18 18:31:06 | TEST     | Format, prod/dev builds, web 28+4, API 3+69 and both production audits                     | PASS — 0 vulnerabilities |
+| 2026-07-18 18:34:30 | TEST     | Added concurrent first-register-open recovery and reran unit/build/browser gates           | PASS — web 29+4          |
+| 2026-07-18 18:31:06 | BACKEND  | Assigned BE-008C append-only sales compensation APIs                                       | IN PROGRESS               |
+
+---
+
 ## 2026-07-18 — Atomic POS posting API
 
 Session: **17:31:00–17:56:26 IST**

@@ -50,18 +50,42 @@ test('signs in and renders real workspace navigation and catalogue data', async 
   await expect(page.getByRole('heading', { name: 'Products' })).toBeVisible();
   const productRow = page.getByRole('row').filter({ hasText: 'RICE-PREMIUM-1KG' });
   await expect(productRow).toContainText('Premium Rice');
-  await expect(productRow).toContainText('100');
+  await expect(productRow).toContainText(/\d+(?:\.\d+)?/);
 
   await page.goto('/pos');
   await expect(page.getByRole('heading', { name: 'New sale' })).toBeVisible();
-  await page.getByRole('button', { name: /Premium Rice/ }).click();
+  const openRegister = page.getByRole('button', { name: 'Open register' });
+  if (await openRegister.isVisible().catch(() => false)) {
+    await openRegister.click();
+    await expect(page.getByText('Register open')).toBeVisible();
+  }
+  const productCard = page.getByRole('button', { name: /Premium Rice/ });
+  const stockText = (await productCard.locator('em').textContent()) ?? '';
+  const stockBefore = Number(stockText.match(/\d+(?:\.\d+)?/)?.[0]);
+  expect(stockBefore).toBeGreaterThan(0);
+  await productCard.click();
+  await expect(page.getByRole('button', { name: /Charge ₹63/ })).toBeVisible();
   await page.getByRole('button', { name: /Charge/ }).click();
   const dialog = page.getByRole('dialog', { name: 'Choose payment method' });
   await expect(dialog).toBeFocused();
   await dialog.getByRole('button', { name: 'Cash' }).click();
-  await expect(
-    page.getByRole('status').filter({ hasText: /Sales posting is not implemented/ }),
-  ).toBeVisible();
+  const receipt = page.locator('.pos-receipt');
+  await expect(receipt).toContainText('Stock and payment recorded');
+  await expect(receipt).toContainText('₹63');
+  const invoiceNumber = (await receipt.locator('strong').textContent())?.trim();
+  expect(invoiceNumber).toMatch(/^WBL-\d+$/);
+  await expect
+    .poll(async () => {
+      const value = (await productCard.locator('em').textContent()) ?? '';
+      return Number(value.match(/\d+(?:\.\d+)?/)?.[0]);
+    })
+    .toBeLessThan(stockBefore);
+
+  await page.goto('/dashboard');
+  await expect(page.getByRole('heading', { name: 'Recent sales activity' })).toBeVisible();
+  await expect(page.getByRole('row').filter({ hasText: invoiceNumber ?? '' })).toContainText(
+    'Paid',
+  );
 
   await page.goto('/purchases');
   await expect(page.getByRole('heading', { name: 'Purchase bills' })).toBeVisible();
