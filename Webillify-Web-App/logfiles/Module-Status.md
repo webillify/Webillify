@@ -1,6 +1,6 @@
 # Webillify module status
 
-Reconciled: **2026-07-17 20:36:50 IST**
+Reconciled: **2026-07-18 17:56:26 IST**
 Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence passed. `DEMO` is not production-ready.
 
 ## Frontend modules
@@ -12,7 +12,7 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 | `WBL-MOD-003` | Application shell | COMPLETE        | Responsive shell in `src/app/layout/`                            | Real organization/branch state        |
 | `WBL-MOD-004` | Sign-in           | COMPLETE — API | Real login/access token/refresh cookie, workspace hydration and sign-out | Password reset later            |
 | `WBL-MOD-005` | Dashboard         | COMPLETE — API  | Live catalogue, stock, purchase and payable projections          | Add sales metrics with BE-008         |
-| `WBL-MOD-006` | POS               | DEMO            | Search, cart, totals and payment selection                       | Transactional API and sessions        |
+| `WBL-MOD-006` | POS               | PARTIAL — API   | Live products/stock and cart; protected posting API ready        | Connect session/checkout/receipt UI   |
 | `WBL-MOD-007` | Products          | PARTIAL — API   | Real tenant catalogue and stock projection render in browser     | CRUD, import and API pagination       |
 | `WBL-MOD-008` | Customers         | PLANNED         | Placeholder route only                                           | List/detail/balance/receipt           |
 | `WBL-MOD-009` | Purchases         | COMPLETE — CORE UI/API | Live draft/post/payment/cancel/full-return flows with permission and reason controls | Partial-line editor later |
@@ -36,7 +36,7 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 | `WBL-MOD-106` | Catalogue          | COMPLETE    | Protected product/reference APIs, atomic identifiers and tenant isolation pass |
 | `WBL-MOD-107` | Inventory          | COMPLETE — CORE | Branch-scoped balances/movements and concurrent idempotent adjustments pass |
 | `WBL-MOD-108` | Purchases/payables | COMPLETE — CORE API | Supplier/draft/post/payment plus idempotent cancellation/returns and reconciled stock/payable/credit effects pass |
-| `WBL-MOD-109` | Sales/receivables  | IN PROGRESS — DB | Tenant customers, financial-year series, POS sessions, immutable invoice/items/tenders and cash schema pass; posting API next |
+| `WBL-MOD-109` | Sales/receivables  | COMPLETE — CORE API | Protected sessions and atomic server-calculated invoice/tender/stock/receivable posting pass |
 | `WBL-MOD-110` | Reports/exports    | NOT STARTED | Reconciled reports and scoped exports                 |
 | `WBL-MOD-111` | Audit/files/worker | NOT STARTED | Audit trail, secure files and outbox jobs             |
 | `WBL-MOD-112` | AI capabilities    | NOT STARTED | Extraction, questions, summaries and drafts           |
@@ -46,7 +46,7 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 | Module           | Status      | Evidence/gap                                  |
 | ---------------- | ----------- | --------------------------------------------- |
 | Unit tests       | COMPLETE    | 23 tests/10 files cover current frontend scope |
-| E2E tests        | PARTIAL     | 4 connected desktop/mobile mutation journeys and 62 API integration tests pass |
+| E2E tests        | PARTIAL     | 4 connected desktop/mobile mutation journeys and 69 API integration tests pass |
 | Accessibility QA | COMPLETE    | Axe plus keyboard/responsive audit passes     |
 | CI/CD            | CONFIGURED  | GitHub Actions definition; first run pending  |
 | Deployment       | NOT STARTED | Bundle exists; no hosting definition          |
@@ -73,4 +73,5 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 2026-07-17 20:15:08 IST  Purchase compensation gate    PASS (7 migrations; drift 0; API 3+57; audit 0)
 2026-07-17 20:25:05 IST  Purchase compensation browser PASS (23 unit + 4 browser; API 3+57; audits 0)
 2026-07-17 20:36:50 IST  POS persistence database gate  PASS (8 migrations; drift 0; API 3+62; audit 0)
+2026-07-18 17:56:26 IST  Atomic POS posting API gate     PASS (9 migrations; drift 0; API 3+69; audit 0)
 ```

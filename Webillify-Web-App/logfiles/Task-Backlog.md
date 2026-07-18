@@ -1,8 +1,22 @@
 # Webillify task backlog
 
-Last prioritized: **2026-07-17 20:38:54 IST**
-Active assignee: **Codex — WBL-BE-008B in progress; BE-008A published as `1bfe776`**
+Last prioritized: **2026-07-18 17:56:26 IST**
+Active assignee: **Codex — WBL-FE-016D assigned; BE-008B verified for publication**
 WIP limit: **One P0 task per engineer**
+
+## Just completed
+
+### WBL-BE-008B — Protected atomic POS session and invoice posting API
+
+Status: **COMPLETE — 2026-07-18 17:56:26 IST**
+
+- Added permission-protected branch POS session opening with normalized register identity and retry-safe idempotency.
+- Added server-calculated intrastate/interstate GST, discount, round-off, split-tender and customer-credit invoice posting.
+- Allocated financial-year invoice numbers under lock and persisted immutable price, tax, cost and payment snapshots.
+- Posted stock issues, balance changes, customer receivables, session cash totals and audit records in one serializable transaction.
+- Added changed-retry, concurrent-replay, insufficient-stock, total-mismatch, credit-customer and suspended-entitlement coverage.
+
+Result: clean nine-migration replay/seed, zero schema drift, lint/build, production audit 0, 3 unit and 69 integration/security tests pass.
 
 ## Just completed
 
@@ -268,7 +282,8 @@ Status: **COMPLETE — CORE API; accounting/GST fixtures remain an external prod
 | `WBL-FE-016C`    | P0       | Purchase cancellation/return browser actions  | COMPLETE    | Codex               | BE-007C         |
 | `WBL-BE-008`     | P0       | POS invoice/payment/stock/return persistence  | READY       | Backend/full-stack  | BE-006/007      |
 | `WBL-BE-008A`    | P0       | POS invoice/payment/stock database foundation | COMPLETE    | Codex               | BE-006/007      |
-| `WBL-BE-008B`    | P0       | Protected atomic POS posting API              | IN PROGRESS | Codex               | BE-008A         |
+| `WBL-BE-008B`    | P0       | Protected atomic POS posting API              | COMPLETE    | Codex               | BE-008A         |
+| `WBL-FE-016D`    | P0       | Connected POS session/invoice browser workflow | IN PROGRESS | Codex              | BE-008B         |
 | `WBL-FE-009`     | P1       | Shared loading/error/toast/confirm UX        | COMPLETE   | Codex              | FE-007          |
 | `WBL-FE-010`     | P1       | Customer list/detail/balance UI              | PLANNED    | Frontend           | Data/API        |
 | `WBL-FE-011`     | P1       | Product create/edit/import UI                | PLANNED    | Frontend           | Catalogue API   |

@@ -1,6 +1,6 @@
 # Webillify completed work worksheet
 
-Last updated: **2026-07-17 20:36:50 IST**
+Last updated: **2026-07-18 17:56:26 IST**
 
 | Task ID         | Completed (IST)     | Module/deliverable                                                            | Evidence                                       | Verification                                  |
 | --------------- | ------------------- | ----------------------------------------------------------------------------- | ---------------------------------------------- | --------------------------------------------- |
@@ -38,5 +38,6 @@ Last updated: **2026-07-17 20:36:50 IST**
 | `WBL-BE-007C`   | 2026-07-17 20:15:08 | Auditable purchase cancellation and linked returns with compensating stock/payables | Return schema, protected APIs and E2E matrix    | 3 unit + 57 integration; drift/audit PASS    |
 | `WBL-FE-016C`   | 2026-07-17 20:25:05 | Permission-aware purchase cancellation/full-return browser workflow                  | Purchase page, API repository and E2E journey   | 23 unit + 4 browser; API 3+57 PASS           |
 | `WBL-BE-008A`   | 2026-07-17 20:36:50 | Tenant POS/customer/invoice-series/invoice/item/payment/cash database foundation      | Prisma schema, migration, seed and DB E2E       | 3 unit + 62 integration; drift/audit PASS    |
+| `WBL-BE-008B`   | 2026-07-18 17:56:26 | Protected idempotent POS sessions and atomic GST invoice/payment/stock posting API    | `src/modules/sales/`, fingerprint migration, E2E | 3 unit + 69 integration; drift/audit PASS   |
 
-`R0 — Frontend foundation` is complete and the implemented R1 surface now uses real identity, tenant, subscription, catalogue, stock and purchase APIs. The product is still pre-release: POS persistence, customers, reporting, administration and production deployment remain pending.
+`R0 — Frontend foundation` is complete and the implemented R1 surface now uses real identity, tenant, subscription, catalogue, stock and purchase APIs. POS posting is implemented in the API and awaits browser connection; sales returns, customers, reporting, administration and production deployment remain pending.

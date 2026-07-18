@@ -96,11 +96,11 @@ Exit gate: Stock balances reconcile to movements and approved purchase/return fi
 
 ## Phase 5 — POS, sales, returns and receivables
 
-Status: **IN PROGRESS — BE-008A database foundation complete; protected posting API next**
+Status: **IN PROGRESS — BE-008B atomic posting API complete; browser connection and compensation next**
 
 - [x] POS sessions and cash movement persistence/constraints
-- [ ] Server-calculated draft and atomic invoice posting
-- [x] Cash/card/UPI/bank split-payment persistence/constraints (posting API pending)
+- [x] Server-calculated atomic invoice posting
+- [x] Cash/card/UPI/bank split-payment persistence/constraints and posting API
 - [ ] Customer balances, receipts and allocations
 - [ ] Sales return, credit note and cancellation/reversal
 - [ ] PDF/thermal invoice; financial-year series persistence complete

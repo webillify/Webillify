@@ -875,38 +875,40 @@ model InvoiceSeries {
 }
 
 model PosSession {
-  id              String           @id @default(uuid()) @db.Uuid
-  organizationId  String           @map("organization_id") @db.Uuid
-  companyId       String           @map("company_id") @db.Uuid
-  branchId        String           @map("branch_id") @db.Uuid
-  warehouseId     String           @map("warehouse_id") @db.Uuid
-  openedByUserId  String           @map("opened_by_user_id") @db.Uuid
-  closedByUserId  String?          @map("closed_by_user_id") @db.Uuid
-  registerCode    String           @map("register_code") @db.VarChar(60)
-  status          PosSessionStatus @default(OPEN)
-  openingCash     Decimal          @default(0) @map("opening_cash") @db.Decimal(14, 2)
-  cashSalesAmount Decimal          @default(0) @map("cash_sales_amount") @db.Decimal(14, 2)
-  payInAmount     Decimal          @default(0) @map("pay_in_amount") @db.Decimal(14, 2)
-  payOutAmount    Decimal          @default(0) @map("pay_out_amount") @db.Decimal(14, 2)
-  refundAmount    Decimal          @default(0) @map("refund_amount") @db.Decimal(14, 2)
-  expectedCash    Decimal?         @map("expected_cash") @db.Decimal(14, 2)
-  declaredCash    Decimal?         @map("declared_cash") @db.Decimal(14, 2)
-  variance        Decimal?         @db.Decimal(14, 2)
-  openedAt        DateTime         @default(now()) @map("opened_at") @db.Timestamptz(3)
-  closedAt        DateTime?        @map("closed_at") @db.Timestamptz(3)
-  createdAt       DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt       DateTime         @updatedAt @map("updated_at") @db.Timestamptz(3)
-  organization    Organization     @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  company         Company          @relation(fields: [companyId, organizationId], references: [id, organizationId], onDelete: Restrict)
-  branch          Branch           @relation(fields: [branchId, organizationId], references: [id, organizationId], onDelete: Restrict)
-  warehouse       Warehouse        @relation(fields: [warehouseId, organizationId], references: [id, organizationId], onDelete: Restrict)
-  openedBy        User             @relation("PosSessionOpenedBy", fields: [openedByUserId], references: [id], onDelete: Restrict)
-  closedBy        User?            @relation("PosSessionClosedBy", fields: [closedByUserId], references: [id], onDelete: Restrict)
-  invoices        SalesInvoice[]
-  payments        SalesPayment[]
-  cashMovements   CashMovement[]
+  id                    String           @id @default(uuid()) @db.Uuid
+  organizationId        String           @map("organization_id") @db.Uuid
+  companyId             String           @map("company_id") @db.Uuid
+  branchId              String           @map("branch_id") @db.Uuid
+  warehouseId           String           @map("warehouse_id") @db.Uuid
+  openedByUserId        String           @map("opened_by_user_id") @db.Uuid
+  closedByUserId        String?          @map("closed_by_user_id") @db.Uuid
+  registerCode          String           @map("register_code") @db.VarChar(60)
+  openingIdempotencyKey String           @map("opening_idempotency_key") @db.VarChar(120)
+  status                PosSessionStatus @default(OPEN)
+  openingCash           Decimal          @default(0) @map("opening_cash") @db.Decimal(14, 2)
+  cashSalesAmount       Decimal          @default(0) @map("cash_sales_amount") @db.Decimal(14, 2)
+  payInAmount           Decimal          @default(0) @map("pay_in_amount") @db.Decimal(14, 2)
+  payOutAmount          Decimal          @default(0) @map("pay_out_amount") @db.Decimal(14, 2)
+  refundAmount          Decimal          @default(0) @map("refund_amount") @db.Decimal(14, 2)
+  expectedCash          Decimal?         @map("expected_cash") @db.Decimal(14, 2)
+  declaredCash          Decimal?         @map("declared_cash") @db.Decimal(14, 2)
+  variance              Decimal?         @db.Decimal(14, 2)
+  openedAt              DateTime         @default(now()) @map("opened_at") @db.Timestamptz(3)
+  closedAt              DateTime?        @map("closed_at") @db.Timestamptz(3)
+  createdAt             DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt             DateTime         @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization          Organization     @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  company               Company          @relation(fields: [companyId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  branch                Branch           @relation(fields: [branchId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  warehouse             Warehouse        @relation(fields: [warehouseId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  openedBy              User             @relation("PosSessionOpenedBy", fields: [openedByUserId], references: [id], onDelete: Restrict)
+  closedBy              User?            @relation("PosSessionClosedBy", fields: [closedByUserId], references: [id], onDelete: Restrict)
+  invoices              SalesInvoice[]
+  payments              SalesPayment[]
+  cashMovements         CashMovement[]
 
   @@unique([id, organizationId])
+  @@unique([organizationId, openingIdempotencyKey])
   @@index([organizationId, branchId, status, openedAt])
   @@map("pos_sessions")
 }
@@ -942,6 +944,7 @@ model SalesInvoice {
   outstandingAmount          Decimal            @default(0) @map("outstanding_amount") @db.Decimal(14, 2)
   costAmount                 Decimal            @default(0) @map("cost_amount") @db.Decimal(14, 2)
   idempotencyKey             String             @map("idempotency_key") @db.VarChar(120)
+  requestHash                String             @map("request_hash") @db.Char(64)
   postedAt                   DateTime           @default(now()) @map("posted_at") @db.Timestamptz(3)
   postedByUserId             String             @map("posted_by_user_id") @db.Uuid
   cancellationIdempotencyKey String?            @map("cancellation_idempotency_key") @db.VarChar(120)

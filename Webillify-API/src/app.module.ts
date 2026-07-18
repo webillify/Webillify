@@ -12,6 +12,7 @@ import { HealthModule } from './modules/health/health.module';
 import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
 import { CatalogueModule } from './modules/catalogue/catalogue.module';
 import { PurchasesModule } from './modules/purchases/purchases.module';
+import { SalesModule } from './modules/sales/sales.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { PurchasesModule } from './modules/purchases/purchases.module';
     SubscriptionsModule,
     CatalogueModule,
     PurchasesModule,
+    SalesModule,
     HealthModule,
   ],
   controllers: [AppController],

@@ -1,14 +1,14 @@
 # Webillify incomplete work worksheet
 
-Last updated: **2026-07-17 20:38:54 IST**
-In progress: **WBL-BE-008B — Codex — protected atomic POS session/invoice posting API**
-Ready next: **WBL-BE-008B protected POS posting API after BE-008A**
+Last updated: **2026-07-18 17:56:26 IST**
+In progress: **WBL-FE-016D — Codex — connected POS session/invoice browser workflow**
+Ready next: **WBL-BE-008C sales cancellation/returns after connected POS posting**
 
 ## Ready
 
 | Task ID      | Priority | Module/outcome                 | Assignee | Status      |
 | ------------ | -------- | ------------------------------ | -------- | ----------- |
-| `WBL-BE-008B` | P0      | Protected atomic POS posting API | Codex | IN PROGRESS |
+| `WBL-FE-016D` | P0      | Connected POS session/invoice browser workflow | Codex | IN PROGRESS |
 
 ## Planned frontend
 
@@ -35,6 +35,8 @@ Ready next: **WBL-BE-008B protected POS posting API after BE-008A**
 | `WBL-BE-007A`   | P0           | Purchases/payables database foundation | COMPLETE    |
 | `WBL-BE-007B`   | P0           | Purchase/payable API and posting effects | COMPLETE    |
 | `WBL-BE-007C`   | P0           | Purchase cancellation and return workflows | COMPLETE  |
+| `WBL-BE-008A`   | P0           | POS persistence database foundation          | COMPLETE  |
+| `WBL-BE-008B`   | P0           | Protected atomic POS posting API             | COMPLETE  |
 | `WBL-BE-008`    | P0           | POS/invoice/payment/returns           | READY       |
 | `WBL-BE-009`    | P1           | Reports/exports/closing               | PLANNED     |
 | `WBL-QA-002`    | P0           | Feature unit tests                    | COMPLETE    |

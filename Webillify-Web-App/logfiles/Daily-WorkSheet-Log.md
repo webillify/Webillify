@@ -2,6 +2,27 @@
 
 Append-only history. Newest session first; corrections use a new timestamped amendment.
 
+## 2026-07-18 — Atomic POS posting API
+
+Session: **17:31:00–17:56:26 IST**
+Task: **WBL-BE-008B**
+Assignee: **Codex**
+Status: **COMPLETE — publication pending**
+
+| Timestamp (IST)     | Category | Activity                                                                                       | Result                    |
+| ------------------- | -------- | ---------------------------------------------------------------------------------------------- | ------------------------- |
+| 2026-07-18 17:31:00 | BACKEND  | Added protected POS session list/open and sales invoice list/detail/post endpoints             | COMPLETE                  |
+| 2026-07-18 17:37:00 | DOMAIN   | Added server GST/discount/tender/credit calculations and financial-year invoice numbering      | COMPLETE                  |
+| 2026-07-18 17:41:00 | DATABASE | Added request fingerprints plus atomic invoice/item/payment/stock/receivable/session projections | COMPLETE                |
+| 2026-07-18 17:44:00 | SECURITY | Enforced tenant/branch, `pos.create`, active-core and branch-hidden idempotent replay boundaries | COMPLETE                |
+| 2026-07-18 17:47:00 | TEST     | Added concurrent session/invoice retries, underflow, mismatch, credit and suspended-plan matrix | PASS — 7/7 new tests      |
+| 2026-07-18 17:49:00 | TEST     | Combined sales database/API suite found mutable sequence fixture assumption                     | FAILED — FIXED            |
+| 2026-07-18 17:53:00 | TEST     | Clean nine-migration replay, seed, schema validation and drift comparison                       | PASS — zero drift         |
+| 2026-07-18 17:56:26 | TEST     | Lint/build, 3 unit, 69 integration/security and production dependency audit                     | PASS — 0 vulnerabilities |
+| 2026-07-18 17:56:26 | FRONTEND | Assigned FE-016D connected POS session/invoice browser workflow                                 | IN PROGRESS               |
+
+---
+
 ## 2026-07-17 — GitHub baseline, CI and backend foundation
 
 Session start: **17:22:35 IST**  

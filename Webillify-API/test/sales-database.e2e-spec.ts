@@ -36,10 +36,10 @@ describe('Sales and POS database foundation', () => {
       documentType: 'SALES_INVOICE',
       financialYear: '2026-27',
       prefix: 'WBL',
-      nextNumber: 1,
       padding: 5,
       active: true,
     });
+    expect(series.nextNumber).toBeGreaterThanOrEqual(1);
   });
 
   it('enforces one open register and matching company/branch/warehouse ownership', async () => {
@@ -64,6 +64,7 @@ describe('Sales and POS database foundation', () => {
               warehouseId,
               openedByUserId: userId,
               registerCode: `MISMATCH-${randomUUID()}`,
+              openingIdempotencyKey: `mismatch-open-${randomUUID()}`,
             },
           }),
         ).rejects.toThrow(/ownership must match/);
@@ -209,6 +210,7 @@ describe('Sales and POS database foundation', () => {
         warehouseId,
         openedByUserId: userId,
         registerCode,
+        openingIdempotencyKey: `open-${randomUUID()}`,
         openingCash: '0.00',
       },
     });
@@ -250,6 +252,7 @@ describe('Sales and POS database foundation', () => {
         outstandingAmount: '95.00',
         costAmount: '45.00',
         idempotencyKey: overrides.idempotencyKey ?? `invoice-${randomUUID()}`,
+        requestHash: randomUUID().replaceAll('-', '').padEnd(64, '0'),
         postedByUserId: userId,
       },
     });
