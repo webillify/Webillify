@@ -1,6 +1,6 @@
 # Webillify module status
 
-Reconciled: **2026-07-18 18:35:58 IST**
+Reconciled: **2026-07-18 18:52:50 IST**
 Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence passed. `DEMO` is not production-ready.
 
 ## Frontend modules
@@ -48,7 +48,7 @@ Rule: `COMPLETE` means the scoped deliverable exists and its acceptance evidence
 | Unit tests       | COMPLETE    | 29 tests/11 files cover current frontend scope |
 | E2E tests        | PARTIAL     | 4 connected desktop/mobile mutation journeys and 69 API integration tests pass |
 | Accessibility QA | COMPLETE    | Axe plus keyboard/responsive audit passes     |
-| CI/CD            | CONFIGURED  | GitHub Actions definition; first run pending  |
+| CI/CD            | DISABLED — USER REQUEST | `Webillify CI` manually disabled on GitHub; local verified gates continue |
 | Deployment       | NOT STARTED | Bundle exists; no hosting definition          |
 | Monitoring       | NOT STARTED | No error/uptime configuration                 |
 | Backup/recovery  | NOT STARTED | Awaits backend/database                       |

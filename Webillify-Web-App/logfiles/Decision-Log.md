@@ -18,6 +18,7 @@ Decisions are append-only. A changed decision gets a new ID and references the s
 | `WBL-DEC-012` | 2026-07-17 17:27:22 | Track the complete Webillify workspace in one root Git repository    | Product specs, app, API and delivery logs must evolve together  | `main` uses the requested GitHub repository as `origin`     | ACTIVE |
 | `WBL-DEC-013` | 2026-07-17 19:06:21 | Treat posted purchase bills/payments as immutable accounting records | Auditability requires corrections through explicit future reversal flows | Drafts remain editable/deletable; posted rows reject mutation | SUPERSEDED |
 | `WBL-DEC-014` | 2026-07-17 19:22:18 | Keep posted purchase snapshots immutable while allowing only allocation-backed payment projections | Payments must reduce payable without rewriting supplier/tax/stock history; clarifies WBL-DEC-013 | Paid/outstanding may change only through reconciled immutable allocation workflows | ACTIVE |
+| `WBL-DEC-015` | 2026-07-18 18:52:50 | Disable the GitHub-hosted `Webillify CI` workflow at the owner's request | Repeated push runs generated unwanted failure notifications because historical log files did not satisfy the workflow Prettier check | GitHub Actions will not run on future pushes; verified local stage gates remain mandatory | ACTIVE |
 
 ## New decision template
 

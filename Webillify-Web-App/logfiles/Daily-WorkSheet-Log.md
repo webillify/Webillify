@@ -22,6 +22,8 @@ Status: **COMPLETE — published to GitHub `main`**
 | 2026-07-18 18:31:06 | TEST     | Format, prod/dev builds, web 28+4, API 3+69 and both production audits                     | PASS — 0 vulnerabilities |
 | 2026-07-18 18:34:30 | TEST     | Added concurrent first-register-open recovery and reran unit/build/browser gates           | PASS — web 29+4          |
 | 2026-07-18 18:37:51 | INFRA    | Pushed verified FE-016D connected POS browser stage to GitHub `main`                        | `efa5fa4`                |
+| 2026-07-18 18:49:00 | TEST     | Inspected latest GitHub run; API passed and frontend stopped on eight log-format warnings   | ROOT CAUSE CONFIRMED     |
+| 2026-07-18 18:52:50 | INFRA    | Manually disabled GitHub `Webillify CI`; confirmed no queued or running workflow jobs        | STOPPED                  |
 | 2026-07-18 18:31:06 | BACKEND  | Assigned BE-008C append-only sales compensation APIs                                       | IN PROGRESS               |
 
 ---

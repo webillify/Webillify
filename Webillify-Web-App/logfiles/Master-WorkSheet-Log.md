@@ -1,6 +1,6 @@
 # Webillify master worksheet
 
-Snapshot timestamp: **2026-07-18 18:37:51 IST**
+Snapshot timestamp: **2026-07-18 18:52:50 IST**
 Project status: **ACTIVE — connected atomic POS checkout verified; sales compensation is next**
 Current release: **R1 — Frontend application foundation**  
 Current phase: **Phase 5 — POS, sales, returns and receivables**
@@ -26,7 +26,7 @@ Current task: **WBL-BE-008C — Sales cancellation, returns and credit-note comp
 | Webillify AI integration        | PARTIAL — PLAN UI/API | Separate plan/lifecycle/credits render live; extraction/questions/summaries remain pending                                            |
 | Data access and request state   | COMPLETE             | Typed models/repositories, mock/API modes, environment configuration and visible request errors                                        |
 | Automated tests                 | PARTIAL              | 29 frontend unit, 4 connected mutation/accessibility journeys, 3 API unit and 69 backend integration/security tests pass                |
-| Production deployment           | PARTIAL              | Production build and GitHub CI definition exist; hosting/deployment environments remain pending                                        |
+| Production deployment           | PARTIAL              | Production build exists; GitHub CI was manually disabled by user request; hosting environments remain pending                          |
 
 ## Latest verified baseline
 
