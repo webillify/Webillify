@@ -83,7 +83,7 @@ See [Task-Backlog.md](Task-Backlog.md#recommended-next-task) for the complete as
 - All five original worksheets are populated.
 - Completed claims are mapped to source files or command evidence.
 - Pending modules are task-ID based and assignable.
-- BE-001 through BE-008C, SEC-001, connected FE-016A/B/C/D/E and SETUP-005 are verified. FE-010 is assigned next.
+- BE-001 through BE-008C, SEC-001, connected FE-016A/B/C/D/E and SETUP-005 are published. FE-016E is on `main` as `baf1528`; FE-010 is assigned next.
 
 ## Category codes
 

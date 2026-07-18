@@ -7,7 +7,7 @@ Append-only history. Newest session first; corrections use a new timestamped ame
 Session: **19:09:00–19:17:32 IST**
 Task: **WBL-FE-016E**
 Assignee: **Codex**
-Status: **COMPLETE — verified locally; publication pending**
+Status: **COMPLETE — published to GitHub `main`**
 
 | Timestamp (IST)     | Category | Activity                                                                     | Result                   |
 | ------------------- | -------- | ---------------------------------------------------------------------------- | ------------------------ |
@@ -18,6 +18,7 @@ Status: **COMPLETE — verified locally; publication pending**
 | 2026-07-18 19:16:00 | TEST     | Desktop return and mobile cancellation through real API with axe scan        | PASS — 4/4 journeys      |
 | 2026-07-18 19:17:32 | TEST     | Format, prod/dev builds, web 35+4, API 3+71 and both production audits       | PASS — 0 vulnerabilities |
 | 2026-07-18 19:17:32 | FRONTEND | Assigned FE-010 customer balances and receipt workflow                       | IN PROGRESS              |
+| 2026-07-18 19:21:08 | INFRA    | Published verified FE-016E stage and confirmed remote `main` readback        | `baf1528`                |
 
 ---
 
@@ -26,7 +27,7 @@ Status: **COMPLETE — verified locally; publication pending**
 Session: **18:53:00–19:08:42 IST**
 Task: **WBL-BE-008C**
 Assignee: **Codex**
-Status: **COMPLETE — verified locally; publication pending**
+Status: **COMPLETE — published to GitHub `main`**
 
 | Timestamp (IST)     | Category | Activity                                                                    | Result                   |
 | ------------------- | -------- | --------------------------------------------------------------------------- | ------------------------ |

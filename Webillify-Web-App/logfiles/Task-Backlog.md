@@ -16,7 +16,7 @@ Status: **COMPLETE — 2026-07-18 19:17:32 IST**
 - Refreshed invoice projections after compensation and exposed refund/return state accessibly on desktop/mobile.
 - Extended connected journeys to post a real sale and then return or cancel/refund it through the browser.
 
-Result: production/development builds, 35 unit tests, 4 connected mutation/accessibility journeys, API 3+71 regressions and both production audits pass at 0 vulnerabilities.
+Result: production/development builds, 35 unit tests, 4 connected mutation/accessibility journeys, API 3+71 regressions and both production audits pass at 0 vulnerabilities; published as `baf1528`.
 
 ## Just completed
 
